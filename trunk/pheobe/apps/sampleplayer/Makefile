@@ -59,7 +59,7 @@ gdbus :
 	$(CD) $(APP_DIR)/$@; gdbus-codegen --interface-prefix $(PROJECT_DOMAIN).GDBus.$(PROJECT_CODE).ObjectManager. \
               --generate-c-code gdbus-$(APP)-generated	\
               --c-generate-object-manager                 \
-              --c-namespace $(APP)	\
+              --c-namespace $(PROJECT_CODE)	\
               --generate-docbook generated-docs                       \
               gdbus-$(APP)-objectmanager.xml
 	

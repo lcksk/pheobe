@@ -5,7 +5,7 @@ static GDBusObjectManagerServer* manager = NULL;
 
 static void on_bus_acquired(GDBusConnection *connection, const gchar *name,
 		gpointer user_data) {
-	sampleplayerSampleplayerSkeleton *object;
+	PBSampleplayerSkeleton *object;
 	guint n;
 
 	g_print("Acquired a message bus connection\n");
@@ -14,6 +14,15 @@ static void on_bus_acquired(GDBusConnection *connection, const gchar *name,
 	manager = g_dbus_object_manager_server_new(
 			GDBUS_OBJECT_PATH);
 
+	for(n = 0; n < 10; n++) {
+
+		gchar* s;
+		s = g_strdup_printf (GDBUS_OBJECT_PATH"%03d", n);
+		g_free(s);
+		PBSampleplayer* player = pb_sampleplayer_skeleton_new();
+		g_object_unref(player);
+
+	}
 //  for (n = 0; n < 10; n++)
 //    {
 //      gchar *s;

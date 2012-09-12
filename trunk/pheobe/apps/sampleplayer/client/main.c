@@ -12,7 +12,8 @@ print_objects (GDBusObjectManager *manager)
   objects = g_dbus_object_manager_get_objects (manager);
   for (l = objects; l != NULL; l = l->next)
     {
-	  sampleplayerObject *object = SAMPLEPLAYER_OBJECT (l->data);
+	  g_print (" - Object...\n");
+	  PBSampleplayer* object = PB_OBJECT (l->data);
       GList *interfaces;
       GList *ll;
       g_print (" - Object at %s\n", g_dbus_object_get_object_path (G_DBUS_OBJECT (object)));
@@ -40,6 +41,7 @@ print_objects (GDBusObjectManager *manager)
            *
            * can be used to get the value of the :Mood property.
            */
+          pb_sampleplayer_complete_set_uri(object, NULL);
         }
       g_list_foreach (interfaces, (GFunc) g_object_unref, NULL);
       g_list_free (interfaces);
@@ -123,7 +125,7 @@ main (gint argc, gchar *argv[])
   loop = g_main_loop_new (NULL, FALSE);
 
   error = NULL;
-  manager = sampleplayer_object_manager_client_new_for_bus_sync (G_BUS_TYPE_SESSION,
+  manager = pb_object_manager_client_new_for_bus_sync (G_BUS_TYPE_SESSION,
                                                             G_DBUS_OBJECT_MANAGER_CLIENT_FLAGS_NONE,
                                                             GDBUS_NAME,
                                                             GDBUS_OBJECT_PATH,
@@ -158,6 +160,8 @@ main (gint argc, gchar *argv[])
                     "interface-proxy-properties-changed",
                     G_CALLBACK (on_interface_proxy_properties_changed),
                     NULL);
+
+  pb_sampleplayer_complete_set_uri(object, NULL);
 
   g_main_loop_run (loop);
 
