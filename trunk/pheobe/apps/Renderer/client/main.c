@@ -47,7 +47,11 @@ static void print_objects(GDBusObjectManager *manager) {
 			 *
 			 * can be used to get the value of the :Mood property.
 			 */
-			pheobe_renderer_call_set_uri_sync(interface, "hello", NULL, NULL);
+			pheobe_renderer_call_set_uri(interface, "file:///home/buttonfly/Videos/MV/1.avi", NULL, NULL, NULL);
+			pheobe_renderer_call_play(interface, 1, NULL, NULL, NULL);
+			pheobe_renderer_call_stop(interface,  NULL, NULL, NULL);
+			pheobe_renderer_call_pause(interface,  NULL, NULL, NULL);
+			pheobe_renderer_call_resume(interface,  NULL, NULL, NULL);
 
 		}
 		g_list_foreach(interfaces, (GFunc) g_object_unref, NULL);
