@@ -39,9 +39,9 @@ CXXFLAGS += -Wall -MD
 CXXFLAGS +=	-fno-rtti -fno-exceptions
 CXXFLAGS += $(CFLAGS)
 
-.PHONY : $(BIN) clean install $(OBJ_DIR)
+.PHONY : $(BIN) clean install gdbus $(OBJ_DIR)
 
-$(BIN) : $(OBJ_DIR) $(BIN_DIR) $(LIB_DIR) $(addprefix $(OBJ_DIR)/,$(OBJS))
+$(BIN) : $(OBJ_DIR) $(BIN_DIR) $(LIB_DIR) $(DBUS) $(addprefix $(OBJ_DIR)/,$(OBJS))
 	@echo [Linking... $(notdir $@)]
 ifeq ($(IS_LIB),y)
 	@$(Q_)$(CC) $(CXXFLAGS) $(LDFLAGS) -o $(BIN) $(addprefix $(OBJ_DIR)/,$(OBJS))
@@ -54,6 +54,14 @@ else
 	$(Q_)$(CP) $@ $(BIN_DIR)
 endif
 
+gdbus :
+	@echo [gdbus : gdbus ]
+	$(CD) $(APP_DIR)/$@; gdbus-codegen --interface-prefix org.gtk.GDBus.$(APP).ObjectManager. \
+              --generate-c-code generated-code                        \
+              --c-namespace $(PROJECT_CODE)	\
+              --c-generate-object-manager                 \
+              --generate-docbook generated-docs                       \
+              gdbus-$(APP)-objectmanager.xml
 	
 $(LIB_DIR) :
 	@echo [mkdir : $(LIB_DIR) ]
