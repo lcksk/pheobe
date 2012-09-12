@@ -15,12 +15,18 @@ $(SUB_BUILD) :
 	$(call DISPLAY_RED , $(subst ,,* $@ ) )
 	@ $(MAKE) -C $(APPS_DIR)/$@ DEBUG=$(DEBUG)
 
+gdbus : $(patsubst %, %_gdbus, $(SUB_BUILD))
+	$(call DISPLAY_RED ,##  $@  COMPLETE !!!  )
+
+$(patsubst %,%_gdbus,$(SUB_BUILD)) :
+	$(Q_)$(MAKE) -C $(APPS_DIR)/$(subst _gdbus,,$@) gdbus DEBUG=$(DEBUG)
+
 clean : $(patsubst %, %_clean, $(SUB_BUILD))
 	$(call DISPLAY_RED ,##  $@  COMPLETE !!!  )
 	
 $(patsubst %,%_clean,$(SUB_BUILD)) :
 	$(Q_)$(MAKE) -C $(APPS_DIR)/$(subst _clean,,$@) clean DEBUG=$(DEBUG)
-
+	
 install : $(patsubst %, %_install, $(SUB_BUILD))
 	$(call DISPLAY_RED ,##  $@  COMPLETE !!!  )
 
