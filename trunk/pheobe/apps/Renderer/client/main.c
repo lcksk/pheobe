@@ -47,6 +47,7 @@ static void print_objects(GDBusObjectManager *manager) {
 			 *
 			 * can be used to get the value of the :Mood property.
 			 */
+			pheobe_renderer_call_set_uri_sync(interface, "hello", NULL, NULL);
 
 		}
 		g_list_foreach(interfaces, (GFunc) g_object_unref, NULL);

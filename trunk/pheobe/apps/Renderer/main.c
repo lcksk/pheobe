@@ -12,13 +12,53 @@
 
 static GDBusObjectManagerServer *manager = NULL;
 
-static gboolean on_renderer_set_uri(PheobeRenderer *proxy, GDBusMethodInvocation *invocation, const gchar* uri, gpointer user_data) {
+static gboolean on_renderer_set_uri(PheobeRenderer *proxy, GDBusMethodInvocation *invocation, const gchar* uri, gpointer user_data) ;
+static void on_bus_acquired(GDBusConnection *connection, const gchar *name, gpointer user_data) ;
+static void on_name_acquired(GDBusConnection *connection, const gchar *name, gpointer user_data) ;
+static void on_name_lost(GDBusConnection *connection, const gchar *name, gpointer user_data);
 
-	g_print("on_renderer_set_uri");
-	out: return TRUE; /* to indicate that the method was handled */
+
+
+gint main(gint argc, gchar *argv[]) {
+	GMainLoop *loop;
+	guint id;
+
+	g_type_init();
+
+	loop = g_main_loop_new(NULL, FALSE);
+	id = g_bus_own_name(G_BUS_TYPE_SESSION, GDBUS_RENDERER_INTERFACE_NAME,
+			G_BUS_NAME_OWNER_FLAGS_ALLOW_REPLACEMENT
+					| G_BUS_NAME_OWNER_FLAGS_REPLACE, on_bus_acquired,
+			on_name_acquired, on_name_lost, loop, NULL);
+
+	g_main_loop_run(loop);
+
+	g_bus_unown_name(id);
+	g_main_loop_unref(loop);
+
+	return 0;
 }
 
 
+
+static gboolean on_renderer_set_uri(PheobeRenderer *proxy, GDBusMethodInvocation *invocation, const gchar* uri, gpointer user_data) {
+
+	g_print("on_renderer_set_uri");
+	if (!uri) {
+		g_dbus_method_invocation_return_dbus_error(invocation,
+				GDBUS_RENDERER_INTERFACE_NAME".Error.Failed",
+				"Exactly one of make_sad or make_happy must be TRUE");
+		goto out;
+	}
+
+	pheobe_renderer_set_uri(proxy, uri);
+	pheobe_renderer_complete_set_uri(proxy, invocation);
+	goto out;
+
+	out: return TRUE; /* to indicate that the method was handled */
+}
+
+#if 0
 static gboolean on_renderer_poke(PheobeRenderer *renderer,
 		GDBusMethodInvocation *invocation, gboolean make_sad,
 		gboolean make_happy, gpointer user_data) {
@@ -59,6 +99,7 @@ static gboolean on_renderer_poke(PheobeRenderer *renderer,
 
 	out: return TRUE; /* to indicate that the method was handled */
 }
+#endif
 
 static void on_bus_acquired(GDBusConnection *connection, const gchar *name,
 		gpointer user_data) {
@@ -70,7 +111,7 @@ static void on_bus_acquired(GDBusConnection *connection, const gchar *name,
 	/* Create a new org.freedesktop.DBus.ObjectManager rooted at /example/renderers */
 	manager = g_dbus_object_manager_server_new(GDBUS_RENDERER_OBJECT_PATH);
 
-	for (n = 0; n < 10; n++) {
+	for (n = 0; n < 1; n++) {
 		gchar *s;
 		PheobeRenderer *renderer;
 
@@ -84,25 +125,17 @@ static void on_bus_acquired(GDBusConnection *connection, const gchar *name,
 		 * that @object takes its own reference to @animal).
 		 */
 		renderer = pheobe_renderer_skeleton_new();
+#if 0
 		pheobe_renderer_set_mood(renderer, "Happy");
+#endif
 		pheobe_object_skeleton_set_renderer(object, renderer);
 		g_object_unref(renderer);
 
-		/* Cats are odd animals - so some of our objects implement the
-		 * org.gtk.GDBus.Example.ObjectManager.Cat interface in addition
-		 * to the .Animal interface
-		 */
-		if (n % 2 == 1) {
-			PheobeCat *cat;
-			cat = pheobe_cat_skeleton_new();
-			pheobe_object_skeleton_set_cat(object, cat);
-			g_object_unref(cat);
-		}
-
+#if 0
 		/* Handle Poke() D-Bus method invocations on the .renderer interface */
 		g_signal_connect(renderer, "handle-poke", G_CALLBACK(on_renderer_poke),
 				NULL); /* user_data */
-
+#endif
 		g_signal_connect(renderer, "handle-set-uri",
 				G_CALLBACK(on_renderer_set_uri), NULL); /* user_data */
 
@@ -126,22 +159,3 @@ static void on_name_lost(GDBusConnection *connection, const gchar *name,
 	g_print("Lost the name %s\n", name);
 }
 
-gint main(gint argc, gchar *argv[]) {
-	GMainLoop *loop;
-	guint id;
-
-	g_type_init();
-
-	loop = g_main_loop_new(NULL, FALSE);
-	id = g_bus_own_name(G_BUS_TYPE_SESSION, GDBUS_RENDERER_INTERFACE_NAME,
-			G_BUS_NAME_OWNER_FLAGS_ALLOW_REPLACEMENT
-					| G_BUS_NAME_OWNER_FLAGS_REPLACE, on_bus_acquired,
-			on_name_acquired, on_name_lost, loop, NULL);
-
-	g_main_loop_run(loop);
-
-	g_bus_unown_name(id);
-	g_main_loop_unref(loop);
-
-	return 0;
-}
