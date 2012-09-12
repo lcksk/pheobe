@@ -2,6 +2,7 @@
 BUILD_ROOT ?= ..
 
 PROJECT_CODE = PB
+PROJECT_DOMAIN = com.halkamalka
 APPS_DIR = $(BUILD_ROOT)/apps
 ARCH ?= $(OS_TYPE)
 
