@@ -1,6 +1,7 @@
 #select config files
 BUILD_ROOT ?= ..
 
+PROJECT_CODE = PB
 APPS_DIR = $(BUILD_ROOT)/apps
 ARCH ?= $(OS_TYPE)
 

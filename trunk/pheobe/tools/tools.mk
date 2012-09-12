@@ -35,7 +35,6 @@ LN		= ln -sf
 FIND 	= $(shell find $(1) -name $(2))
 FIND0 	= $(shell find $(1) -maxdepth 1 -name $(2))
 
-
 # $(call make-depend, src, obj, dep)
 define make-depend
 	$(CC) -MM -MF $3 -MP -MT $2 $(CFLAGS) $1
