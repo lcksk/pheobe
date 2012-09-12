@@ -4,6 +4,15 @@
 			<method name="SetUri">
 				<arg direction="in" type="s" name="uri"/>
 			</method>
+			<method name="Play">
+				<arg direction="in" type="i" name="speed"/>
+			</method>
+			<method name="Stop">				
+			</method>
+			<method name="Pause">				
+			</method>
+			<method name="Resume">				
+			</method>
 
 <!--
     <signal name="Jumped">

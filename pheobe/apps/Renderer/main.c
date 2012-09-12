@@ -7,12 +7,18 @@
 
 #include "gdbus-Renderer-generated.h"
 #include "def-renderer.h"
-
+#include "playback.h"
 /* ---------------------------------------------------------------------------------------------------- */
 
 static GDBusObjectManagerServer *manager = NULL;
+static playback s_playback = NULL;
 
 static gboolean on_renderer_set_uri(PheobeRenderer *proxy, GDBusMethodInvocation *invocation, const gchar* uri, gpointer user_data) ;
+static gboolean on_renderer_play(PheobeRenderer *proxy, GDBusMethodInvocation *invocation, gint speed, gpointer user_data);
+static gboolean on_renderer_stop(PheobeRenderer *proxy, GDBusMethodInvocation *invocation, gpointer user_data);
+static gboolean on_renderer_pause(PheobeRenderer *proxy, GDBusMethodInvocation *invocation, gpointer user_data);
+static gboolean on_renderer_resume(PheobeRenderer *proxy, GDBusMethodInvocation *invocation, gpointer user_data);
+
 static void on_bus_acquired(GDBusConnection *connection, const gchar *name, gpointer user_data) ;
 static void on_name_acquired(GDBusConnection *connection, const gchar *name, gpointer user_data) ;
 static void on_name_lost(GDBusConnection *connection, const gchar *name, gpointer user_data);
@@ -31,6 +37,7 @@ gint main(gint argc, gchar *argv[]) {
 					| G_BUS_NAME_OWNER_FLAGS_REPLACE, on_bus_acquired,
 			on_name_acquired, on_name_lost, loop, NULL);
 
+	s_playback = playback_getInstance();
 	g_main_loop_run(loop);
 
 	g_bus_unown_name(id);
@@ -40,23 +47,6 @@ gint main(gint argc, gchar *argv[]) {
 }
 
 
-
-static gboolean on_renderer_set_uri(PheobeRenderer *proxy, GDBusMethodInvocation *invocation, const gchar* uri, gpointer user_data) {
-
-	g_print("on_renderer_set_uri");
-	if (!uri) {
-		g_dbus_method_invocation_return_dbus_error(invocation,
-				GDBUS_RENDERER_INTERFACE_NAME".Error.Failed",
-				"Exactly one of make_sad or make_happy must be TRUE");
-		goto out;
-	}
-
-	pheobe_renderer_set_uri(proxy, uri);
-	pheobe_renderer_complete_set_uri(proxy, invocation);
-	goto out;
-
-	out: return TRUE; /* to indicate that the method was handled */
-}
 
 #if 0
 static gboolean on_renderer_poke(PheobeRenderer *renderer,
@@ -131,13 +121,11 @@ static void on_bus_acquired(GDBusConnection *connection, const gchar *name,
 		pheobe_object_skeleton_set_renderer(object, renderer);
 		g_object_unref(renderer);
 
-#if 0
-		/* Handle Poke() D-Bus method invocations on the .renderer interface */
-		g_signal_connect(renderer, "handle-poke", G_CALLBACK(on_renderer_poke),
-				NULL); /* user_data */
-#endif
-		g_signal_connect(renderer, "handle-set-uri",
-				G_CALLBACK(on_renderer_set_uri), NULL); /* user_data */
+		g_signal_connect(renderer, "handle-set-uri",	G_CALLBACK(on_renderer_set_uri), NULL); /* user_data */
+		g_signal_connect(renderer, "handle-play",	G_CALLBACK(on_renderer_play), NULL); /* user_data */
+		g_signal_connect(renderer, "handle-stop",	G_CALLBACK(on_renderer_stop), NULL); /* user_data */
+		g_signal_connect(renderer, "handle-resume",	G_CALLBACK(on_renderer_resume), NULL); /* user_data */
+		g_signal_connect(renderer, "handle-pause",	G_CALLBACK(on_renderer_pause), NULL); /* user_data */
 
 		/* Export the object (@manager takes its own reference to @object) */
 		g_dbus_object_manager_server_export(manager,
@@ -158,4 +146,58 @@ static void on_name_lost(GDBusConnection *connection, const gchar *name,
 		gpointer user_data) {
 	g_print("Lost the name %s\n", name);
 }
+
+static gboolean on_renderer_set_uri(PheobeRenderer *proxy, GDBusMethodInvocation *invocation, const gchar* uri, gpointer user_data) {
+
+	g_print("on_renderer_set_uri\n");
+	if (!uri) {
+		g_dbus_method_invocation_return_dbus_error(invocation,
+				GDBUS_RENDERER_INTERFACE_NAME".Error.Failed",
+				"Exactly one of make_sad or make_happy must be TRUE");
+		goto out;
+	}
+
+	pheobe_renderer_set_uri(proxy, uri);
+	pheobe_renderer_complete_set_uri(proxy, invocation);
+	playback_set_uri(s_playback, uri);
+	goto out;
+
+	g_assert_not_reached();
+
+	out: return TRUE; /* to indicate that the method was handled */
+}
+
+static gboolean on_renderer_play(PheobeRenderer *proxy, GDBusMethodInvocation *invocation, gint speed, gpointer user_data)
+{
+	g_print("on_renderer_play\n");
+	playback_play(s_playback, 1);
+	goto out;
+	g_assert_not_reached();
+	out: return TRUE; /* to indicate that the method was handled */
+}
+
+static gboolean on_renderer_stop(PheobeRenderer *proxy, GDBusMethodInvocation *invocation, gpointer user_data)
+{
+	g_print("on_renderer_stop\n");
+	goto out;
+	g_assert_not_reached();
+	out: return TRUE; /* to indicate that the method was handled */
+}
+
+static gboolean on_renderer_pause(PheobeRenderer *proxy, GDBusMethodInvocation *invocation, gpointer user_data)
+{
+	g_print("on_renderer_pause\n");
+	goto out;
+	g_assert_not_reached();
+	out: return TRUE; /* to indicate that the method was handled */
+}
+
+static gboolean on_renderer_resume(PheobeRenderer *proxy, GDBusMethodInvocation *invocation, gpointer user_data)
+{
+	g_print("on_renderer_resume\n");
+	goto out;
+	g_assert_not_reached();
+	out: return TRUE; /* to indicate that the method was handled */
+}
+
 
