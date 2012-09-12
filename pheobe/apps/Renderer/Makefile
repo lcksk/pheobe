@@ -56,9 +56,9 @@ endif
 
 gdbus :
 	@echo [gdbus : gdbus-codegen ]
-	$(CD) $(APP_DIR)/$@; gdbus-codegen --interface-prefix $(PROJECT_DOMAIN).GDBus.Example.ObjectManager. \
+	$(CD) $(APP_DIR)/$@; gdbus-codegen --interface-prefix $(PROJECT_DOMAIN).GDBus.$(PROJECT_CODE).ObjectManager. \
               --generate-c-code gdbus-$(APP)-generated                      \
-              --c-namespace Example                       \
+              --c-namespace $(PROJECT_CODE)                       \
               --c-generate-object-manager                 \
               --generate-docbook generated-docs                       \
               gdbus-$(APP)-objectmanager.xml

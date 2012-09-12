@@ -15,7 +15,7 @@
 static GDBusObjectManagerServer *manager = NULL;
 
 static gboolean
-on_animal_poke (ExampleAnimal          *animal,
+on_animal_poke (PheobeAnimal          *animal,
                 GDBusMethodInvocation  *invocation,
                 gboolean                make_sad,
                 gboolean                make_happy,
@@ -24,38 +24,38 @@ on_animal_poke (ExampleAnimal          *animal,
   if ((make_sad && make_happy) || (!make_sad && !make_happy))
     {
       g_dbus_method_invocation_return_dbus_error (invocation,
-                                                  "com.halkamalka.GDBus.Examples.ObjectManager.Error.Failed",
+                                                  "com.halkamalka.GDBus.Pheobe.ObjectManager.Error.Failed",
                                                   "Exactly one of make_sad or make_happy must be TRUE");
       goto out;
     }
 
   if (make_sad)
     {
-      if (g_strcmp0 (example_animal_get_mood (animal), "Sad") == 0)
+      if (g_strcmp0 (pheobe_animal_get_mood (animal), "Sad") == 0)
         {
           g_dbus_method_invocation_return_dbus_error (invocation,
-                                                      "com.halkamalka.GDBus.Examples.ObjectManager.Error.SadAnimalIsSad",
+                                                      "com.halkamalka.GDBus.Pheobe.ObjectManager.Error.SadAnimalIsSad",
                                                       "Sad animal is already sad");
           goto out;
         }
 
-      example_animal_set_mood (animal, "Sad");
-      example_animal_complete_poke (animal, invocation);
+      pheobe_animal_set_mood (animal, "Sad");
+      pheobe_animal_complete_poke (animal, invocation);
       goto out;
     }
 
   if (make_happy)
     {
-      if (g_strcmp0 (example_animal_get_mood (animal), "Happy") == 0)
+      if (g_strcmp0 (pheobe_animal_get_mood (animal), "Happy") == 0)
         {
           g_dbus_method_invocation_return_dbus_error (invocation,
-                                                      "com.halkamalka.GDBus.Examples.ObjectManager.Error.HappyAnimalIsHappy",
+                                                      "com.halkamalka.GDBus.Pheobe.ObjectManager.Error.HappyAnimalIsHappy",
                                                       "Happy animal is already happy");
           goto out;
         }
 
-      example_animal_set_mood (animal, "Happy");
-      example_animal_complete_poke (animal, invocation);
+      pheobe_animal_set_mood (animal, "Happy");
+      pheobe_animal_complete_poke (animal, invocation);
       goto out;
     }
 
@@ -71,31 +71,31 @@ on_bus_acquired (GDBusConnection *connection,
                  const gchar     *name,
                  gpointer         user_data)
 {
-  ExampleObjectSkeleton *object;
+  PheobeObjectSkeleton *object;
   guint n;
 
   g_print ("Acquired a message bus connection\n");
 
   /* Create a new org.freedesktop.DBus.ObjectManager rooted at /example/Animals */
-  manager = g_dbus_object_manager_server_new ("/example/Animals");
+  manager = g_dbus_object_manager_server_new ("/pheobe/Animals");
 
   for (n = 0; n < 10; n++)
     {
       gchar *s;
-      ExampleAnimal *animal;
+      PheobeAnimal *animal;
 
       /* Create a new D-Bus object at the path /example/Animals/N where N is 000..009 */
-      s = g_strdup_printf ("/example/Animals/%03d", n);
-      object = example_object_skeleton_new (s);
+      s = g_strdup_printf ("/pheobe/Animals/%03d", n);
+      object = pheobe_object_skeleton_new (s);
       g_free (s);
 
       /* Make the newly created object export the interface
        * org.gtk.GDBus.Example.ObjectManager.Animal (note
        * that @object takes its own reference to @animal).
        */
-      animal = example_animal_skeleton_new ();
-      example_animal_set_mood (animal, "Happy");
-      example_object_skeleton_set_animal (object, animal);
+      animal = pheobe_animal_skeleton_new ();
+      pheobe_animal_set_mood (animal, "Happy");
+      pheobe_object_skeleton_set_animal (object, animal);
       g_object_unref (animal);
 
       /* Cats are odd animals - so some of our objects implement the
@@ -104,9 +104,9 @@ on_bus_acquired (GDBusConnection *connection,
        */
       if (n % 2 == 1)
         {
-          ExampleCat *cat;
-          cat = example_cat_skeleton_new ();
-          example_object_skeleton_set_cat (object, cat);
+          PheobeCat *cat;
+          cat = pheobe_cat_skeleton_new ();
+          pheobe_object_skeleton_set_cat (object, cat);
           g_object_unref (cat);
         }
 
@@ -153,7 +153,7 @@ main (gint argc, gchar *argv[])
   loop = g_main_loop_new (NULL, FALSE);
 
   id = g_bus_own_name (G_BUS_TYPE_SESSION,
-                       "com.halkamalka.GDBus.Examples.ObjectManager",
+                       "com.halkamalka.GDBus.Pheobe.ObjectManager",
                        G_BUS_NAME_OWNER_FLAGS_ALLOW_REPLACEMENT |
                        G_BUS_NAME_OWNER_FLAGS_REPLACE,
                        on_bus_acquired,
