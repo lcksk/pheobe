@@ -13,7 +13,7 @@ on_bus_acquired (GDBusConnection *connection,
   g_print ("Acquired a message bus connection\n");
 
   /* Create a new org.freedesktop.DBus.ObjectManager rooted at /example/Animals */
-  manager = g_dbus_object_manager_server_new ("/com/halkamalka/GDBus/PB/sampleplayer");
+  manager = g_dbus_object_manager_server_new ("/com/halkamalka/GDBus/PB/Sampleplayer");
 
 //  for (n = 0; n < 10; n++)
 //    {
@@ -86,7 +86,7 @@ gint main(gint argc, gchar* argv[]) {
 
 		loop = g_main_loop_new (NULL, FALSE);
 		id = g_bus_own_name (G_BUS_TYPE_SESSION,
-														"com.halkamalka.GDBus.sampleplayer.ObjectManager",
+														"com.halkamalka.GDBus.PB.Sampleplayer.ObjectManager",
 														G_BUS_NAME_OWNER_FLAGS_ALLOW_REPLACEMENT | G_BUS_NAME_OWNER_FLAGS_REPLACE,
 														on_bus_acquired,
 														on_name_acquired,

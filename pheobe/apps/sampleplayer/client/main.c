@@ -125,8 +125,8 @@ main (gint argc, gchar *argv[])
   error = NULL;
   manager = sampleplayer_object_manager_client_new_for_bus_sync (G_BUS_TYPE_SESSION,
                                                             G_DBUS_OBJECT_MANAGER_CLIENT_FLAGS_NONE,
-                                                            "com.halkamalka.GDBus.sampleplayer.ObjectManager",
-                                                            "/com/halkamalka/GDBus/PB/sampleplayer",
+                                                            "com.halkamalka.GDBus.PB.Sampleplayer.ObjectManager",
+                                                            "/com/halkamalka/GDBus/PB/Sampleplayer",
                                                             NULL, /* GCancellable */
                                                             &error);
   if (manager == NULL)

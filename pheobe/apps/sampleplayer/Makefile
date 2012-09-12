@@ -85,7 +85,8 @@ $(OBJ_DIR)/%.o : %.cpp
 	
 clean :
 	$(Q_)$(RM) -rf $(OBJ_DIR)
-	$(Q_)$(RM) -f gdbus/*.h gdbus/*.c
+	$(Q_)$(RM) -f gdbus/*.h gdbus/*.c gdbus/generated-docs*
+	$(MAKE) -C client clean
 
 install :
 ifeq ($(IS_LIB),y)
