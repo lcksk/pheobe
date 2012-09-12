@@ -84,7 +84,6 @@ $(OBJ_DIR)/%.o : %.cpp
 	
 clean :
 	$(Q_)$(RM) -rf $(OBJ_DIR)
-	$(Q_)$(RM) -f gdbus/generated*
 	
 install :
 ifeq ($(IS_LIB),y)
