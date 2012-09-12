@@ -22,7 +22,7 @@ print_objects (GDBusObjectManager *manager)
   objects = g_dbus_object_manager_get_objects (manager);
   for (l = objects; l != NULL; l = l->next)
     {
-      ExampleObject *object = EXAMPLE_OBJECT (l->data);
+     PheobeObject *object = PHEOBE_OBJECT (l->data);
       GList *interfaces;
       GList *ll;
       g_print (" - Object at %s\n", g_dbus_object_get_object_path (G_DBUS_OBJECT (object)));
@@ -133,10 +133,10 @@ main (gint argc, gchar *argv[])
   loop = g_main_loop_new (NULL, FALSE);
 
   error = NULL;
-  manager = example_object_manager_client_new_for_bus_sync (G_BUS_TYPE_SESSION,
+  manager = pheobe_object_manager_client_new_for_bus_sync (G_BUS_TYPE_SESSION,
                                                             G_DBUS_OBJECT_MANAGER_CLIENT_FLAGS_NONE,
-                                                            "com.halkamalka.GDBus.Examples.ObjectManager",
-                                                            "/example/Animals",
+                                                            "com.halkamalka.GDBus.Pheobe.ObjectManager",
+                                                            "/pheobe/Animals",
                                                             NULL, /* GCancellable */
                                                             &error);
   if (manager == NULL)
