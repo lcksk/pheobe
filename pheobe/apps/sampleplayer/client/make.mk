@@ -2,6 +2,7 @@ include $(BUILD_ROOT)/tools/config.mk
 include $(BUILD_ROOT)/tools/library.mk
 
 INCLUDE_DIR = \
+	../include	\
 	../gdbus
 
 CFLAGS += $(addprefix -I, $(INCLUDE_DIR))
