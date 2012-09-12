@@ -1,220 +1,103 @@
-#include <gst/gst.h>
-#include <stdio.h>
+#include "gdbus-sampleplayer-generated.h"
 
-/* Structure to contain all our information, so we can pass it around */
-typedef struct _CustomData {
-  GstElement *playbin2;  /* Our one and only element */
+static GDBusObjectManagerServer* manager = NULL;
 
-  gint n_video;          /* Number of embedded video streams */
-  gint n_audio;          /* Number of embedded audio streams */
-  gint n_text;           /* Number of embedded subtitle streams */
+static void
+on_bus_acquired (GDBusConnection *connection,
+                 const gchar     *name,
+                 gpointer         user_data)
+{
+	sampleplayerSampleplayerSkeleton *object;
+  guint n;
 
-  gint current_video;    /* Currently playing video stream */
-  gint current_audio;    /* Currently playing audio stream */
-  gint current_text;     /* Currently playing subtitle stream */
+  g_print ("Acquired a message bus connection\n");
 
-  GMainLoop *main_loop;  /* GLib's Main Loop */
-} CustomData;
+  /* Create a new org.freedesktop.DBus.ObjectManager rooted at /example/Animals */
+  manager = g_dbus_object_manager_server_new ("/com/halkamalka/GDBus/PB/sampleplayer");
 
-/* playbin2 flags */
-typedef enum {
-  GST_PLAY_FLAG_VIDEO         = (1 << 0), /* We want video output */
-  GST_PLAY_FLAG_AUDIO         = (1 << 1), /* We want audio output */
-  GST_PLAY_FLAG_TEXT          = (1 << 2)  /* We want subtitle output */
-} GstPlayFlags;
+//  for (n = 0; n < 10; n++)
+//    {
+//      gchar *s;
+//      ExampleAnimal *animal;
+//
+//      /* Create a new D-Bus object at the path /example/Animals/N where N is 000..009 */
+//      s = g_strdup_printf ("/example/Animals/%03d", n);
+//      object = example_object_skeleton_new (s);
+//      g_free (s);
+//
+//      /* Make the newly created object export the interface
+//       * org.gtk.GDBus.Example.ObjectManager.Animal (note
+//       * that @object takes its own reference to @animal).
+//       */
+//      animal = example_animal_skeleton_new ();
+//      example_animal_set_mood (animal, "Happy");
+//      example_object_skeleton_set_animal (object, animal);
+//      g_object_unref (animal);
+//
+//      /* Cats are odd animals - so some of our objects implement the
+//       * org.gtk.GDBus.Example.ObjectManager.Cat interface in addition
+//       * to the .Animal interface
+//       */
+//      if (n % 2 == 1)
+//        {
+//          ExampleCat *cat;
+//          cat = example_cat_skeleton_new ();
+//          example_object_skeleton_set_cat (object, cat);
+//          g_object_unref (cat);
+//        }
+//
+//      /* Handle Poke() D-Bus method invocations on the .Animal interface */
+//      g_signal_connect (animal,
+//                        "handle-poke",
+//                        G_CALLBACK (on_animal_poke),
+//                        NULL); /* user_data */
+//
+//      /* Export the object (@manager takes its own reference to @object) */
+//      g_dbus_object_manager_server_export (manager, G_DBUS_OBJECT_SKELETON (object));
+//      g_object_unref (object);
+//    }
 
-/* Forward definition for the message and keyboard processing functions */
-static gboolean handle_message (GstBus *bus, GstMessage *msg, CustomData *data);
-static gboolean handle_keyboard (GIOChannel *source, GIOCondition cond, CustomData *data);
-
-int main(int argc, char *argv[]) {
-  CustomData data;
-  GstBus *bus;
-  GstStateChangeReturn ret;
-  gint flags;
-  GIOChannel *io_stdin;
-
-  /* Initialize GStreamer */
-  gst_init (&argc, &argv);
-
-  /* Create the elements */
-  data.playbin2 = gst_element_factory_make ("playbin2", "playbin2");
-
-  if (!data.playbin2) {
-    g_printerr ("Not all elements could be created.\n");
-    return -1;
-  }
-
-  /* Set the URI to play */
-//  g_object_set (data.playbin2, "uri", "http://docs.gstreamer.com/media/sintel_cropped_multilingual.webm", NULL);
-  g_object_set (data.playbin2, "uri", "file:///home/buttonfly/Videos/Beyonc - Love On Top.avi", NULL);
-
-  /* Set flags to show Audio and Video but ignore Subtitles */
-  g_object_get (data.playbin2, "flags", &flags, NULL);
-  flags |= GST_PLAY_FLAG_VIDEO | GST_PLAY_FLAG_AUDIO;
-  flags &= ~GST_PLAY_FLAG_TEXT;
-  g_object_set (data.playbin2, "flags", flags, NULL);
-
-  /* Set connection speed. This will affect some internal decisions of playbin2 */
-  g_object_set (data.playbin2, "connection-speed", 56, NULL);
-
-  /* Add a bus watch, so we get notified when a message arrives */
-  bus = gst_element_get_bus (data.playbin2);
-  gst_bus_add_watch (bus, (GstBusFunc)handle_message, &data);
-
-  /* Add a keyboard watch so we get notified of keystrokes */
-#ifdef _WIN32
-  io_stdin = g_io_channel_win32_new_fd (fileno (stdin));
-#else
-  io_stdin = g_io_channel_unix_new (fileno (stdin));
-#endif
-  g_io_add_watch (io_stdin, G_IO_IN, (GIOFunc)handle_keyboard, &data);
-
-  /* Start playing */
-  ret = gst_element_set_state (data.playbin2, GST_STATE_PLAYING);
-  if (ret == GST_STATE_CHANGE_FAILURE) {
-    g_printerr ("Unable to set the pipeline to the playing state.\n");
-    gst_object_unref (data.playbin2);
-    return -1;
-  }
-
-  /* Create a GLib Main Loop and set it to run */
-  data.main_loop = g_main_loop_new (NULL, FALSE);
-  g_main_loop_run (data.main_loop);
-
-  /* Free resources */
-  g_main_loop_unref (data.main_loop);
-  g_io_channel_unref (io_stdin);
-  gst_object_unref (bus);
-  gst_element_set_state (data.playbin2, GST_STATE_NULL);
-  gst_object_unref (data.playbin2);
-  return 0;
+  /* Export all objects */
+  g_dbus_object_manager_server_set_connection (manager, connection);
 }
 
-/* Extract some metadata from the streams and print it on the screen */
-static void analyze_streams (CustomData *data) {
-  gint i;
-  GstTagList *tags;
-  gchar *str;
-  guint rate;
-
-  /* Read some properties */
-  g_object_get (data->playbin2, "n-video", &data->n_video, NULL);
-  g_object_get (data->playbin2, "n-audio", &data->n_audio, NULL);
-  g_object_get (data->playbin2, "n-text", &data->n_text, NULL);
-
-  g_print ("%d video stream(s), %d audio stream(s), %d text stream(s)\n",
-    data->n_video, data->n_audio, data->n_text);
-
-  g_print ("\n");
-  for (i = 0; i < data->n_video; i++) {
-    tags = NULL;
-    /* Retrieve the stream's video tags */
-    g_signal_emit_by_name (data->playbin2, "get-video-tags", i, &tags);
-    if (tags) {
-      g_print ("video stream %d:\n", i);
-      gst_tag_list_get_string (tags, GST_TAG_VIDEO_CODEC, &str);
-      g_print ("  codec: %s\n", str ? str : "unknown");
-      g_free (str);
-      gst_tag_list_free (tags);
-    }
-  }
-
-  g_print ("\n");
-  for (i = 0; i < data->n_audio; i++) {
-    tags = NULL;
-    /* Retrieve the stream's audio tags */
-    g_signal_emit_by_name (data->playbin2, "get-audio-tags", i, &tags);
-    if (tags) {
-      g_print ("audio stream %d:\n", i);
-      if (gst_tag_list_get_string (tags, GST_TAG_AUDIO_CODEC, &str)) {
-        g_print ("  codec: %s\n", str);
-        g_free (str);
-      }
-      if (gst_tag_list_get_string (tags, GST_TAG_LANGUAGE_CODE, &str)) {
-        g_print ("  language: %s\n", str);
-        g_free (str);
-      }
-      if (gst_tag_list_get_uint (tags, GST_TAG_BITRATE, &rate)) {
-        g_print ("  bitrate: %d\n", rate);
-      }
-      gst_tag_list_free (tags);
-    }
-  }
-
-  g_print ("\n");
-  for (i = 0; i < data->n_text; i++) {
-    tags = NULL;
-    /* Retrieve the stream's subtitle tags */
-    g_signal_emit_by_name (data->playbin2, "get-text-tags", i, &tags);
-    if (tags) {
-      g_print ("subtitle stream %d:\n", i);
-      if (gst_tag_list_get_string (tags, GST_TAG_LANGUAGE_CODE, &str)) {
-        g_print ("  language: %s\n", str);
-        g_free (str);
-      }
-      gst_tag_list_free (tags);
-    }
-  }
-
-  g_object_get (data->playbin2, "current-video", &data->current_video, NULL);
-  g_object_get (data->playbin2, "current-audio", &data->current_audio, NULL);
-  g_object_get (data->playbin2, "current-text", &data->current_text, NULL);
-
-  g_print ("\n");
-  g_print ("Currently playing video stream %d, audio stream %d and text stream %d\n",
-    data->current_video, data->current_audio, data->current_text);
-  g_print ("Type any number and hit ENTER to select a different audio stream\n");
+static void
+on_name_acquired (GDBusConnection *connection,
+                  const gchar     *name,
+                  gpointer         user_data)
+{
+  g_print ("Acquired the name %s\n", name);
 }
 
-/* Process messages from GStreamer */
-static gboolean handle_message (GstBus *bus, GstMessage *msg, CustomData *data) {
-  GError *err;
-  gchar *debug_info;
-
-  switch (GST_MESSAGE_TYPE (msg)) {
-    case GST_MESSAGE_ERROR:
-      gst_message_parse_error (msg, &err, &debug_info);
-      g_printerr ("Error received from element %s: %s\n", GST_OBJECT_NAME (msg->src), err->message);
-      g_printerr ("Debugging information: %s\n", debug_info ? debug_info : "none");
-      g_clear_error (&err);
-      g_free (debug_info);
-      g_main_loop_quit (data->main_loop);
-      break;
-    case GST_MESSAGE_EOS:
-      g_print ("End-Of-Stream reached.\n");
-      g_main_loop_quit (data->main_loop);
-      break;
-    case GST_MESSAGE_STATE_CHANGED: {
-      GstState old_state, new_state, pending_state;
-      gst_message_parse_state_changed (msg, &old_state, &new_state, &pending_state);
-      if (GST_MESSAGE_SRC (msg) == GST_OBJECT (data->playbin2)) {
-        if (new_state == GST_STATE_PLAYING) {
-          /* Once we are in the playing state, analyze the streams */
-          analyze_streams (data);
-        }
-      }
-    } break;
-  }
-
-  /* We want to keep receiving messages */
-  return TRUE;
+static void
+on_name_lost (GDBusConnection *connection,
+              const gchar     *name,
+              gpointer         user_data)
+{
+  g_print ("Lost the name %s\n", name);
 }
 
-/* Process keyboard input */
-static gboolean handle_keyboard (GIOChannel *source, GIOCondition cond, CustomData *data) {
-  gchar *str = NULL;
+gint main(gint argc, gchar* argv[]) {
 
-  if (g_io_channel_read_line (source, &str, NULL, NULL, NULL) == G_IO_STATUS_NORMAL) {
-    int index = atoi (str);
-    if (index < 0 || index >= data->n_audio) {
-      g_printerr ("Index out of bounds\n");
-    } else {
-      /* If the input was a valid audio stream index, set the current audio stream */
-      g_print ("Setting current audio stream to %d\n", index);
-      g_object_set (data->playbin2, "current-audio", index, NULL);
-    }
-  }
-  g_free (str);
-  return TRUE;
+		GMainLoop* loop;
+		guint id;
+
+		g_type_init();
+
+		loop = g_main_loop_new (NULL, FALSE);
+		id = g_bus_own_name (G_BUS_TYPE_SESSION,
+														"com.halkamalka.GDBus.sampleplayer.ObjectManager",
+														G_BUS_NAME_OWNER_FLAGS_ALLOW_REPLACEMENT | G_BUS_NAME_OWNER_FLAGS_REPLACE,
+														on_bus_acquired,
+														on_name_acquired,
+														on_name_lost,
+														loop,
+														NULL
+			);
+
+		g_main_loop_run(loop);
+		g_bus_unown_name(id);
+		g_main_loop_unref(loop);
+
+		return 0;
 }

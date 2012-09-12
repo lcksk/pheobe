@@ -1,13 +1,21 @@
 <node>
-	<interface name="org.gtk.GDBus.Multimedia.ObjectManager.Sampleplayer">
+	<interface name="com.halkamalka.GDBus.PB.ObjectManager.Sampleplayer">
+		<!-- 
+			<property name="Verbose" type="b" access="readwrite"/>
+		-->
+		
 		<property name="State" type="s" access="read"/>
+		<method name="setUri">
+			<arg direction="in" type="s" name="uri"/>			
+		</method>
 		<method name="play">
 			<arg direction="in" type="b" name="arg0"/>			
 		</method>
-
+		<method name="stop">
+			<arg direction="in" type="b" name="arg0"/>			
+		</method>
 		<signal name="eof">
 			<arg type="d" name="state" />
 		</signal>
-
 	</interface>
 </node>

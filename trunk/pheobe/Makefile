@@ -20,6 +20,13 @@ gdbus : $(patsubst %, %_gdbus, $(TARGETS))
 $(patsubst %,%_gdbus,$(TARGETS)) :
 	$(Q_)$(MAKE) -C $(subst _gdbus,,$@) gdbus
 
+client : $(patsubst %, %_client, $(TARGETS))
+	$(call DISPLAY_RED ,##  $@  COMPLETE !!!  )
+	
+	
+$(patsubst %,%_client,$(TARGETS)) :
+	$(Q_)$(MAKE) -C $(subst _client,,$@) client
+	
 
 clean : $(patsubst %, %_clean, $(TARGETS))
 	$(call DISPLAY_RED ,##  $@  COMPLETE !!!  )

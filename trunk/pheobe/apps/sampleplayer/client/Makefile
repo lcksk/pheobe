@@ -14,7 +14,7 @@ endif
 
 include $(BUILD_ROOT)/tools/library.mk
 
-LIB_NAME=sampleplayer
+LIB_NAME=sampleplayer-client
 LIB_VER=0.1.0
 SO_NAME = $(LIB_NAME).0
 
@@ -57,9 +57,8 @@ endif
 gdbus :
 	@echo [gdbus : gdbus-codegen ]
 	$(CD) $(APP_DIR)/$@; gdbus-codegen --interface-prefix $(PROJECT_DOMAIN).GDBus.$(PROJECT_CODE).ObjectManager. \
-              --generate-c-code gdbus-$(APP)-generated	\
+              --generate-c-code generated-code                        \
               --c-generate-object-manager                 \
-              --c-namespace $(APP)	\
               --generate-docbook generated-docs                       \
               gdbus-$(APP)-objectmanager.xml
 	
@@ -85,8 +84,8 @@ $(OBJ_DIR)/%.o : %.cpp
 	
 clean :
 	$(Q_)$(RM) -rf $(OBJ_DIR)
-	$(Q_)$(RM) -f gdbus/*.h gdbus/*.c
-
+	$(Q_)$(RM) -f gdbus/generated*
+	
 install :
 ifeq ($(IS_LIB),y)
 	$(CP) $(BIN) $(OBJ_DEST)/usr/local/lib/

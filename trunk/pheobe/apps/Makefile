@@ -21,6 +21,12 @@ gdbus : $(patsubst %, %_gdbus, $(SUB_BUILD))
 $(patsubst %,%_gdbus,$(SUB_BUILD)) :
 	$(Q_)$(MAKE) -C $(APPS_DIR)/$(subst _gdbus,,$@) gdbus DEBUG=$(DEBUG)
 
+client : $(patsubst %, %_client, $(SUB_BUILD))
+	$(call DISPLAY_RED ,##  $@  COMPLETE !!!  )
+
+$(patsubst %,%_client,$(SUB_BUILD)) :
+	$(Q_)$(MAKE) -C $(APPS_DIR)/$(subst _client,,$@)/client DEBUG=$(DEBUG)
+	
 clean : $(patsubst %, %_clean, $(SUB_BUILD))
 	$(call DISPLAY_RED ,##  $@  COMPLETE !!!  )
 	
