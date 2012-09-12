@@ -4,7 +4,8 @@ include $(BUILD_ROOT)/tools/config.mk
 include $(BUILD_ROOT)/tools/tools.mk
 
 LIBS += 
-APPS = sampleplayer
+#APPS = sampleplayer
+APPS = Renderer
 
 SUB_BUILD = $(LIBS) $(APPS)
 .PHONY : $(SUB_BUILD) $(BIN_DIR)
