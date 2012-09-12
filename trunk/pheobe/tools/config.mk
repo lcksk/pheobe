@@ -1,7 +1,7 @@
 #select config files
 BUILD_ROOT ?= ..
 
-PROJECT_CODE = PB
+PROJECT_CODE = Pheobe
 PROJECT_DOMAIN = com.halkamalka
 APPS_DIR = $(BUILD_ROOT)/apps
 ARCH ?= $(OS_TYPE)
