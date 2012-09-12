@@ -5,7 +5,7 @@
 
        This D-Bus interface is used to describe a simple animal.
     -->
-  <interface name="org.gtk.GDBus.Example.ObjectManager.Animal">
+  <interface name="com.halkamalka.GDBus.Example.ObjectManager.Animal">
     <!-- Mood: The mood of the animal.
          @since: 2.30
 
@@ -60,6 +60,6 @@
        implement the #org.gtk.GDBus.Example.ObjectManager.Animal
        interface.
     -->
-  <interface name="org.gtk.GDBus.Example.ObjectManager.Cat">
+  <interface name="com.halkamalka.GDBus.Example.ObjectManager.Cat">
   </interface>
 </node>

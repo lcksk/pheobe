@@ -56,7 +56,7 @@ endif
 
 gdbus :
 	@echo [gdbus : gdbus-codegen ]
-	$(CD) $(APP_DIR)/$@; gdbus-codegen --interface-prefix org.gtk.GDBus.Example.ObjectManager. \
+	$(CD) $(APP_DIR)/$@; gdbus-codegen --interface-prefix $(PROJECT_DOMAIN).GDBus.Example.ObjectManager. \
               --generate-c-code gdbus-$(APP)-generated                      \
               --c-namespace Example                       \
               --c-generate-object-manager                 \
