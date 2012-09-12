@@ -24,7 +24,6 @@ static void on_name_acquired(GDBusConnection *connection, const gchar *name, gpo
 static void on_name_lost(GDBusConnection *connection, const gchar *name, gpointer user_data);
 
 
-
 gint main(gint argc, gchar *argv[]) {
 	GMainLoop *loop;
 	guint id;
@@ -101,6 +100,7 @@ static void on_bus_acquired(GDBusConnection *connection, const gchar *name,
 	/* Create a new org.freedesktop.DBus.ObjectManager rooted at /example/renderers */
 	manager = g_dbus_object_manager_server_new(GDBUS_RENDERER_OBJECT_PATH);
 
+#if 0
 	for (n = 0; n < 1; n++) {
 		gchar *s;
 		PheobeRenderer *renderer;
@@ -115,9 +115,6 @@ static void on_bus_acquired(GDBusConnection *connection, const gchar *name,
 		 * that @object takes its own reference to @animal).
 		 */
 		renderer = pheobe_renderer_skeleton_new();
-#if 0
-		pheobe_renderer_set_mood(renderer, "Happy");
-#endif
 		pheobe_object_skeleton_set_renderer(object, renderer);
 		g_object_unref(renderer);
 
@@ -132,7 +129,35 @@ static void on_bus_acquired(GDBusConnection *connection, const gchar *name,
 				G_DBUS_OBJECT_SKELETON(object));
 		g_object_unref(object);
 	}
+#else
+	gchar *s;
+	PheobeRenderer *renderer;
 
+	/* Create a new D-Bus object at the path /example/renderers/N where N is 000..009 */
+	s = g_strdup(GDBUS_RENDERER_OBJECT_PATH"/000");
+	object = pheobe_object_skeleton_new(s);
+	g_free(s);
+
+	/* Make the newly created object export the interface
+	 * org.gtk.GDBus.Example.ObjectManager.renderer (note
+	 * that @object takes its own reference to @animal).
+	 */
+	renderer = pheobe_renderer_skeleton_new();
+	pheobe_object_skeleton_set_renderer(object, renderer);
+	g_object_unref(renderer);
+
+	g_signal_connect(renderer, "handle-set-uri",	G_CALLBACK(on_renderer_set_uri), NULL); /* user_data */
+	g_signal_connect(renderer, "handle-play",	G_CALLBACK(on_renderer_play), NULL); /* user_data */
+	g_signal_connect(renderer, "handle-stop",	G_CALLBACK(on_renderer_stop), NULL); /* user_data */
+	g_signal_connect(renderer, "handle-resume",	G_CALLBACK(on_renderer_resume), NULL); /* user_data */
+	g_signal_connect(renderer, "handle-pause",	G_CALLBACK(on_renderer_pause), NULL); /* user_data */
+
+	/* Export the object (@manager takes its own reference to @object) */
+	g_dbus_object_manager_server_export(manager,
+			G_DBUS_OBJECT_SKELETON(object));
+	g_object_unref(object);
+
+#endif
 	/* Export all objects */
 	g_dbus_object_manager_server_set_connection(manager, connection);
 }
@@ -179,6 +204,7 @@ static gboolean on_renderer_play(PheobeRenderer *proxy, GDBusMethodInvocation *i
 static gboolean on_renderer_stop(PheobeRenderer *proxy, GDBusMethodInvocation *invocation, gpointer user_data)
 {
 	g_print("on_renderer_stop\n");
+	playback_stop(s_playback);
 	goto out;
 	g_assert_not_reached();
 	out: return TRUE; /* to indicate that the method was handled */
@@ -188,6 +214,7 @@ static gboolean on_renderer_pause(PheobeRenderer *proxy, GDBusMethodInvocation *
 {
 	g_print("on_renderer_pause\n");
 	goto out;
+	playback_pause(s_playback);
 	g_assert_not_reached();
 	out: return TRUE; /* to indicate that the method was handled */
 }
@@ -195,6 +222,7 @@ static gboolean on_renderer_pause(PheobeRenderer *proxy, GDBusMethodInvocation *
 static gboolean on_renderer_resume(PheobeRenderer *proxy, GDBusMethodInvocation *invocation, gpointer user_data)
 {
 	g_print("on_renderer_resume\n");
+	playback_resume(s_playback);
 	goto out;
 	g_assert_not_reached();
 	out: return TRUE; /* to indicate that the method was handled */

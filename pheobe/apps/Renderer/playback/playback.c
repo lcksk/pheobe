@@ -62,14 +62,20 @@ int playback_play(playback handle, gint speed) {
 }
 
 int playback_stop(playback handle) {
-
+	playback_t* instance = (playback_t*) handle;
+	g_print("playback_stop\n");
+	gst_element_set_state(instance->playbin2, GST_STATE_NULL);
 }
 
 int playback_pause(playback handle) {
-
+	playback_t* instance = (playback_t*) handle;
+	g_print("playback_pause\n");
+	gst_element_set_state(instance->playbin2, GST_STATE_PAUSED);
 }
 
 int playback_resume(playback handle) {
-
+	playback_t* instance = (playback_t*) handle;
+	g_print("playback_resume\n");
+	gst_element_set_state(instance->playbin2, GST_STATE_PLAYING);
 }
 
