@@ -12,6 +12,13 @@
 
 static GDBusObjectManagerServer *manager = NULL;
 
+static gboolean on_renderer_set_uri(PheobeRenderer *proxy, GDBusMethodInvocation *invocation, const gchar* uri, gpointer user_data) {
+
+	g_print("on_renderer_set_uri");
+	out: return TRUE; /* to indicate that the method was handled */
+}
+
+
 static gboolean on_renderer_poke(PheobeRenderer *renderer,
 		GDBusMethodInvocation *invocation, gboolean make_sad,
 		gboolean make_happy, gpointer user_data) {
@@ -95,6 +102,9 @@ static void on_bus_acquired(GDBusConnection *connection, const gchar *name,
 		/* Handle Poke() D-Bus method invocations on the .renderer interface */
 		g_signal_connect(renderer, "handle-poke", G_CALLBACK(on_renderer_poke),
 				NULL); /* user_data */
+
+		g_signal_connect(renderer, "handle-set-uri",
+				G_CALLBACK(on_renderer_set_uri), NULL); /* user_data */
 
 		/* Export the object (@manager takes its own reference to @object) */
 		g_dbus_object_manager_server_export(manager,
