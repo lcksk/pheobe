@@ -35,6 +35,10 @@
       <arg direction="in" type="b" name="make_happy"/>
     </method>
 
+	<method name="SetUri">
+		<arg direction="in" type="s" name="uri"/>
+	</method>
+
     <!--
         Jumped:
         @height: Height, in meters, that the animal jumped.
