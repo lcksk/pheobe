@@ -14,7 +14,7 @@ endif
 
 include $(BUILD_ROOT)/tools/library.mk
 
-LIB_NAME=Renderer
+LIB_NAME=smallpb
 LIB_VER=0.1.0
 SO_NAME = $(LIB_NAME).0
 
@@ -65,7 +65,7 @@ gdbus :
               --generate-docbook generated-docs                       \
               gdbus-$(APP)-objectmanager.xml;	\
      fi
-                   
+
 #	$(CD) $(APP_DIR)/$@; gdbus-codegen --interface-prefix $(PROJECT_DOMAIN).GDBus.$(PROJECT_CODE).ObjectManager. \
               --generate-c-code gdbus-$(APP)-generated	\
               --c-generate-object-manager                 \
@@ -99,10 +99,10 @@ clean :
 	@if [ -e $(APP_DIR)/client ]; then	\
 		$(Q_)$(RM) -f gdbus/*.h gdbus/*.c gdbus/generated-docs*	;	\
 	fi
-	
 	@if [ -e $(APP_DIR)/client ]; then	\
 		$(MAKE) -C client clean;	\
 	fi
+	
 
 install :
 ifeq ($(IS_LIB),y)
