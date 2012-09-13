@@ -1,5 +1,7 @@
 #include <clutter-gst/clutter-gst.h>
 
+static GstElement *pipeline;
+
 void on_stage_button_press(ClutterStage* stage, ClutterEvent* event, gpointer data) {
 	g_print("%s\n", __FUNCTION__);
 //	gfloat x = 0;
@@ -15,12 +17,22 @@ void on_stage_button_press(ClutterStage* stage, ClutterEvent* event, gpointer da
 
 void on_stage_key_press(ClutterStage* stage, ClutterEvent* event, gpointer data) {
 	g_print("%s\n", __FUNCTION__);
+	static gboolean toggle = FALSE;
+
+	if(toggle) {
+		gst_element_set_state(pipeline, GST_STATE_PLAYING);
+	}
+	else {
+		gst_element_set_state(pipeline, GST_STATE_PAUSED);
+	}
+	toggle = !toggle;
 }
 
 
 /* Setup the video texture once its size is known */
 void size_change(ClutterActor *texture, gint width, gint height,
 		gpointer user_data) {
+	g_print("%s\n", __FUNCTION__);
 	ClutterActor *stage;
 	gfloat new_x, new_y, new_width, new_height;
 	gfloat stage_width, stage_height;
@@ -57,7 +69,7 @@ void size_change(ClutterActor *texture, gint width, gint height,
 }
 
 int main(int argc, char *argv[]) {
-	GstElement *pipeline, *sink;
+	GstElement *sink;
 	ClutterTimeline *timeline;
 	ClutterActor *stage, *texture;
 
@@ -82,15 +94,19 @@ int main(int argc, char *argv[]) {
 
 	/* Build the GStreamer pipeline */
 //  pipeline = gst_parse_launch ("playbin2 uri=http://docs.gstreamer.com/media/sintel_trailer-480p.webm", NULL);
-	pipeline = gst_parse_launch(
-			"playbin2 uri=file:///home/buttonfly/Videos/MV/1.avi", NULL);
+//	pipeline = gst_parse_launch(	"playbin2 uri=file:///home/buttonfly/Videos/MV/1.avi", NULL);
+	pipeline = gst_parse_launch(	"playbin2 uri=rtp://233.18.158.206:5000", NULL);
 
 	/* Instantiate the Clutter sink */
+#if 0
 	sink = gst_element_factory_make("autocluttersink", NULL);
 	if (sink == NULL) {
 		/* Revert to the older cluttersink, in case autocluttersink was not found */
 		sink = gst_element_factory_make("cluttersink", NULL);
 	}
+#else
+	sink = gst_element_factory_make("cluttersink", NULL);
+#endif
 	if (sink == NULL) {
 		g_printerr("Unable to find a Clutter sink.\n");
 		return -1;
@@ -103,7 +119,7 @@ int main(int argc, char *argv[]) {
 	g_object_set(pipeline, "video-sink", sink, NULL);
 
 	/* Start playing */
-	gst_element_set_state(pipeline, GST_STATE_PLAYING);
+//	gst_element_set_state(pipeline, GST_STATE_PLAYING);
 
 	/* start the timeline */
 	clutter_timeline_start(timeline);
