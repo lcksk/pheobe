@@ -5,7 +5,7 @@ include $(BUILD_ROOT)/tools/tools.mk
 
 LIBS += 
 #APPS = sampleplayer
-APPS = Renderer
+APPS = Renderer smallpb
 
 SUB_BUILD = $(LIBS) $(APPS)
 .PHONY : $(SUB_BUILD) $(BIN_DIR)
@@ -26,8 +26,10 @@ client : $(patsubst %, %_client, $(SUB_BUILD))
 	$(call DISPLAY_RED ,##  $@  COMPLETE !!!  )
 
 $(patsubst %,%_client,$(SUB_BUILD)) :
-	$(Q_)$(MAKE) -C $(APPS_DIR)/$(subst _client,,$@)/client DEBUG=$(DEBUG)
-	
+	@if [ -e $(APPS_DIR)/$(subst _client,,$@)/client ]; then	\
+		$(Q_)$(MAKE) -C $(APPS_DIR)/$(subst _client,,$@)/client DEBUG=$(DEBUG);	\
+	fi
+
 clean : $(patsubst %, %_clean, $(SUB_BUILD))
 	$(call DISPLAY_RED ,##  $@  COMPLETE !!!  )
 	
