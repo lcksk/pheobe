@@ -28,6 +28,14 @@ public:
 	int pause();
 	int resume();
 	int setUri(const gchar* uri);
+	void setPosition(gint64 position);
+	gint64 getPosition();
+	gdouble getVolume();
+	void setVolume(gdouble level);
+
+	gint64 getDuration();
+	gboolean isPlaying();
+	static gboolean busMessage (GstBus * bus, GstMessage * msg, gpointer data);
 
 private:
 	GstPlaybin();

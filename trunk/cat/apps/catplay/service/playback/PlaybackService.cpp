@@ -66,5 +66,34 @@ void PlaybackService::resume()
 	GstPlaybin::getInstance().resume();
 }
 
+void PlaybackService::setPosition(gint64 position)
+{
+	GstPlaybin::getInstance().setPosition(position);
+}
+
+gint64 PlaybackService::getPosition()
+{
+	return GstPlaybin::getInstance().getPosition();
+}
+
+gdouble PlaybackService::getVolume()
+{
+	return GstPlaybin::getInstance().getVolume();
+}
+
+void PlaybackService::setVolume(gdouble level)
+{
+	GstPlaybin::getInstance().setVolume(level);
+}
+
+gint64 PlaybackService::getDuration()
+{
+	return GstPlaybin::getInstance().getDuration();
+}
+
+gboolean PlaybackService::isPlaying()
+{
+	return GstPlaybin::getInstance().isPlaying();
+}
 
 } /* namespace halkamalka */
