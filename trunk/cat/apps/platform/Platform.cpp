@@ -59,11 +59,32 @@ void* Platform::getWindow() const
 void Platform::windowSizeChanged (ClutterStage * stage, gpointer data)
 {
 	Platform* pThis = static_cast<Platform*>(data);
-	gfloat w = clutter_actor_get_width (pThis->m_stage);
-	gfloat h = clutter_actor_get_height (pThis->m_stage);
-	g_print("%f, %f\n", w, h);
-	clutter_actor_set_size (pThis->m_videoTexture, w, h);
-//	clutter_actor_set_position (CLUTTER_ACTOR (pThis->m_videoTexture), w / 2,h / 2);
+	gfloat stageWidth = clutter_actor_get_width (pThis->m_stage);
+	gfloat stageHeight = clutter_actor_get_height (pThis->m_stage);
+	gfloat videoTextureWidth = clutter_actor_get_width (pThis->m_videoTexture);
+	gfloat videoTextureHeight = clutter_actor_get_height (pThis->m_videoTexture);
+
+	gfloat width = stageWidth;
+	gfloat height = stageHeight;
+	gfloat stageAspectRatio = stageWidth / stageHeight;
+	gfloat videoTextureAspectRatio = videoTextureWidth / videoTextureHeight;
+
+	if(videoTextureAspectRatio > stageAspectRatio) {
+		height = stageWidth / videoTextureAspectRatio;
+	}
+	else {
+		width = stageHeight * videoTextureAspectRatio;
+	}
+
+	g_print("stage: %f, %f\n", stageWidth, stageHeight);
+	g_print("video texture: %f, %f\n", videoTextureWidth, videoTextureHeight);
+	clutter_actor_set_size (pThis->m_videoTexture, width, height);
+//		clutter_actor_set_position (pThis->m_videoTexture, w / 2,h / 2);
+
+	videoTextureWidth = clutter_actor_get_width (pThis->m_videoTexture);
+	videoTextureHeight = clutter_actor_get_height (pThis->m_videoTexture);
+	g_print("stage: %f, %f\n", stageWidth, stageHeight);
+	g_print("video texture: %f, %f\n", videoTextureWidth, videoTextureHeight);
 }
 
 } /* namespace halkamalka */
