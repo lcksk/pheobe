@@ -26,12 +26,15 @@ public:
 
 	void* getWindow() const;
 
+	static void windowSizeChanged (ClutterStage * stage, gpointer data);
+
 private:
 	Platform();
 	virtual ~Platform();
 
 	bool m_initialized;
 	ClutterActor *m_stage;
+	ClutterActor* m_videoTexture;
 };
 
 } /* namespace halkamalka */

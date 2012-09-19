@@ -21,7 +21,9 @@ public:
 		VK_UP = 111,
 		VK_LEFT = 113,
 		VK_RIGHT = 114,
-		VK_DOWN = 116
+		VK_DOWN = 116,
+		VK_ENTER = 36,
+		VK_SPACE_BAR = 65
 	};
 
 	const static char* ID;
@@ -33,10 +35,13 @@ public:
 	const char* GetID();
 
 	static gboolean keyPressed (ClutterStage *stage, ClutterEvent *event, gpointer data);
+	static void windowSizeChanged (ClutterStage * stage, gpointer data);
 
 private:
     pthread_mutex_t		m_lck;
     pthread_cond_t		m_cond;
+
+    ClutterActor* m_stage;
 };
 
 } /* namespace halkamalka */

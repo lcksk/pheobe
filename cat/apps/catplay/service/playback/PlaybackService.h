@@ -10,6 +10,7 @@
 
 #include "IService.h"
 #include <pthread.h>
+#include <glib.h>
 
 namespace halkamalka {
 
@@ -29,6 +30,14 @@ public:
 	void pause();
 	void resume();
 
+	void setPosition(gint64 position);
+	gint64 getPosition();
+	gdouble getVolume();
+	void setVolume(gdouble level);
+	gint64 getDuration();
+	gboolean isPlaying();
+
+private:
     pthread_mutex_t		m_lck;
     pthread_cond_t		m_cond;
 };

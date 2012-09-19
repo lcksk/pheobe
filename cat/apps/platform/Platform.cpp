@@ -37,9 +37,11 @@ void Platform::init(int* argc, char*** argv)
 	m_stage = clutter_stage_get_default();
 	clutter_actor_set_size(m_stage, (gfloat)960, (gfloat)540);
 
-	ClutterActor* videoTexture = clutter_texture_new ();
-	GstPlaybin::getInstance().init(videoTexture);
-	clutter_container_add_actor (CLUTTER_CONTAINER (m_stage), videoTexture);
+	m_videoTexture = clutter_texture_new ();
+	GstPlaybin::getInstance().init(m_videoTexture);
+	clutter_container_add_actor (CLUTTER_CONTAINER (m_stage), m_videoTexture);
+	g_signal_connect (CLUTTER_STAGE (m_stage), "fullscreen", G_CALLBACK (Platform::windowSizeChanged), this);
+	g_signal_connect (CLUTTER_STAGE (m_stage), "unfullscreen", G_CALLBACK (Platform::windowSizeChanged), this);
 }
 
 gint Platform::start(void)
@@ -52,6 +54,16 @@ gint Platform::start(void)
 void* Platform::getWindow() const
 {
 	return static_cast<void*>(m_stage);
+}
+
+void Platform::windowSizeChanged (ClutterStage * stage, gpointer data)
+{
+	Platform* pThis = static_cast<Platform*>(data);
+	gfloat w = clutter_actor_get_width (pThis->m_stage);
+	gfloat h = clutter_actor_get_height (pThis->m_stage);
+	g_print("%f, %f\n", w, h);
+	clutter_actor_set_size (pThis->m_videoTexture, w, h);
+//	clutter_actor_set_position (CLUTTER_ACTOR (pThis->m_videoTexture), w / 2,h / 2);
 }
 
 } /* namespace halkamalka */
