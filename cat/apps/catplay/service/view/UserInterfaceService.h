@@ -12,20 +12,12 @@
 #include <pthread.h>
 #include <clutter/clutter.h>
 #include <stdlib.h>
+#include "IUpnpDeviceListener.h"
 
 namespace halkamalka {
 
-class UserInterfaceService : public halkamalka::IService  {
+class UserInterfaceService : public halkamalka::IService, halkamalka::IUpnpDeviceListener  {
 public:
-	enum {
-		VK_UP = 111,
-		VK_LEFT = 113,
-		VK_RIGHT = 114,
-		VK_DOWN = 116,
-		VK_ENTER = 36,
-		VK_SPACE_BAR = 65
-	};
-
 	const static char* ID;
 
 	UserInterfaceService();
@@ -34,14 +26,20 @@ public:
 	void Run();
 	const char* GetID();
 
+	void deviceAdded(GUPnPControlPoint *cp, GUPnPServiceProxy *proxy);
+	void deviceRemoved(GUPnPControlPoint *cp, GUPnPServiceProxy *proxy);
+
 	static gboolean keyPressed (ClutterStage *stage, ClutterEvent *event, gpointer data);
-	static void windowSizeChanged (ClutterStage * stage, gpointer data);
+	static void fadeEffectCompleted(ClutterTimeline* timeline, gpointer data);
 
 private:
     pthread_mutex_t		m_lck;
     pthread_cond_t		m_cond;
 
     ClutterActor* m_stage;
+    ClutterTimeline * m_fadeEffectTimeline;
+    ClutterBehaviour *m_behaviourOpacity;
+    ClutterActor* m_text;
 };
 
 } /* namespace halkamalka */

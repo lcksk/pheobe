@@ -14,7 +14,9 @@ m_isInitialized(false) {
 }
 
 GstPlaybin::~GstPlaybin() {
-
+	gst_element_set_state (m_playbin, GST_STATE_NULL);
+	gst_object_unref (m_playbin);
+	gst_object_unref(m_sink);
 }
 
 void GstPlaybin::init(ClutterActor* videoTexture)
@@ -55,6 +57,7 @@ int GstPlaybin::resume()
 int GstPlaybin::setUri(const gchar* uri)
 {
 	g_object_set(m_playbin, "uri", uri, NULL);
+	gst_element_set_state (m_playbin, GST_STATE_READY);
 }
 
 void GstPlaybin::setPosition(gint64 position)
