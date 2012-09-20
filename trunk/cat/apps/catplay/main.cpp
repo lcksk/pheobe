@@ -16,10 +16,9 @@
 #include "ServiceManager.h"
 #include "PlaybackService.h"
 #include "UserInterfaceService.h"
+#include "UpnpControlPointService.h"
 
 using namespace halkamalka;
-
-gboolean busCall (GstBus * bus, GstMessage * msg, gpointer data);
 
 int main(int argc, char** argv) {
 
@@ -29,8 +28,12 @@ int main(int argc, char** argv) {
 	IService* playbackService = new PlaybackService;
 	ServiceManager::GetInstance().Invoke(playbackService);
 
+	IService* upnpService = new UpnpControlPointService;
+	ServiceManager::GetInstance().Invoke(upnpService);
+
 	IService* uiService = new UserInterfaceService;
 	ServiceManager::GetInstance().Invoke(uiService);
+
 	platform.start();
 	return EXIT_SUCCESS;
 }

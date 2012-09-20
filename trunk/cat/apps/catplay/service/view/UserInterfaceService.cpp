@@ -12,6 +12,7 @@
 
 #include "ServiceManager.h"
 #include "PlaybackService.h"
+#include "UpnpControlPointService.h"
 
 const char* halkamalka::UserInterfaceService::ID = "UserInterfaceService";
 
@@ -26,6 +27,9 @@ UserInterfaceService::UserInterfaceService() {
     pthread_cond_init(&m_cond, NULL);
 
     pthread_attr_destroy(&attri);
+
+    m_fadeEffectTimeline = clutter_timeline_new(300);
+    g_signal_connect (m_fadeEffectTimeline, "completed", G_CALLBACK (UserInterfaceService::fadeEffectCompleted), this);
 }
 
 UserInterfaceService::~UserInterfaceService() {
@@ -43,23 +47,28 @@ void UserInterfaceService::Run()
 	g_assert(m_stage != NULL);
 
 	g_signal_connect (CLUTTER_STAGE(m_stage), "key-press-event", G_CALLBACK (UserInterfaceService::keyPressed), this);
-	g_signal_connect (CLUTTER_STAGE (m_stage), "fullscreen", G_CALLBACK (UserInterfaceService::windowSizeChanged), this);
-	g_signal_connect (CLUTTER_STAGE (m_stage), "unfullscreen", G_CALLBACK (UserInterfaceService::windowSizeChanged), this);
+//	g_signal_connect (CLUTTER_STAGE (m_stage), "fullscreen", G_CALLBACK (UserInterfaceService::windowSizeChanged), this);
+//	g_signal_connect (CLUTTER_STAGE (m_stage), "unfullscreen", G_CALLBACK (UserInterfaceService::windowSizeChanged), this);
 //	  g_signal_connect (ui->stage, "event", G_CALLBACK (event_cb), ui);
 
-	ClutterActor* text = clutter_text_new ();
+	m_text = clutter_text_new ();
 	ClutterColor color = { 0x60, 0x60, 0x90, 0xFF }; /* blueish */
-	clutter_text_set_color (CLUTTER_TEXT (text), &color);
+	clutter_text_set_color (CLUTTER_TEXT (m_text), &color);
 //	clutter_text_set_font_name (CLUTTER_TEXT (context->text), "Sans 24");
-	clutter_actor_set_position (text, 10, 10);
+	clutter_actor_set_position (m_text, 10, 10);
 //	clutter_actor_set_opacity(text, (guint8) 0);
-	clutter_text_set_text (CLUTTER_TEXT (text), "Hello world");
-	clutter_container_add_actor (CLUTTER_CONTAINER (m_stage), text);
-	clutter_actor_show (text);
+	clutter_text_set_text (CLUTTER_TEXT (m_text), "Hello world");
+	clutter_container_add_actor (CLUTTER_CONTAINER (m_stage), m_text);
+	clutter_actor_show (m_text);
 
 	PlaybackService* playbackService = dynamic_cast<PlaybackService*>(ServiceManager::GetInstance().GetServiceProxy(PlaybackService::ID));
 	g_assert(playbackService != NULL);
 
+	UpnpControlPointService* upnpControlPoint = dynamic_cast<UpnpControlPointService*>(ServiceManager::GetInstance().GetServiceProxy(UpnpControlPointService::ID));
+	g_assert(upnpControlPoint != NULL);
+	upnpControlPoint->addDeviceListener(this);
+
+	//TODO
 	playbackService->setUri("file:///home/buttonfly/Videos/MV/1.avi");
 
 	for(;;) {
@@ -74,10 +83,10 @@ gboolean UserInterfaceService::keyPressed (ClutterStage *stage, ClutterEvent *ev
 	PlaybackService* playbackService = dynamic_cast<PlaybackService*>(ServiceManager::GetInstance().GetServiceProxy(PlaybackService::ID));
 	g_assert(playbackService != NULL);
 
-	guint16 keycode = clutter_event_get_key_code(event);
+	guint16 keycode = clutter_event_get_key_symbol (event);
 	g_print ("key code (%d)\n", keycode);
 	switch(keycode) {
-	case UserInterfaceService::VK_RIGHT: {
+	case CLUTTER_Right: {
 		gint64 pos = playbackService->getPosition();
 		gint64 duration = playbackService->getDuration();
 		pos +=SKIP_UNIT;
@@ -87,7 +96,7 @@ gboolean UserInterfaceService::keyPressed (ClutterStage *stage, ClutterEvent *ev
 		playbackService->setPosition(pos);
 		break;
 	}
-	case UserInterfaceService::VK_LEFT: {
+	case CLUTTER_Left: {
 		// skip back
 		gint64 pos = playbackService->getPosition();
 		pos -=SKIP_UNIT;
@@ -97,7 +106,7 @@ gboolean UserInterfaceService::keyPressed (ClutterStage *stage, ClutterEvent *ev
 		playbackService->setPosition(pos);
 		break;
 	}
-	case UserInterfaceService::VK_DOWN: {
+	case CLUTTER_Down: {
 		gdouble level = playbackService->getVolume();
 		if(level > 0.1) {
 			level -= 0.1;
@@ -105,90 +114,51 @@ gboolean UserInterfaceService::keyPressed (ClutterStage *stage, ClutterEvent *ev
 		playbackService->setVolume(level);
 		break;
 	}
-	case UserInterfaceService::VK_UP: {
+	case CLUTTER_Up: {
 		gdouble level = playbackService->getVolume();
 		level += 0.1;
 		playbackService->setVolume(level);
 		break;
 	}
 
-	case UserInterfaceService::VK_ENTER: {
+	case CLUTTER_Return: {
 		gboolean isFullScreen = clutter_stage_get_fullscreen  (CLUTTER_STAGE(pThis->m_stage));
 		clutter_stage_set_fullscreen(CLUTTER_STAGE(pThis->m_stage), !isFullScreen);
 		break;
 	}
 
-	case UserInterfaceService::VK_SPACE_BAR:
+	case CLUTTER_space:
 		if(!playbackService->isPlaying()) {
 			playbackService->resume();
 		}
 		else {
 			playbackService->pause();
 		}
+		clutter_timeline_stop(pThis->m_fadeEffectTimeline);
+		ClutterAlpha *alpha = clutter_alpha_new_full (pThis->m_fadeEffectTimeline, CLUTTER_EASE_IN_SINE);
+		pThis->m_behaviourOpacity = clutter_behaviour_opacity_new (alpha, 0, 255);
+		clutter_behaviour_apply (pThis->m_behaviourOpacity, pThis->m_text);
+
+		clutter_timeline_start(pThis->m_fadeEffectTimeline);
+
 		break;
 	}
 }
 
-void UserInterfaceService::windowSizeChanged (ClutterStage * stage, gpointer data)
+void UserInterfaceService::fadeEffectCompleted(ClutterTimeline* timeline, gpointer data)
 {
-	UserInterfaceService* pThis = static_cast<UserInterfaceService*>(data);
-
-	g_print("windowSizeChanged\n");
 
 }
 
-//static void
-//size_change (ClutterStage * stage, UserInterface * ui)
-//{
-//  gfloat stage_width, stage_height;
-//  gfloat new_width, new_height;
-//  gfloat media_width, media_height;
-//  gfloat stage_ar, media_ar;
-//
-//  media_width = clutter_actor_get_width (ui->texture);
-//  media_height = clutter_actor_get_height (ui->texture);
-//
-//  stage_width = clutter_actor_get_width (ui->stage);
-//  stage_height = clutter_actor_get_height (ui->stage);
-//
-//  ui->stage_width = stage_width;
-//  ui->stage_height = stage_height;
-//
-//  stage_ar = stage_width / stage_height;
-//
-//  new_width = stage_width;
-//  new_height = stage_height;
-//
-//  if (media_height > 0.0f && media_width > 0.0f) {
-//    /* if we're rotated, the media_width and media_height are swapped */
-//    if (ui->rotated) {
-//      media_ar = media_height / media_width;
-//    } else {
-//      media_ar = media_width / media_height;
-//    }
-//
-//    /* calculate new width and height
-//     * note: when we're done, new_width/new_height should equal media_ar */
-//    if (media_ar > stage_ar) {
-//      /* media has wider aspect than stage so use new width as stage width and
-//       * scale down height */
-//      new_height = stage_width / media_ar;
-//    } else {
-//      new_width = stage_height * media_ar;
-//    }
-//  } else {
-//    g_debug ("Warning: not considering texture dimensions %fx%f\n", media_width,
-//        media_height);
-//  }
-//
-//  clutter_actor_set_size (CLUTTER_ACTOR (ui->texture), new_width, new_height);
-//  clutter_actor_set_position (CLUTTER_ACTOR (ui->texture), stage_width / 2,
-//      stage_height / 2);
-//
-//  update_controls_size (ui);
-//  center_controls (ui);
-//  progress_timing (ui);
-//}
+void UserInterfaceService::deviceAdded(GUPnPControlPoint *cp, GUPnPServiceProxy *proxy)
+{
+	g_print ("deviceAdded\n");
+}
+
+void UserInterfaceService::deviceRemoved(GUPnPControlPoint *cp, GUPnPServiceProxy *proxy)
+{
+	g_print ("deviceRemoved\n");
+}
 
 
 } /* namespace halkamalka */

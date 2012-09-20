@@ -6,6 +6,7 @@ INCLUDE_DIR = \
 	$(APPS_DIR)/framework	\
 	$(APPS_DIR)/framework/service	\
 	$(APP_DIR)/service/playback	\
+	$(APP_DIR)/service/upnp	\
 	$(APPS_DIR)/platform	\
 
 CFLAGS += $(addprefix -I, $(INCLUDE_DIR))
@@ -27,9 +28,11 @@ LDFLAGS += -L$(APPS_DIR)/$(ARCH).$(DEBUG_SUFFIX)/lib -lframework -lplatform
 
 vpath %.cpp %.h  $(APP_DIR)/service/playback
 vpath %.cpp %.h  $(APP_DIR)/service/view
+vpath %.cpp %.h  $(APP_DIR)/service/upnp
 
 include $(APP_DIR)/service/playback/make.mk
 include $(APP_DIR)/service/view/make.mk
+include $(APP_DIR)/service/upnp/make.mk
 
 OBJS += \
 	main.o	\

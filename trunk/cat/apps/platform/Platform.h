@@ -27,6 +27,7 @@ public:
 	void* getWindow() const;
 
 	static void windowSizeChanged (ClutterStage * stage, gpointer data);
+	static gboolean stageEvent(ClutterStage * stage, ClutterEvent * event, gpointer ui);
 
 private:
 	Platform();
