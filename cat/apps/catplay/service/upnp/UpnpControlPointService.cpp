@@ -80,7 +80,7 @@ void UpnpControlPointService::deviceProxyAdded (GUPnPControlPoint *cp, GUPnPServ
 {
 	UpnpControlPointService* pThis = static_cast<UpnpControlPointService*>(data);
 	const char* type = gupnp_device_info_get_device_type(GUPNP_DEVICE_INFO(proxy));
-	const char* location = gupnp_device_info_get_device_type(GUPNP_DEVICE_INFO(proxy));
+	const char* location = gupnp_device_info_get_location(GUPNP_DEVICE_INFO(proxy));
 
 	g_print("Device added: \n");
 	g_print("\ttype: %s\n", type);
@@ -92,7 +92,7 @@ void UpnpControlPointService::deviceProxyRemoved (GUPnPControlPoint *cp, GUPnPSe
 {
 	UpnpControlPointService* pThis = static_cast<UpnpControlPointService*>(data);
 	const char* type = gupnp_device_info_get_device_type(GUPNP_DEVICE_INFO(proxy));
-	const char* location = gupnp_device_info_get_device_type(GUPNP_DEVICE_INFO(proxy));
+	const char* location = gupnp_device_info_get_location(GUPNP_DEVICE_INFO(proxy));
 
 	g_print("Device removed: \n");
 	g_print("\ttype: %s\n", type);
