@@ -4,8 +4,8 @@ include $(BUILD_ROOT)/tools/config.mk
 include $(BUILD_ROOT)/tools/tools.mk
 
 LIBS = platform framework 
-APPS = catplay
-
+#APPS = catplay
+APPS = zzazan
 
 SUB_BUILD = $(LIBS) $(APPS)
 .PHONY : $(SUB_BUILD) $(BIN_DIR)
