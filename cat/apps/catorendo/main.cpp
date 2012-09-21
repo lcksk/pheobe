@@ -13,12 +13,6 @@
 
 #include "Platform.h"
 
-#if 0
-#include "ServiceManager.h"
-#include "PlaybackService.h"
-#include "UserInterfaceService.h"
-#include "UpnpControlPointService.h"
-#endif
 #include "UpnpControlPoint.h"
 #include "UserInterface.h"
 
@@ -29,9 +23,12 @@ int main(int argc, char** argv) {
 	Platform& platform  = Platform::getInstance();
 	platform.init(&argc, &argv);
 
+	// init. Upnp
 	UpnpControlPoint::getInstance().init();
 
+	// init. UI
 	UserInterface::getInstance().init();
+
 	platform.start();
 	return EXIT_SUCCESS;
 }

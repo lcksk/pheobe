@@ -13,6 +13,9 @@
 #include "GstPlaybin.h"
 #include "UpnpControlPoint.h"
 
+
+#include "subNoti.h"
+
 namespace halkamalka {
 
 UserInterface::UserInterface() {
@@ -24,13 +27,10 @@ UserInterface::UserInterface() {
     pthread_cond_init(&m_cond, NULL);
 
     pthread_attr_destroy(&attri);
-
-    m_fadeEffectTimeline = clutter_timeline_new(300);
-    g_signal_connect (m_fadeEffectTimeline, "completed", G_CALLBACK (UserInterface::fadeEffectCompleted), this);
 }
 
 UserInterface::~UserInterface() {
-	// TODO Auto-generated destructor stub
+
 }
 
 void UserInterface::init() {
@@ -38,34 +38,12 @@ void UserInterface::init() {
 	g_assert(m_stage != NULL);
 
 	g_signal_connect (CLUTTER_STAGE(m_stage), "key-press-event", G_CALLBACK (UserInterface::keyPressed), this);
-//	g_signal_connect (CLUTTER_STAGE (m_stage), "fullscreen", G_CALLBACK (UserInterface::windowSizeChanged), this);
-//	g_signal_connect (CLUTTER_STAGE (m_stage), "unfullscreen", G_CALLBACK (UserInterface::windowSizeChanged), this);
-//	  g_signal_connect (ui->stage, "event", G_CALLBACK (event_cb), ui);
-
-	m_text = clutter_text_new ();
-	ClutterColor color = { 0x60, 0x60, 0x90, 0xFF }; /* blueish */
-	clutter_text_set_color (CLUTTER_TEXT (m_text), &color);
-//	clutter_text_set_font_name (CLUTTER_TEXT (context->text), "Sans 24");
-	clutter_actor_set_position (m_text, 10, 10);
-//	clutter_actor_set_opacity(text, (guint8) 0);
-	clutter_text_set_text (CLUTTER_TEXT (m_text), "Hello world");
-	clutter_container_add_actor (CLUTTER_CONTAINER (m_stage), m_text);
-	clutter_actor_show (m_text);
-
-#if 0
-	PlaybackService* playbackService = dynamic_cast<PlaybackService*>(ServiceManager::GetInstance().GetServiceProxy(PlaybackService::ID));
-	g_assert(playbackService != NULL);
-
-	UpnpControlPointService* upnpControlPoint = dynamic_cast<UpnpControlPointService*>(ServiceManager::GetInstance().GetServiceProxy(UpnpControlPointService::ID));
-	g_assert(upnpControlPoint != NULL);
-	upnpControlPoint->addDeviceListener(this);
-
-	//TODO
-	playbackService->setUri("file:///home/buttonfly/Videos/MV/1.avi");
-#endif
-	UpnpControlPoint::getInstance().addDeviceListener(this);
 
 	GstPlaybin::getInstance().setUri("file:///home/buttonfly/Videos/MV/1.avi");
+
+	m_subNoti = new subNoti;
+	m_subNoti->createPartControl(m_stage);
+	m_subNoti->setVisible(true);
 }
 
 
@@ -73,10 +51,6 @@ gboolean UserInterface::keyPressed (ClutterStage *stage, ClutterEvent *event, gp
 {
 #define SKIP_UNIT	10000000000 // TODO: read from conf.
 	UserInterface* pThis = static_cast<UserInterface*>(data);
-#if 0
-	PlaybackService* playbackService = dynamic_cast<PlaybackService*>(ServiceManager::GetInstance().GetServiceProxy(PlaybackService::ID));
-	g_assert(playbackService != NULL);
-#endif
 	GstPlaybin& playbin = GstPlaybin::getInstance();
 
 	guint16 keycode = clutter_event_get_key_symbol (event);
@@ -130,47 +104,8 @@ gboolean UserInterface::keyPressed (ClutterStage *stage, ClutterEvent *event, gp
 		else {
 			playbin.pause();
 		}
-		clutter_timeline_stop(pThis->m_fadeEffectTimeline);
-		ClutterAlpha *alpha = clutter_alpha_new_full (pThis->m_fadeEffectTimeline, CLUTTER_EASE_IN_SINE);
-		pThis->m_behaviourOpacity = clutter_behaviour_opacity_new (alpha, 0, 255);
-		clutter_behaviour_apply (pThis->m_behaviourOpacity, pThis->m_text);
-
-		clutter_timeline_start(pThis->m_fadeEffectTimeline);
-
 		break;
 	}
-}
-
-void UserInterface::fadeEffectCompleted(ClutterTimeline* timeline, gpointer data)
-{
-	UserInterface* pThis = static_cast<UserInterface*>(data);
-	g_print ("fadeEffectCompleted\n");
-	g_object_unref(pThis->m_behaviourOpacity);
-	pThis->m_behaviourOpacity = NULL;
-}
-
-void UserInterface::deviceAdded(GUPnPControlPoint *cp, GUPnPServiceProxy *proxy)
-{
-	g_print ("deviceAdded\n");
-	clutter_timeline_stop(m_fadeEffectTimeline);
-	ClutterAlpha *alpha = clutter_alpha_new_full (m_fadeEffectTimeline, CLUTTER_EASE_IN_SINE);
-	m_behaviourOpacity = clutter_behaviour_opacity_new (alpha, 0, 255);
-	clutter_behaviour_apply (m_behaviourOpacity, m_text);
-	const char* type = gupnp_device_info_get_device_type(GUPNP_DEVICE_INFO(proxy));
-	clutter_text_set_text (CLUTTER_TEXT (m_text), type);
-	clutter_timeline_start(m_fadeEffectTimeline);
-}
-
-void UserInterface::deviceRemoved(GUPnPControlPoint *cp, GUPnPServiceProxy *proxy)
-{
-	g_print ("deviceRemoved\n");
-	clutter_timeline_stop(m_fadeEffectTimeline);
-	ClutterAlpha *alpha = clutter_alpha_new_full (m_fadeEffectTimeline, CLUTTER_EASE_IN_SINE);
-	m_behaviourOpacity = clutter_behaviour_opacity_new (alpha, 0, 255);
-	clutter_behaviour_apply (m_behaviourOpacity, m_text);
-	const char* type = gupnp_device_info_get_device_type(GUPNP_DEVICE_INFO(proxy));
-	clutter_text_set_text (CLUTTER_TEXT (m_text), type);
-	clutter_timeline_start(m_fadeEffectTimeline);
 }
 
 
