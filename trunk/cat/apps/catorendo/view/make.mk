@@ -3,4 +3,6 @@ CFLAGS +=	\
 	-I$(APP_DIR)/view	\
 	
 OBJS += \
-	UserInterface.o
+	UserInterface.o	\
+	subNoti.o
+	

@@ -11,11 +11,11 @@
 #include <pthread.h>
 #include <clutter/clutter.h>
 #include <stdlib.h>
-#include "IUpnpDeviceListener.h"
+#include "subNoti.h"
 
 namespace halkamalka {
 
-class UserInterface : halkamalka::IUpnpDeviceListener  {
+class UserInterface  {
 public:
 	static UserInterface& getInstance() {
 		static UserInterface instance;
@@ -24,11 +24,8 @@ public:
 
 	void init();
 
-	void deviceAdded(GUPnPControlPoint *cp, GUPnPServiceProxy *proxy);
-	void deviceRemoved(GUPnPControlPoint *cp, GUPnPServiceProxy *proxy);
-
 	static gboolean keyPressed (ClutterStage *stage, ClutterEvent *event, gpointer data);
-	static void fadeEffectCompleted(ClutterTimeline* timeline, gpointer data);
+
 
 private:
 	UserInterface();
@@ -38,9 +35,8 @@ private:
     pthread_cond_t		m_cond;
 
     ClutterActor* m_stage;
-    ClutterTimeline * m_fadeEffectTimeline;
-    ClutterBehaviour *m_behaviourOpacity;
-    ClutterActor* m_text;
+
+    IsubXXX* m_subNoti;
 };
 
 } /* namespace halkamalka */
