@@ -14,6 +14,8 @@
 
 #include "IUpnpDeviceListener.h"
 
+#include <pthread.h>
+
 namespace halkamalka {
 
 class subNoti : public IsubXXX, IUpnpDeviceListener {
@@ -26,8 +28,14 @@ public:
 
 	static void fadeEffectCompleted(ClutterTimeline* timeline, gpointer data);
 
-	void deviceAdded(GUPnPControlPoint *cp, GUPnPServiceProxy *proxy);
-	void deviceRemoved(GUPnPControlPoint *cp, GUPnPServiceProxy *proxy);
+	void deviceAdded(GUPnPControlPoint *cp, GUPnPDeviceProxy  *proxy);
+	void deviceRemoved(GUPnPControlPoint *cp, GUPnPDeviceProxy  *proxy);
+
+#if 0
+	void serviceAdded(GUPnPControlPoint *cp, GUPnPServiceProxy *proxy);
+	void serviceRemoved(GUPnPControlPoint *cp, GUPnPServiceProxy *proxy);
+#endif
+	void didlObjectFound(GUPnPDIDLLiteObject* object);
 
 private:
 	ClutterTimeline * m_fadeEffectTimeline;
@@ -35,6 +43,9 @@ private:
 	ClutterActor* m_text;
 
 	bool m_visible;
+
+//	pthread_mutex_t		m_lck;
+//    pthread_cond_t		m_cond;
 };
 
 } /* namespace halkamalka */

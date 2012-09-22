@@ -30,7 +30,8 @@ UserInterface::UserInterface() {
 }
 
 UserInterface::~UserInterface() {
-
+	pthread_mutex_destroy(&m_lck);
+	pthread_cond_destroy(&m_cond);
 }
 
 void UserInterface::init() {
@@ -39,7 +40,8 @@ void UserInterface::init() {
 
 	g_signal_connect (CLUTTER_STAGE(m_stage), "key-press-event", G_CALLBACK (UserInterface::keyPressed), this);
 
-	GstPlaybin::getInstance().setUri("file:///home/buttonfly/Videos/MV/1.avi");
+	// TODO: remove
+	GstPlaybin::getInstance().setUri("http://192.168.1.5:49152/web/7.avi");
 
 	m_subNoti = new subNoti;
 	m_subNoti->createPartControl(m_stage);
