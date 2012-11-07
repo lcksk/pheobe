@@ -9,9 +9,9 @@ CFLAGS += $(addprefix -I, $(INCLUDE_DIR))
 LDFLAGS += -lnl
 
 OBJS += \
-	xwifi_iw.o	\
+	xwifi_nl80211.o	\
 	sections.o	\
-	event.o	\
+	xwifi_nl80211_event.o	\
 	genl.o	\
 	reg.o	\
 	util.o	\
