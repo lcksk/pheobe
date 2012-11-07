@@ -42,8 +42,10 @@ int xwifi_open_event_queue(_out_ int* const fd)
 	S_;
 	struct xwifi_event_queue* event_queue =xwifi_event_queue_get_instance();
 	KASSERT(event_queue);
-	*fd = event_queue->fd;
-	return *fd;
+	if(fd) {
+		*fd = event_queue->fd;
+	}
+	return event_queue->fd;
 }
 
 int xwifi_close_event_queue(const int fd)
