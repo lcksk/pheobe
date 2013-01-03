@@ -24,7 +24,7 @@ include $(APP_DIR)/make.mk
 
 ifeq ($(IS_LIB),y)
 #CFLAGS += --shared -fPIC
-#CFLAGS += -fPIC
+CFLAGS += -fPIC
 #CFLAGS += Wl,-soname,$(SO_NAME)
 endif
 
@@ -46,7 +46,7 @@ ifeq ($(IS_LIB),y)
 	$(Q_)$(CP) $@ $(BIN_DIR)
 #	$(Q_)$(CD) $(BIN_DIR) && $(LN) $(APP) $(LIB_NAME)
 else
-	$(Q_)$(CXX) $(CFLAGS) $(CXXFLAGS) $(LDFLAGS) -o $(BIN) $(addprefix $(OBJ_DIR)/,$(OBJS))
+	$(Q_)$(CXX) $(CFLAGS) $(CXXFLAGS) -o $(BIN) $(addprefix $(OBJ_DIR)/,$(OBJS)) $(LDFLAGS) 
 	@echo [Copy $(notdir $@) to $(BIN_DIR)
 	$(Q_)$(CP) $@ $(BIN_DIR)
 endif
