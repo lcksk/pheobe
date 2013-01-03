@@ -50,8 +50,8 @@ typedef void* osl_queue;
 
 #define _out_
 
-unsigned int oslGetClockMilliseconds(void);
-
+//unsigned int oslGetClockMilliseconds(void);
+u_int32_t osl_get_clock_ms (void);
 /**
  *
  * @function oslCreateThread
@@ -61,37 +61,43 @@ unsigned int oslGetClockMilliseconds(void);
  * @param	name			@deprecated
  * @return						handle
  */
-osl_thread oslCreateThread(void (*__function)(void*), void* param, u_int32_t stack, u_int8_t priority, int8_t* name);
+//osl_thread oslCreateThread(void (*__function)(void*), void* param, u_int32_t stack, u_int8_t priority, int8_t* name);
+osl_thread osl_thread_create (void (*__function)(void*), void* param, u_int32_t stack, u_int8_t priority, int8_t* name);
 
 /**
  * @function oslThreadDelay
  * @param	timeout			millisecond
  */
-void oslThreadDelay (u_int32_t timeout);
+//void oslThreadDelay (u_int32_t timeout);
+void osl_delay (u_int32_t timeout);
 
 /**
  * @function	oslThreadSleep
  * @param	timeout			second
  */
-void oslThreadSleep(u_int32_t timeout);
+//void oslThreadSleep(u_int32_t timeout);
+void osl_sleep (u_int32_t timeout);
 
 /**
  * @function	KnOSGetCurrentTask
  * @return						current thread
  */
-osl_thread oslGetCurrentTask(void);
+//osl_thread oslGetCurrentTask(void);
+osl_thread osl_thread_current(void);
 
 /**
  * @function	KnOSCreateSemaphore
  * @return	semaphore handle
  */
-osl_semaphore oslCreateSemaphore(void);
+//osl_semaphore oslCreateSemaphore(void);
+osl_semaphore osl_semaphore_create(void);
 
 /**
  * @function KnOSCreateCountSemaphore
  * @param 	value
  */
-osl_semaphore oslCreateCountSemaphore(u_int32_t value);
+//osl_semaphore oslCreateCountSemaphore(u_int32_t value);
+osl_semaphore osl_semaphore_create_count(u_int32_t count);
 
 /**
  * @function KnOSInitCountSemaphore
@@ -99,14 +105,16 @@ osl_semaphore oslCreateCountSemaphore(u_int32_t value);
  * @param	value
  * @deprecated		It is used internally
  */
-void oslInitCountSemaphore(osl_semaphore semaphore, u_int32_t value);
+//void oslInitCountSemaphore(osl_semaphore semaphore, u_int32_t value);
+void osl_semaphore_init(osl_semaphore semaphore, u_int32_t count);
 
 /**
  * @function	KnOSDeleteSemaphore
  * @param	semaphore
  * @description
  */
-void oslDeleteSemaphore(osl_semaphore semaphore);
+//void oslDeleteSemaphore(osl_semaphore semaphore);
+void osl_semaphore_close(osl_semaphore semaphore);
 
 /**
  * @function	KnOSSemaphoreWait
@@ -114,15 +122,16 @@ void oslDeleteSemaphore(osl_semaphore semaphore);
  * @description
  * The running status if the current thread is changed to the status of NOT_RUNNABLE
  */
-void oslSemaphoreWait(osl_semaphore semaphore);
-
+//void oslSemaphoreWait(osl_semaphore semaphore);
+void osl_semaphore_wait(osl_semaphore semaphore);
 /**
  * @function KnOSSemaphoreSignal
  * @param	semaphore
  * @description
  * wake up
  */
-void oslSemaphoreSignal(osl_semaphore semaphore);
+//void oslSemaphoreSignal(osl_semaphore semaphore);
+void osl_semaphore_signal(osl_semaphore semaphore);
 
 /***
  * @function	KnOSSemaphoreWaitTimeout
@@ -130,34 +139,43 @@ void oslSemaphoreSignal(osl_semaphore semaphore);
  * @param	timeout				milli
  * @return
  */
-bool oslSemaphoreWaitTimeout (osl_semaphore semaphore, u_int16_t timeout);
+//bool oslSemaphoreWaitTimeout (osl_semaphore semaphore, u_int16_t timeout);
+bool osl_semaphore_timed_wait(osl_semaphore semaphore, u_int16_t timeout);
 
 /**
  * @function	KnOSCreateMutex
  * @return	mutex handle
  */
-osl_mutex oslCreateMutex (void);
+//osl_mutex oslCreateMutex (void);
+osl_mutex osl_mutex_create(void);
 
 /**
  * @function	KnOSMutexLock
  * @param	handle
  */
-void oslMutexLock (osl_mutex mutex);
+//void oslMutexLock (osl_mutex mutex);
+void osl_mutex_lock(osl_mutex mutex);
 
 /**
  * @function	KnOSMutexUnlock
  * @param	handle
  */
-void oslMutexUnlock (osl_mutex mutex);
+//void oslMutexUnlock (osl_mutex mutex);
+void osl_mutex_unlock(osl_mutex mutex);
 
 /**
  * @function	KnOSMutexUnlock
  * @param	handle
  */
-void oslDeleteMutex (osl_mutex mutex);
+//void oslDeleteMutex (osl_mutex mutex);
+void osl_mutex_close (osl_mutex mutex);
 
 
-u_int32_t oslGetGatewayAddr(void);
+//u_int32_t oslGetGatewayAddr(void);
+u_int32_t osl_get_gateway_addr(void);
+
+//u_int32_t oslGetHWAddr(u_int8_t *addr);
+u_int32_t osl_get_hwaddr(u_int8_t *addr);
 
 typedef struct {
 	u_int32_t					event;

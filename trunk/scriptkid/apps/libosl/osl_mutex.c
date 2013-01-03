@@ -11,7 +11,7 @@
 #include "osldbg.h"
 #include <string.h>
 
-osl_mutex KnOSCreateMutex (void)
+osl_mutex osl_mutex_create (void)
 {
 	pthread_mutex_t* lck;
 	pthread_mutexattr_t mutexAttr;;
@@ -26,19 +26,19 @@ osl_mutex KnOSCreateMutex (void)
 	return (osl_mutex) lck;
 }
 
-void oslMutexLock (osl_mutex mutex)
+void osl_mutex_lock (osl_mutex mutex)
 {
 	KASSERT(mutex);
 	pthread_mutex_lock((pthread_mutex_t*)mutex);
 }
 
-void oslMutexUnlock (osl_mutex mutex)
+void osl_mutex_unlock (osl_mutex mutex)
 {
 	KASSERT(mutex);
 	pthread_mutex_unlock((pthread_mutex_t*)mutex);
 }
 
-void oslDeleteMutex (osl_mutex mutex)
+void osl_mutex_close (osl_mutex mutex)
 {
 	KASSERT(mutex);
 	pthread_mutex_destroy((pthread_mutex_t*)mutex);

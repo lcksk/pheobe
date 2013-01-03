@@ -66,6 +66,7 @@ linkedlist linkedlist_new(void)
 {
     int linkedlist_size = sizeof(linkedlist_t);
     linkedlist_t* list = (linkedlist_t*) malloc(linkedlist_size);
+    memset(list, 0, linkedlist_size);
     set_head(list, NULL);
     set_tail(list, NULL);
     list->size = 0;

@@ -25,6 +25,7 @@
 #include <sys/types.h>
 #include <net/if.h>
 #include <linux/netlink.h>
+#include <dirent.h>
 
 #define BUFSIZE 8192
 
@@ -40,7 +41,7 @@ static unsigned int parseRoutes(struct nlmsghdr *nlHdr,
 		struct route_info *rtInfo);
 static int readNlSock(int sock, char *buf, int seqNo);
 
-u_int32_t oslGetGatewayAddr(void) {
+u_int32_t osl_get_gateway_addr(void) {
 
 	unsigned int addr = 0;
 	int sock = socket(PF_NETLINK, SOCK_DGRAM, NETLINK_ROUTE);
@@ -162,5 +163,81 @@ unsigned int parseRoutes(struct nlmsghdr *nlHdr, struct route_info *rtInfo) {
 	gateway = rtInfo->gateWay;
 
 	return gateway;
+}
+
+
+
+u_int32_t osl_get_hwaddr(u_int8_t *addr) {
+	struct ifreq ifr;
+    struct ifreq *IFR;
+    struct ifconf ifc;
+    char buf[1024];
+    int s, i;
+    int ok = 0;
+
+    s = socket(AF_INET, SOCK_DGRAM, 0);
+    if (s==-1) {
+        return -1;
+    }
+
+    ifc.ifc_len = sizeof(buf);
+    ifc.ifc_buf = buf;
+    ioctl(s, SIOCGIFCONF, &ifc);
+
+    IFR = ifc.ifc_req;
+    for (i = ifc.ifc_len / sizeof(struct ifreq); --i >= 0; IFR++) {
+        strcpy(ifr.ifr_name, IFR->ifr_name);
+        if (ioctl(s, SIOCGIFFLAGS, &ifr) == 0) {
+            if (! (ifr.ifr_flags & IFF_LOOPBACK)) {
+                if (ioctl(s, SIOCGIFHWADDR, &ifr) == 0) {
+                    ok = 1;
+                    break;
+                }
+            }
+        }
+    }
+
+    close(s);
+    if (ok) {
+        bcopy( ifr.ifr_hwaddr.sa_data, addr, ETH_ALEN);
+    }
+    else {
+        return -1;
+    }
+    return 0;
+}
+
+const char* osl_get_default_wlan_ifname(void)
+{
+#ifndef CONFIG_CTRL_IFACE_DIR
+#define CONFIG_CTRL_IFACE_DIR "/var/run/wpa_supplicant"
+#endif
+	char *ifname = NULL;
+
+	struct dirent *dent;
+	DIR *dir = opendir(CONFIG_CTRL_IFACE_DIR);
+	if (!dir) {
+		return NULL;
+	}
+	while ((dent = readdir(dir))) {
+#ifdef _DIRENT_HAVE_D_TYPE
+		/*
+		 * Skip the file if it is not a socket. Also accept
+		 * DT_UNKNOWN (0) in case the C library or underlying
+		 * file system does not support d_type.
+		 */
+		if (dent->d_type != DT_SOCK && dent->d_type != DT_UNKNOWN)
+			continue;
+#endif /* _DIRENT_HAVE_D_TYPE */
+		if (strcmp(dent->d_name, ".") == 0 ||
+		    strcmp(dent->d_name, "..") == 0)
+			continue;
+		printf("Selected interface '%s'\n", dent->d_name);
+		ifname = strdup(dent->d_name);
+		break;
+	}
+	closedir(dir);
+
+	return ifname;
 }
 
