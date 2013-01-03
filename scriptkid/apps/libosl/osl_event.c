@@ -30,41 +30,41 @@
 struct osl_event_queue {
 	int fd;
 	uint32_t events;
-	pthread_mutex_t lck;
+	osl_mutex lck;
 	fd_set readfds;
 	struct sockaddr_un  serveraddr;
 };
 
 /* internal use functions */
-static struct osl_event_queue* oslEventQueGetInstance();
-static int oslEventQueInitialise(struct osl_event_queue* event_queue, const char* file);
+static struct osl_event_queue* __get_instance();
+static int __init(struct osl_event_queue* event_queue, const char* file);
 
-int oslEventQueOpen(int* const fd)
+int osl_event_open(int* const fd)
 {
-	struct osl_event_queue* event_queue =oslEventQueGetInstance();
+	struct osl_event_queue* event_queue =__get_instance();
 	if(fd) {
 		*fd = event_queue->fd;
 	}
 	return event_queue->fd;
 }
 
-int oslEventQueClose(const int fd)
+int osl_event_close(const int fd)
 {
-	struct osl_event_queue* event_queue = oslEventQueGetInstance();
+	struct osl_event_queue* event_queue = __get_instance();
 	unlink(UNIX_DOMAIN_FILE_PATH);
 	close(event_queue->fd);
 	free(event_queue);
 	return 0;
 }
 
-int32_t oslEventQueSubscribe(const int fd, const uint32_t events)
+int32_t osl_event_subscribe(const int fd, const uint32_t events)
 {
-	struct osl_event_queue* event_queue =oslEventQueGetInstance();
+	struct osl_event_queue* event_queue =__get_instance();
 	event_queue->events = events;
 	return 0;
 }
 
-int32_t oslEventQueGet(const int fd, osl_event* const event)
+int32_t osl_event_get(const int fd, osl_event* const event)
 {
 	int nread, offset;
 	int clientsocket = -1;
@@ -73,22 +73,19 @@ int32_t oslEventQueGet(const int fd, osl_event* const event)
 	int clientaddr_len;
 	clientaddr_len = sizeof(clientaddr);
 
-	struct osl_event_queue* self =oslEventQueGetInstance();
-	pthread_mutex_lock(&self->lck);
+	struct osl_event_queue* self =__get_instance();
+	osl_mutex_lock(self->lck);
 	clientsocket = accept(fd, (struct sockaddr_un*) &clientaddr, (socklen_t*) &clientaddr_len);
 
 	if(clientsocket < 0) {
 		fprintf(stderr, "invalid client socket: %d", clientsocket);
-		pthread_mutex_unlock(&self->lck);
-		return -1;
+		goto error;
 	}
 
 	ioctl(clientsocket, FIONREAD, &nread);
 	if(nread == 0) {
 		fprintf(stderr, "nread: %d", nread);
-		close(clientsocket);
-		pthread_mutex_unlock(&self->lck);
-		return -1;
+		goto error;
 	}
 
 	for(nread=0, offset=0; offset < sizeof_event; offset+=nread) {
@@ -96,8 +93,14 @@ int32_t oslEventQueGet(const int fd, osl_event* const event)
 		usleep(10);
 		fprintf(stderr, ".");
 	}
-	pthread_mutex_unlock(&self->lck);
+	close(clientsocket);
+	osl_mutex_unlock(self->lck);
 	return 0;
+
+error:
+	close(clientsocket);
+	osl_mutex_unlock(self->lck);
+	return -1;
 }
 
 int32_t oslEventQuePut(const int _fd, osl_event* const event)
@@ -108,13 +111,13 @@ int32_t oslEventQuePut(const int _fd, osl_event* const event)
 	int nwrite, offset;
 	const int sizeof_event = sizeof(*event);
 
-	struct osl_event_queue* event_queue =oslEventQueGetInstance();
+	struct osl_event_queue* event_queue =__get_instance();
 	if(!(event->event & event_queue->events)) {
 		fprintf(stderr, "event <%d> filtered", event->event);
 		return -1;
 	}
 
-	pthread_mutex_lock(&event_queue->lck);
+	osl_mutex_lock(event_queue->lck);
 	fd = socket(PF_UNIX, SOCK_STREAM, 0);
     bzero(&serveraddr, sizeof(serveraddr));
     serveraddr.sun_family = AF_UNIX;
@@ -123,8 +126,7 @@ int32_t oslEventQuePut(const int _fd, osl_event* const event)
     ret = connect(fd, (struct sockaddr *) &serveraddr, sizeof(serveraddr));
 	if(ret == -1) {
 		fprintf(stderr, "oops! cannot connect to ");
-		pthread_mutex_unlock(&event_queue->lck);
-		return -1;
+		goto error;
 	}
 
 	for(nwrite=0, offset=0; offset < sizeof_event; offset+=nwrite) {
@@ -134,23 +136,29 @@ int32_t oslEventQuePut(const int _fd, osl_event* const event)
 	}
 
 	close(fd);
-	pthread_mutex_unlock(&event_queue->lck);
+	osl_mutex_unlock(event_queue->lck);
 	usleep(100); // yield
 	return 0;
+
+error:
+	close(fd);
+	osl_mutex_unlock(event_queue->lck);
+	return -1;
 }
 
-static struct osl_event_queue* oslEventQueGetInstance()
+static struct osl_event_queue* __get_instance()
 {
 	static struct osl_event_queue* event_queue = NULL;
 	if(event_queue == NULL) {
 		event_queue = malloc(sizeof(*event_queue));
-		pthread_mutex_init(&event_queue->lck, NULL);
-		oslEventQueInitialise(event_queue, UNIX_DOMAIN_FILE_PATH);
+		memset(event_queue, 0, sizeof(*event_queue));
+		event_queue->lck = osl_mutex_create();
+		__init(event_queue, UNIX_DOMAIN_FILE_PATH);
 	}
 	return event_queue;
 }
 
-static int oslEventQueInitialise(struct osl_event_queue* self, const char* file)
+static int __init(struct osl_event_queue* self, const char* file)
 {
 	if (access(file, R_OK | W_OK) == 0) {
 		unlink(file);
