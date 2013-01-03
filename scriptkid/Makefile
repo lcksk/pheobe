@@ -4,7 +4,7 @@ export BUILD_ROOT=$(shell echo `pwd`)
 include $(BUILD_ROOT)/tools/config.mk
 include $(BUILD_ROOT)/tools/tools.mk
 
-APPS = libosl tcprst2 arpscan arpsnd arplsn
+APPS = libosl tcprst2 arpscan arpsnd arplsn arplsn.d arpsnd.d
 
 SUB_BUILD = $(LIBS) $(APPS) 
 .PHONY : $(SUB_BUILD) $(BIN_DIR) 
