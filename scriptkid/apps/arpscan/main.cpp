@@ -54,8 +54,8 @@ int main(int argc, char** argv) {
 	int rc = pcap_lookupnet(application_info.dev, &net, &mask, err);
 	KASSERT(rc != -1);
 
-	application_info.sem = oslCreateSemaphore();
-	oslCreateThread((void(*)(void*))send_arp, &application_info, 0, NULL, NULL);
+	application_info.sem = osl_semaphore_create();
+	osl_thread_create((void(*)(void*))send_arp, &application_info, 0, NULL, NULL);
 
 	listen_arp(&application_info);
 	return 0;
@@ -100,7 +100,7 @@ static void listen_arp(application_info_t* app)
 	#define ETHERNET_LEN		14
 	#define ARPOP_REPLY 			2
 
-	oslSemaphoreSignal(app->sem);
+	osl_semaphore_signal(app->sem);
 	for(;;) {
 		pcap_next_ex(handle, &header, (const u_char**)&payload);
 		struct arp_hdr* ah = (struct arp_hdr*) (payload + ETHERNET_LEN);
@@ -127,9 +127,9 @@ static void listen_arp(application_info_t* app)
 
 static void send_arp(application_info_t* app)
 {
-	oslSemaphoreWait(app->sem);
+	osl_semaphore_wait(app->sem);
 
-	unsigned int gateway = oslGetGatewayAddr();
+	unsigned int gateway = osl_get_gateway_addr();
 	char err[LIBNET_ERRBUF_SIZE];
 	libnet_t* handle = libnet_init(LIBNET_LINK, NULL, err);
 	KASSERT(handle);
