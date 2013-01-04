@@ -5,8 +5,7 @@ include $(BUILD_ROOT)/tools/library.mk
 INCLUDE_DIR =	\
 		include	\
 		$(APPS_DIR)/include	\
-		$(APPS_DIR)/libh/include
-		
+
 		
 CFLAGS += $(addprefix -I, $(INCLUDE_DIR))
 
