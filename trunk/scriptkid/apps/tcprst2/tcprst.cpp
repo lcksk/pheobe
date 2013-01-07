@@ -13,6 +13,7 @@
 #include "dbg.h"
 #include "CFile.h"
 #include "CGKeyFile.h"
+#include "osl.h"
 
 #define PATH_MAX 512
 #define CONF_FILE_NAME	"env.conf"
@@ -35,6 +36,7 @@ static void decode_options(application_info_t* application_info, int argc, char 
 static void usage(const char* program);
 static int validate_conf(libnet_t* handle, const char* conf, application_info_t* application_info);
 static int perform(libnet_t* handle, application_info_t* application_info);
+static int perform2(libnet_t* handle, application_info_t* application_info);
 
 int main(int argc, char** argv) {
 
@@ -57,8 +59,8 @@ int main(int argc, char** argv) {
 	KASSERT(handle);
 
 	validate_conf(handle, application_info.conf_path, &application_info);
-	perform(handle, &application_info);
-
+//	perform(handle, &application_info);
+	perform2(handle, &application_info);
 	libnet_destroy(handle);
 	return 0;
 }
@@ -147,6 +149,23 @@ static int perform(libnet_t* handle, application_info_t* application_info) {
 	        0);
 #endif
 
+    t = libnet_build_ipv4(
+        LIBNET_IPV4_H + LIBNET_TCP_H + 20 + 0,/* length */
+      	0,                                          /* TOS */
+        0,                                        /* IP ID */
+        IP_DF,                                          /* IP Frag */
+        application_info->ttl,                                         /* TTL */
+        IPPROTO_TCP,                                /* protocol */
+        0,                                          /* checksum */
+        application_info->src.ip,                                     /* source IP */
+        application_info->dst.ip,                                     /* destination IP */
+        NULL,                                       /* payload */
+        0,                                          /* payload size */
+        handle,                                          /* libnet handle */
+        0);                                         /* libnet id */
+
+    KASSERT(t != -1);
+
     t = libnet_build_tcp(
         application_info->src.port,                                    /* source port */
         application_info->dst.port,                                    /* destination port */
@@ -159,23 +178,6 @@ static int perform(libnet_t* handle, application_info_t* application_info) {
         LIBNET_TCP_H + 20 + 0,              /* TCP packet size */
         (uint8_t*) NULL,                         /* payload */
         0,                                  /* payload size */
-        handle,                                          /* libnet handle */
-        0);                                         /* libnet id */
-
-    KASSERT(t != -1);
-
-    t = libnet_build_ipv4(
-        LIBNET_IPV4_H + LIBNET_TCP_H + 20 + 0,/* length */
-      	0,                                          /* TOS */
-        242,                                        /* IP ID */
-        0,                                          /* IP Frag */
-        application_info->ttl,                                         /* TTL */
-        IPPROTO_TCP,                                /* protocol */
-        0,                                          /* checksum */
-        application_info->src.ip,                                     /* source IP */
-        application_info->dst.ip,                                     /* destination IP */
-        NULL,                                       /* payload */
-        0,                                          /* payload size */
         handle,                                          /* libnet handle */
         0);                                         /* libnet id */
 
@@ -197,13 +199,71 @@ static int perform(libnet_t* handle, application_info_t* application_info) {
     for(;;) {
     	int c = libnet_write(handle);
     	if(c == -1) {
-    		printf("failed to send a packet: %d", c);
+    		printf("failed to send a packet: %d\n", c);
     	}
 
         if(application_info->interval> 0) {
         	usleep(application_info->interval);
         }
     }
-
-
 }
+
+static int perform2(libnet_t* handle, application_info_t* application_info) {
+
+	libnet_ptag_t tcp_tag = 0;
+	libnet_ptag_t ipv4_tag = 0;
+
+    for(;;) {
+    	u_int32_t rnd = libnet_get_prand (LIBNET_PRu16);
+    	if(rnd < 30000)
+    		continue;
+
+    	tcp_tag = libnet_build_tcp(
+    		rnd,                                    /* source port */
+			application_info->dst.port,                                    /* destination port */
+			1,                                 /* sequence number */
+			0,                                 /* acknowledgement num */
+			TH_RST,                                     /* control flags */
+			0,                                      /* window size */
+			0,                                          /* checksum */
+			10,                                          /* urgent pointer */
+			LIBNET_TCP_H + 20 + 0,              /* TCP packet size */
+			(uint8_t*) NULL,                         /* payload */
+			0,                                  /* payload size */
+			handle,                                          /* libnet handle */
+			tcp_tag);                                         /* libnet id */
+
+		KASSERT(tcp_tag != -1);
+
+		ipv4_tag = libnet_build_ipv4(
+			LIBNET_IPV4_H + LIBNET_TCP_H + 20 + 0,/* length */
+			0,                                          /* TOS */
+			242,                                        /* IP ID */
+			IP_DF,                                          /* IP Frag */
+			application_info->ttl,                                         /* TTL */
+			IPPROTO_TCP,                                /* protocol */
+			0,                                          /* checksum */
+			application_info->src.ip,                                     /* source IP */
+			application_info->dst.ip,                                     /* destination IP */
+			NULL,                                       /* payload */
+			0,                                          /* payload size */
+			handle,                                          /* libnet handle */
+			ipv4_tag);                                         /* libnet id */
+
+		KASSERT(ipv4_tag != -1);
+
+		int i;
+		for(i = 0; i < 3; i++) {
+	    	int c = libnet_write(handle);
+	    	if(c == -1) {
+	    		printf("failed to send a packet: %d\n", c);
+	    	}
+
+	        if(application_info->interval> 0) {
+	        	usleep(application_info->interval);
+	        }
+		}
+    }
+}
+
+
