@@ -20,6 +20,7 @@
 
 #define UDP_BUFFER_SIZE	1316
 #define RTP_BUFFER_SIZE 1328
+#define RTP_HEADER_SIZE 12 /*minimum*/
 #define RECV_TIMEOUT	5	/* 5 seconds */
 
 typedef struct {
@@ -186,7 +187,7 @@ static void leave(conn* conn)
 static void receive_stream(conn* conn)
 {
 	static unsigned long long __n = 0;
-    unsigned char payload[UDP_BUFFER_SIZE] = {0};
+    unsigned char payload[RTP_BUFFER_SIZE] = {0};
     for(;;) {
     	int nread = recvfrom(conn->sockfd, (void *)payload, sizeof(payload), 0, ( struct sockaddr *)&conn->serveraddr,  (socklen_t *)&conn->client_addr_len);
     	if(nread < 0) { // timeout
@@ -194,7 +195,7 @@ static void receive_stream(conn* conn)
     		continue;
     	}
 
-    	fwrite(payload, nread,1, conn->filefd);
+    	fwrite(&payload[RTP_HEADER_SIZE], nread - RTP_HEADER_SIZE,1, conn->filefd);
     	__n += nread;
     	fprintf(stderr, "%d\r", __n );
     }
