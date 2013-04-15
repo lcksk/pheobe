@@ -16,26 +16,13 @@
 #include <getopt.h>
 #include <fcntl.h>
 #include <assert.h>
-
-
-#define UDP_BUFFER_SIZE	1316
-#define RTP_BUFFER_SIZE 1328
-#define RTP_HEADER_SIZE 12 /*minimum*/
-#define RECV_TIMEOUT	5	/* 5 seconds */
-
-typedef struct {
-	int sockfd;
-	int client_addr_len;
-	struct ip_mreq mreq;
-	struct sockaddr_in serveraddr;
-	FILE* filefd;
-} conn;
+#include "multicastcapture.h"
 
 typedef struct  {
-	conn con;
 	char* multicast_ip;
 	unsigned short multicast_port;
 	char* filepath;
+	FILE* fp;
 } application_info_t;
 
 static application_info_t* getcontext() {
@@ -47,9 +34,9 @@ static application_info_t* getcontext() {
 static void usage(const char* program);
 static void decode_options(application_info_t* application_info, int argc, char **argv);
 
-static conn* join(const char* ip, short port);
-static void leave(conn* conn);
-static void receive_stream(conn* conn);
+size_t data_received(void* context, u_int8_t* buf, size_t len) {
+	return fwrite(buf, 1, len, (FILE*) context);
+}
 
 int main(int argc, char** argv)
 {
@@ -62,18 +49,24 @@ int main(int argc, char** argv)
 		exit(0);
 	}
 
-	conn* tsconn = join(context->multicast_ip, context->multicast_port);
-
 	if(context->filepath) {
-		tsconn->filefd  = fopen(context->filepath, "wt+");
+		context->fp  = fopen(context->filepath, "wt+");
 	}
 	else {
-		tsconn->filefd  = stdout;
+		context->fp  = stdout;
 	}
 
-	assert(tsconn->filefd > 0);
+	multicastcapture_open_param_t param;
+	memset(&param, 0, sizeof(multicastcapture_open_param_t));
+	param.ip = (int8_t*)context->multicast_ip;
+	param.port = context->multicast_port;
+	param.cbr.cbr = data_received;
+	param.cbr.context = context->fp;
+	multicastcapture cap = multicastcapture_open(&param);
+	multicastcapture_start(cap);
+	multicastcapture_stop(cap);
+	multicastcapture_close(cap);
 
-	receive_stream(tsconn);
 	return 0;
 }
 
@@ -133,71 +126,3 @@ static void decode_options(application_info_t* application_info, int argc, char 
     }
 }
 
-static conn* join(const char* ip, short port)
-{
-	assert(ip);
-	assert(port > 0);
-
-	conn* con = (conn*) malloc(sizeof(conn));
-	assert(con);
-	memset(con, 0, sizeof(conn));
-
-	con->sockfd = socket(AF_INET, SOCK_DGRAM, 0);
-	assert(con->sockfd > 0);
-	if(con->sockfd < 0) {
-		goto error;
-	}
-
-    memset(&con->serveraddr, 0, sizeof(con->serveraddr));
-    con->serveraddr.sin_family = AF_INET;
-    con->serveraddr.sin_addr.s_addr = inet_addr(ip);
-    con->serveraddr.sin_port = htons(port);
-    con->client_addr_len = sizeof(con->serveraddr);
-	bind(con->sockfd, (struct sockaddr *)&(con->serveraddr), sizeof(struct sockaddr));
-
-	// join group
-	memset(&con->mreq, 0, sizeof(con->mreq));
-	con->mreq.imr_multiaddr.s_addr = inet_addr(ip);
-	con->mreq.imr_interface.s_addr = INADDR_ANY;
-	setsockopt(con->sockfd, IPPROTO_IP, IP_ADD_MEMBERSHIP, (char *)&con->mreq, sizeof(con->mreq));
-
-	struct timeval tv;
-	memset(&tv, 0, sizeof(tv));
-	tv.tv_sec = RECV_TIMEOUT;
-	setsockopt(con->sockfd, SOL_SOCKET, SO_RCVTIMEO,(struct timeval *)&tv,sizeof(struct timeval));
-	setsockopt(con->sockfd, SOL_SOCKET, SO_SNDTIMEO,(struct timeval *)&tv,sizeof(struct timeval));
-
-	return con;
-
-error:
-	if(con != NULL) {
-		free(con);
-		con = NULL;
-	}
-	return NULL;
-}
-
-static void leave(conn* conn)
-{
-	assert(conn);
-	close(conn->sockfd);
-	free(conn);
-}
-
-static void receive_stream(conn* conn)
-{
-	static unsigned long long __n = 0;
-    unsigned char payload[RTP_BUFFER_SIZE] = {0};
-    for(;;) {
-    	int nread = recvfrom(conn->sockfd, (void *)payload, sizeof(payload), 0, ( struct sockaddr *)&conn->serveraddr,  (socklen_t *)&conn->client_addr_len);
-    	if(nread < 0) { // timeout
-    		fprintf(stderr, "no stream");
-    		continue;
-    	}
-
-    	fwrite(&payload[RTP_HEADER_SIZE], nread - RTP_HEADER_SIZE,1, conn->filefd);
-    	__n += nread;
-    	fprintf(stderr, "%d\r", __n );
-    }
-	leave(conn);
-}
