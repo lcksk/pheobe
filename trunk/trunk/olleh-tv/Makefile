@@ -1,38 +1,33 @@
-
 export BUILD_ROOT=$(shell echo `pwd`)
 
 include $(BUILD_ROOT)/tools/config.mk
 include $(BUILD_ROOT)/tools/tools.mk
 
-APPS = ollehtv
-LIBS = libosl libframework libmulticastcapture
+TARGETS = opensource apps
 
-SUB_BUILD = $(LIBS) $(APPS) 
-.PHONY : $(SUB_BUILD) $(BIN_DIR) 
+.PHONY : all $(TARGETS) veryclean install uninstall
+all :  apps
 
-all : $(SUB_BUILD)	$(BIN_DIR)
-
-$(SUB_BUILD) : 
+$(TARGETS) :
 	$(call DISPLAY_RED , $(subst ,,* $@ ) )
-	@ $(MAKE) -C $(APPS_DIR)/$@
-
-clean : $(patsubst %, %_clean, $(SUB_BUILD))
-	$(call DISPLAY_RED ,##  $@  COMPLETE !!!  )
+	@ $(MAKE) -C $@
 	
-$(patsubst %,%_clean,$(SUB_BUILD)) :
-	$(Q_)$(MAKE) -C $(APPS_DIR)/$(subst _clean,,$@) clean
-	
-install : $(patsubst %, %_install, $(SUB_BUILD))
+clean : $(patsubst %, %_clean, $(TARGETS))
 	$(call DISPLAY_RED ,##  $@  COMPLETE !!!  )
 
-$(patsubst %,%_install,$(SUB_BUILD)) :
-	$(Q_)$(MAKE) -C $(APPS_DIR)/$(subst _install,,$@) install
+$(patsubst %,%_clean,$(TARGETS)) :
+	$(Q_)$(MAKE) -C $(subst _clean,,$@) clean
 	
-	
-$(BIN_DIR) :
-	$(Q_)$(MKDIR) $(BIN_DIR)
+install : $(patsubst %, %_install, $(TARGETS))
+	$(call DISPLAY_RED ,##  $@  COMPLETE !!!  )
 
+$(patsubst %,%_install,$(TARGETS)) :
+	$(Q_)$(MAKE) -C $(subst _install,,$@) install
+
+uninstall :
+	$(Q_)$(RM) -rf $(OBJ_DEST)
+	
+veryclean : uninstall clean
+	@ $(RM) -rf $(BUILD_ROOT)/output
 
 include $(BUILD_ROOT)/tools/print.mk
-
-	
