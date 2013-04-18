@@ -46,6 +46,7 @@ typedef struct {
 static conn* join(const char* ip, short port);
 static void leave(conn* conn);
 static void receive_stream(conn* conn);
+static bool is_multicast(const struct sockaddr_storage *saddr, socklen_t len);
 
 multicastcapture multicastcapture_open(multicastcapture_open_param_t* param) {
 	multicastcapture_t* context = (multicastcapture_t*) malloc(sizeof(multicastcapture_t));
@@ -75,7 +76,9 @@ int multicastcapture_start(multicastcapture h) {
     	}
 
     	__n += nread;
+#if 0
     	fprintf(stderr, "%d\r", __n );
+#endif
     }
 	leave(conn);
 }
@@ -136,6 +139,9 @@ static conn* join(const char* ip, short port)
 	setsockopt(con->sockfd, SOL_SOCKET, SO_RCVTIMEO,(struct timeval *)&tv,sizeof(struct timeval));
 	setsockopt(con->sockfd, SOL_SOCKET, SO_SNDTIMEO,(struct timeval *)&tv,sizeof(struct timeval));
 
+#if 0
+	setsockopt(con->sockfd, SOL_SOCKET, 	SO_RCVBUF, (char *)&sockbufsize, &size);
+#endif
 	return con;
 
 error:
@@ -172,4 +178,27 @@ static void receive_stream(conn* conn)
 	leave(conn);
 }
 
+static bool is_multicast(const struct sockaddr_storage *saddr, socklen_t len) {
+    const struct sockaddr *addr = (const struct sockaddr *) saddr;
+
+    switch(addr->sa_family) {
+#if defined(IN_MULTICAST)
+        case AF_INET: {
+            const struct sockaddr_in *ip = (const struct sockaddr_in *)saddr;
+            if ((size_t)len < sizeof (*ip))
+                return false;
+            return IN_MULTICAST(ntohl(ip->sin_addr.s_addr)) != 0;
+        }
+#endif
+#if defined(IN6_IS_ADDR_MULTICAST)
+        case AF_INET6: {
+            const struct sockaddr_in6 *ip6 = (const struct sockaddr_in6 *)saddr;
+            if ((size_t)len < sizeof (*ip6))
+                return false;
+            return IN6_IS_ADDR_MULTICAST(&ip6->sin6_addr) != 0;
+        }
+#endif
+    }
+    return false;
+}
 
