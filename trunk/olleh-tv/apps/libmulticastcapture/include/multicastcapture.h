@@ -24,10 +24,17 @@ typedef struct {
 	void* context;
 } cbr_t;
 
+typedef enum {
+	prot_eUDP = 0,
+	prot_eRTP,
+	prot_eUnknown
+} protocol_t;
+
 typedef struct {
 	cbr_t cbr;
 	char* ip;
 	u_int16_t port;
+	protocol_t prot;
 } multicastcapture_open_param_t;
 
 multicastcapture multicastcapture_open(multicastcapture_open_param_t* param);
