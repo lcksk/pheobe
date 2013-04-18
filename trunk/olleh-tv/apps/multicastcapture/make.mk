@@ -14,5 +14,9 @@ CFLAGS += $(addprefix -I, $(INCLUDE_DIR))
 LDFLAGS += -L$(BUILD_ROOT)/bin -pthread -lmulticastcapture -losl
 
 
+CFLAGS += `pkg-config --cflags liburiparser`
+
+LDFLAGS += `pkg-config --libs liburiparser`
+
 OBJS += \
 	main.o
