@@ -18,11 +18,20 @@
 #include <assert.h>
 #include "multicastcapture.h"
 
+#include <uriparser/Uri.h>
+
+#define USE_HIGH_LEVEL_API
+
 typedef struct  {
+	protocol_t prot;
 	char* multicast_ip;
 	unsigned short multicast_port;
 	char* filepath;
+#ifdef USE_HIGH_LEVEL_API
 	FILE* fp;
+#else
+	int fd;
+#endif
 } application_info_t;
 
 static application_info_t* getcontext() {
@@ -34,8 +43,9 @@ static application_info_t* getcontext() {
 static void usage(const char* program);
 static void decode_options(application_info_t* application_info, int argc, char **argv);
 
-size_t data_received(void* context, u_int8_t* buf, size_t len) {
-	return fwrite(buf, 1, len, (FILE*) context);
+inline size_t data_received(void* context, u_int8_t* buf, size_t len) {
+	int nwrite = fwrite(buf, 1, len, (FILE*) context);
+	return nwrite;
 }
 
 int main(int argc, char** argv)
@@ -49,19 +59,28 @@ int main(int argc, char** argv)
 		exit(0);
 	}
 
+#ifdef USE_HIGH_LEVEL_API
 	if(context->filepath) {
 		context->fp  = fopen(context->filepath, "wt+");
 	}
 	else {
 		context->fp  = stdout;
 	}
+#else
+	context->fd = STDOUT_FILENO;
+#endif
 
 	multicastcapture_open_param_t param;
 	memset(&param, 0, sizeof(multicastcapture_open_param_t));
+	param.port = context->prot;
 	param.ip = (int8_t*)context->multicast_ip;
 	param.port = context->multicast_port;
 	param.cbr.cbr = data_received;
+#ifdef USE_HIGH_LEVEL_API
 	param.cbr.context = context->fp;
+#else
+	param.cbr.context = context->fd;
+#endif
 	multicastcapture cap = multicastcapture_open(&param);
 	multicastcapture_start(cap);
 	multicastcapture_stop(cap);
@@ -122,6 +141,42 @@ static void decode_options(application_info_t* application_info, int argc, char 
         default:
         	usage(name);
         	exit(0);
+        }
+    }
+
+    {
+        UriParserStateA state;
+        UriUriA uri;
+        int i;
+        state.uri = &uri;
+        for (i = optind; i < argc; i++) {
+            printf ("Non-option argument %s\n", argv[i]);
+
+            if (uriParseUriA(&state, argv[i]) != URI_SUCCESS) {
+                    /* Failure */
+                    uriFreeUriMembersA(&uri);
+                    fprintf(stderr, "failed to <uriParseUriA>\n");
+                    exit(0);
+            }
+
+            if(memcmp("rtp", uri.scheme.first, uri.scheme.afterLast - uri.scheme.first)==0) {
+            	application_info->prot = prot_eRTP;
+            }
+            else if(memcmp("udp", uri.scheme.first, uri.scheme.afterLast - uri.scheme.first)==0) {
+            	application_info->prot = prot_eUDP;
+            }
+            else {
+            	application_info->prot = prot_eUnknown;
+            }
+
+            // group address
+            char tmp[512] = {0};
+            sprintf(tmp, "%d.%d.%d.%d", uri.hostData.ip4->data[0], uri.hostData.ip4->data[1], uri.hostData.ip4->data[2], uri.hostData.ip4->data[3]);
+            application_info->multicast_ip = strdup(tmp);
+
+            // port
+            application_info->multicast_port = atoi(uri.portText.first);
+            uriFreeUriMembersA(&uri);
         }
     }
 }
