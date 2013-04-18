@@ -25,6 +25,7 @@ public:
 	gint start(void);
 
 	void* getWindow() const;
+	void* getTexture() const;
 
 	static void windowSizeChanged (ClutterStage * stage, gpointer data);
 	static gboolean stageEvent(ClutterStage * stage, ClutterEvent * event, gpointer ui);

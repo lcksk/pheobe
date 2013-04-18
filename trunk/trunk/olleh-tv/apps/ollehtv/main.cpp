@@ -13,14 +13,19 @@
 #include "service/IService.h"
 #include "service/ServiceManager.h"
 #include "service/playback/PlaybackService.h"
+#include "UserInterface.h"
 
 using namespace halkamalka;
 
+#define USE_STDIN
+
+#ifndef USE_STDIN
 size_t data_received(void* context, u_int8_t* buf, size_t len);
+#endif
 
 int main(int argc, char** argv) {
 
-#if 0
+#ifndef USE_STDIN
 	multicastcapture_open_param_t param;
 	memset(&param, 0, sizeof(multicastcapture_open_param_t));
 	param.ip = (int8_t*)"233.15.200.1";
@@ -46,13 +51,17 @@ int main(int argc, char** argv) {
 		service->play();
 	}
 
+	UserInterface::getInstance().init();
+
 	platform.start();
 #endif
 	return 0;
 }
 
+#ifndef USE_STDIN
 size_t data_received(void* context, u_int8_t* buf, size_t len) {
 	return fwrite(buf, 1, len, stdout);
 }
+#endif
 
 
