@@ -41,6 +41,7 @@ typedef struct {
 typedef struct {
 	conn* conn;
 	cbr_t cbr;
+	protocol_t prot;
 } multicastcapture_t;
 
 static conn* join(const char* ip, short port);
@@ -53,7 +54,7 @@ multicastcapture multicastcapture_open(multicastcapture_open_param_t* param) {
 	memset(context, 0, sizeof(multicastcapture_t));
 	context->cbr.cbr = param->cbr.cbr;
 	context->cbr.context = param->cbr.context;
-
+	context->prot = param->prot;
 	context->conn = join(param->ip, param->port);
 	return context;
 }
@@ -63,16 +64,36 @@ int multicastcapture_start(multicastcapture h) {
 	multicastcapture_t* context = (multicastcapture_t*) h;
 	conn* conn = context->conn;
 
-    unsigned char payload[RTP_BUFFER_SIZE] = {0};
+	size_t size = 0 ;
+	u_int8_t* payload = NULL;
+    u_int8_t* ptr = NULL;
+    size_t rtp_hdr_len = 0;
+	if(context->prot == prot_eUDP) {
+		size = UDP_BUFFER_SIZE;
+		payload = (u_int8_t*) malloc(size);
+		ptr = payload;
+	}
+	else if(context->prot == prot_eRTP){
+		size = RTP_BUFFER_SIZE;
+		payload = (u_int8_t*) malloc(size);
+		ptr = payload + RTP_HEADER_SIZE;
+		rtp_hdr_len = RTP_HEADER_SIZE;
+	}
+	else {
+		fprintf(stderr, "E: Unknown protocol: %d\n", context->prot);
+		return -1;
+	}
+
+
     for(;;) {
-    	int nread = recvfrom(conn->sockfd, (void *)payload, sizeof(payload), 0, ( struct sockaddr *)&conn->serveraddr,  (socklen_t *)&conn->client_addr_len);
+    	int nread = recvfrom(conn->sockfd, (void *)payload, size, 0, ( struct sockaddr *)&conn->serveraddr,  (socklen_t *)&conn->client_addr_len);
     	if(nread < 0) { // timeout
     		fprintf(stderr, "no stream");
     		continue;
     	}
 
     	if(context->cbr.cbr) {
-    		context->cbr.cbr(context->cbr.context, &payload[RTP_HEADER_SIZE], nread - RTP_HEADER_SIZE);
+    		context->cbr.cbr(context->cbr.context, ptr, nread - rtp_hdr_len);
     	}
 
     	__n += nread;
@@ -80,6 +101,10 @@ int multicastcapture_start(multicastcapture h) {
     	fprintf(stderr, "%d\r", __n );
 #endif
     }
+
+    if(payload)
+    	free(payload);
+
 	leave(conn);
 }
 

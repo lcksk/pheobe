@@ -72,7 +72,7 @@ int main(int argc, char** argv)
 
 	multicastcapture_open_param_t param;
 	memset(&param, 0, sizeof(multicastcapture_open_param_t));
-	param.port = context->prot;
+	param.prot = context->prot;
 	param.ip = (int8_t*)context->multicast_ip;
 	param.port = context->multicast_port;
 	param.cbr.cbr = data_received;
