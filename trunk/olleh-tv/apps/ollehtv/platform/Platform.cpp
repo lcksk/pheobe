@@ -15,7 +15,8 @@
 
 namespace halkamalka {
 
-Platform::Platform() : m_initialized(false){
+Platform::Platform() :
+m_initialized(false), m_videoTexture(NULL) , m_stage(NULL){
 	// TODO Auto-generated constructor stub
 
 }
@@ -56,6 +57,12 @@ void* Platform::getWindow() const
 {
 	return static_cast<void*>(m_stage);
 }
+
+void* Platform::getTexture() const
+{
+	return static_cast<void*>(m_videoTexture);
+}
+
 
 void Platform::windowSizeChanged (ClutterStage * stage, gpointer data)
 {

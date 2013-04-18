@@ -21,6 +21,9 @@ include platform/make.mk
 vpath %.cpp %.h  service/playback
 include service/playback/make.mk
 
+vpath %.cpp %.h  ui
+include ui/make.mk
+
 OBJS += \
 	main.o
 

@@ -15,7 +15,9 @@ const char* halkamalka::PlaybackService::ID = "PlaybackService";
 
 namespace halkamalka {
 
-PlaybackService::PlaybackService() {
+PlaybackService::PlaybackService()
+: m_multicastcap(NULL)
+{
     pthread_attr_t attri;
     pthread_attr_init(&attri);
     pthread_attr_setdetachstate(&attri, PTHREAD_CREATE_JOINABLE);
