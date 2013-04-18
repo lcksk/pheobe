@@ -4,7 +4,7 @@ include $(BUILD_ROOT)/tools/config.mk
 include $(BUILD_ROOT)/tools/tools.mk
 
 
-APPS = multicastcapture ollehtv epg
+APPS = multicastcapture ollehtv epg uritest
 LIBS = libosl libframework libmulticastcapture
 
 SUB_BUILD = $(LIBS) $(APPS)

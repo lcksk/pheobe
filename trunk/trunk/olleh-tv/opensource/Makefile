@@ -4,7 +4,7 @@ include $(BUILD_ROOT)/tools/config.mk
 include $(BUILD_ROOT)/tools/tools.mk
 
 
-SUB_BUILD = libdvbpsi
+SUB_BUILD = libdvbpsi uriparser
 
 .PHONY : $(SUB_BUILD) $(OPENSOURCE_PREFIX)
 
