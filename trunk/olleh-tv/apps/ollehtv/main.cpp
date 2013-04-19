@@ -47,7 +47,6 @@ int main(int argc, char** argv) {
 	PlaybackService* service = (PlaybackService*) playbackService;
 	if(service != NULL) {
 		service->setUri("fd://0");
-//		service->setUri("rtp://233.15.200.1:5000");
 		service->play();
 	}
 
