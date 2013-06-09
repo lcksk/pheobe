@@ -31,6 +31,12 @@ int Echo::unbind(Json::Rpc::Handler& handler) {
 
 bool Echo::echo(const Json::Value& root, Json::Value& response) {
 	S_;
+//	std::cerr << "Receive query: " << root << std::endl;
+//	std::cerr << root["params"]["subtrahend"].asInt()  << std::endl;
+
+	response["jsonrpc"] = "2.0";
+	response["id"] = root["id"];
+	response["result"] = "1";
 	return true;
 }
 
