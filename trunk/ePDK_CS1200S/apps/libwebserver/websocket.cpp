@@ -107,10 +107,10 @@ int WebSocket::write(std::string& msg) {
 		buf[i + 2] = msg.c_str()[i];
 	}
 
-	mg_write((struct mg_connection*) m_conn, buf, 2 + len);
+	len = mg_write((struct mg_connection*) m_conn, buf, 2 + len);
 
 	delete[] buf;
-	return 0;
+	return (memcmp(buf + 2, "exit", 4)==0) ? 0 : len;
 }
 
 

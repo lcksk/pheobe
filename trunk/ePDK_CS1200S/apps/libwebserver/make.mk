@@ -15,7 +15,6 @@ LDFLAGS += -L$(BUILD_ROOT)/bin -lpthread
 
 OBJS += \
 	mongoose.o	\
-	webservice.o
-	
-
+	webservice.o	\
+	websocket.o
 
