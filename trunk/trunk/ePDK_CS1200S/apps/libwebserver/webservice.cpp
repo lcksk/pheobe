@@ -156,96 +156,97 @@ static int websocketData(struct mg_connection *conn) {
 		return 0;
 	}
 	std::string res = context->process(req);
-	websocket.write(res);
+	std::cerr << res << std::endl;
+	return websocket.write(res);
+
+#if move_to_websocket
+	int i, mask_len, x, msg_len;
+	uint8_t buf[10];
+
+	msg_len = mask_len = 0;
+	for (int len=0, n=0; len < 2; len += n) {
+		if ((n = mg_read(conn, buf + len, 2 - len)) <= 0)
+			return 0;  // Read error, close websocket
+	}
+
+	if(buf[0] != 0x81)
+		return 0;
+
+	char frame_masked = (buf[1] & 0x80);
+	if(frame_masked) {
+//		M_("frame masked");
+	}
+
+	msg_len = buf[1] & 0x7F;
+	mask_len = (buf[1] & 128) ? 4 : 0;
+	int current = 2;
+
+	M_("msg len, mask len: %d, %d", msg_len, mask_len);
+	if(msg_len == 126) { // large
+		for (int len=0, n=0; len < 2; len+=n) {
+			if((n = mg_read(conn, buf+len, 2-len)) <=0)
+				return 0;
+		}
+		msg_len = (((int) buf[0] << 8) + buf[1]);
+	}
+	else if(msg_len > 126) { // very large
+		for (int len=0, n=0; len < 2; len += n) {
+			if((n = mg_read(conn, buf+len, 2-len)) <=0)
+				return 0;
+		}
+		msg_len = (((long long) htonl(*(int*)&buf[0])) << 32) | htonl(*(int*)&buf[4]);
+	}
+
+	uint8_t masking_key[4] = {0,0,0,0};
+    if (frame_masked){
+        int i = 0;
+        for (i = 0; i < 4; i++, current++)
+            masking_key[i] = buf[current];
+    }
+
+	uint8_t* data = new uint8_t[msg_len+mask_len];
+	for(int len=0, n=0;len < msg_len+mask_len; len += n) {
+		if ((n = mg_read(conn, data+len, msg_len+mask_len-len)) <= 0) {
+			fprintf(stderr, "error\n");
+			delete[] data;
+			return 0;  // Read error, close websocket
+		}
+	}
+
+	char* msg = new char[msg_len+1];
+	for(int i=0; i < msg_len; i++) {
+		int x = ((mask_len==0) ? 0 : data[i%4]);
+		msg[i] = data[i+mask_len]^x;
+	}
+	msg[msg_len] = '\0';
+
+	std::string tmp(msg);
+	std::string res = context->process(tmp);
+
+	std::cerr << msg << std::endl;
 	std::cerr << res << std::endl;
 
-//	int i, mask_len, x, msg_len;
-//	uint8_t buf[10];
-//
-//	msg_len = mask_len = 0;
-//	for (int len=0, n=0; len < 2; len += n) {
-//		if ((n = mg_read(conn, buf + len, 2 - len)) <= 0)
-//			return 0;  // Read error, close websocket
-//	}
-//
-//	if(buf[0] != 0x81)
-//		return 0;
-//
-//	char frame_masked = (buf[1] & 0x80);
-//	if(frame_masked) {
-////		M_("frame masked");
-//	}
-//
-//	msg_len = buf[1] & 0x7F;
-//	mask_len = (buf[1] & 128) ? 4 : 0;
-//	int current = 2;
-//
-//	M_("msg len, mask len: %d, %d", msg_len, mask_len);
-//	if(msg_len == 126) { // large
-//		for (int len=0, n=0; len < 2; len+=n) {
-//			if((n = mg_read(conn, buf+len, 2-len)) <=0)
-//				return 0;
-//		}
-//		msg_len = (((int) buf[0] << 8) + buf[1]);
-//	}
-//	else if(msg_len > 126) { // very large
-//		for (int len=0, n=0; len < 2; len += n) {
-//			if((n = mg_read(conn, buf+len, 2-len)) <=0)
-//				return 0;
-//		}
-//		msg_len = (((long long) htonl(*(int*)&buf[0])) << 32) | htonl(*(int*)&buf[4]);
-//	}
-//
-//	uint8_t masking_key[4] = {0,0,0,0};
-//    if (frame_masked){
-//        int i = 0;
-//        for (i = 0; i < 4; i++, current++)
-//            masking_key[i] = buf[current];
-//    }
-//
-//	uint8_t* data = new uint8_t[msg_len+mask_len];
-//	for(int len=0, n=0;len < msg_len+mask_len; len += n) {
-//		if ((n = mg_read(conn, data+len, msg_len+mask_len-len)) <= 0) {
-//			fprintf(stderr, "error\n");
-//			delete[] data;
-//			return 0;  // Read error, close websocket
-//		}
-//	}
-//
-//	char* msg = new char[msg_len+1];
-//	for(int i=0; i < msg_len; i++) {
-//		int x = ((mask_len==0) ? 0 : data[i%4]);
-//		msg[i] = data[i+mask_len]^x;
-//	}
-//	msg[msg_len] = '\0';
+	delete[] data;
+	delete[] msg;
 
-//	std::string tmp(msg);
-//	std::string res = context->process(tmp);
-//
-//	std::cerr << msg << std::endl;
-//	std::cerr << res << std::endl;
-//
-//	delete[] data;
-//	delete[] msg;
-//
-//	context->response(conn, res, masking_key);
-//	return memcmp(reply + 2, "exit", 4);
-//	{
-//		int x = 4;
-//		int mask_len = 4;
-//		int len = response.length();
-//		unsigned char* buf = new unsigned char[len+2+1];
-//		buf[0] = 0x81;  // text, FIN set
-//		buf[1] = len;
-//
-//		for (int i = 0; i < len; i++) {
-//			buf[i + 2] = response.c_str()[i + 2 + mask_len] ^ x;
-//		}
-//
-//		mg_write(conn, buf, 2 + len);
-//		delete[] buf;
-//	}
-	return 1;
+	context->response(conn, res, masking_key);
+	return memcmp(reply + 2, "exit", 4);
+	{
+		int x = 4;
+		int mask_len = 4;
+		int len = response.length();
+		unsigned char* buf = new unsigned char[len+2+1];
+		buf[0] = 0x81;  // text, FIN set
+		buf[1] = len;
+
+		for (int i = 0; i < len; i++) {
+			buf[i + 2] = response.c_str()[i + 2 + mask_len] ^ x;
+		}
+
+		mg_write(conn, buf, 2 + len);
+		delete[] buf;
+	}
+#endif
 }
 
 namespace k {

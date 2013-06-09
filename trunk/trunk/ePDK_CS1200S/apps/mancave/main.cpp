@@ -20,7 +20,12 @@ int main(void) {
 	k::Echo* echoPlugin = new k::Echo;
 	web.add(echoPlugin);
 
-	web.start();
+	const char *options[] = {
+			"listening_ports", "8080",
+			"document_root","webapp",
+			NULL };
+
+	web.start(options);
 
 	getchar();
 	web.stop();
