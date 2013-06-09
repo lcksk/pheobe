@@ -10,6 +10,7 @@
 
 #include <string>
 #include <map>
+#include <json/json.h>
 #include <jsonrpc/jsonrpc.h>
 #include "plugin.h"
 
@@ -21,12 +22,14 @@ public:
 	virtual ~WebService();
 
 	int start(void);
+	int start(const char *options[]);
 	int stop(void);
 
     int add(IPlugin* p);
     int remove(IPlugin* p);
 
-	virtual std::string process(std::string& data);
+	std::string process(std::string& msg);
+	int response(void *conn, std::string& msg, uint8_t key[4]);
 
 private:
 	void* m_context;
