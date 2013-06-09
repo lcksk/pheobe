@@ -192,29 +192,23 @@ static int websocketData(struct mg_connection *conn) {
 //		M_("frame masked");
 	}
 
+	msg_len = buf[1] & 0x7F;
 	mask_len = (buf[1] & 128) ? 4 : 0;
 	int current = 2;
-	switch(buf[1] & 0x7F) {
-	case 126: {
+
+	if(msg_len == 126) { // large
 		for (int len=0, n=0; len < 2; len+=n) {
 			if((n = mg_read(conn, buf+len, 2-len)) <=0)
 				return 0;
 		}
 		msg_len = (((int) buf[0] << 8) + buf[1]);
-		break;
 	}
-	case 127: {
+	else if(msg_len > 126) { // very large
 		for (int len=0, n=0; len < 2; len += n) {
 			if((n = mg_read(conn, buf+len, 2-len)) <=0)
 				return 0;
 		}
 		msg_len = (((long long) htonl(*(int*)&buf[0])) << 32) | htonl(*(int*)&buf[4]);
-		break;
-	}
-	default:
-		//TODO:
-		fprintf(stderr, "unsupported length: %d\n", msg_len);
-		return 0;
 	}
 
 	uint8_t masking_key[4] = {0,0,0,0};
@@ -224,7 +218,6 @@ static int websocketData(struct mg_connection *conn) {
             masking_key[i] = buf[current];
     }
 
-//	M_("msg len: %d", msg_len);
 	uint8_t* data = new uint8_t[msg_len+mask_len];
 	for(int len=0, n=0;len < msg_len+mask_len; len += n) {
 		if ((n = mg_read(conn, data+len, msg_len+mask_len-len)) <= 0) {
