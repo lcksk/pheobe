@@ -30,7 +30,7 @@ endif
 
 # Add C++ only options
 CXXFLAGS += -Wall -MD
-CXXFLAGS +=	-fno-exceptions
+#CXXFLAGS +=	-fno-exceptions
 
 CXXFLAGS += $(CFLAGS)
 
