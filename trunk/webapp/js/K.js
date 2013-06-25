@@ -1,7 +1,16 @@
 
+
+var _Control = Class.extend({
+	init : function() {
+		console.log("_Control.init");
+	},
+});
+
+
 var _K = Class.extend({
 	websocket: null,
 	eventListeners:null,
+	control:null,
 	init: function() {
 		eventListeners = new Array();
 		fireEvent =  function(e0) {
@@ -65,6 +74,21 @@ var _K = Class.extend({
 		var object = {"jsonrpc": "2.0", "method": "dmc::removeEventListener", "params": 1, "id": 10};
 		websocket.send(JSON.stringify(object));
 	},
+	subscribeServer : function (uuid) {
+		console.log("subscribeServer : " + uuid);
+		var object = {"jsonrpc": "2.0", "method": "dmc::subscribeServer", "uuid": uuid, "id": 10};
+		websocket.send(JSON.stringify(object));
+	},
+//	browseRootContainer: function () {
+//		console.log("browseRootContainer");
+//		var object = {"jsonrpc": "2.0", "method": "dmc::browseRootContainer", "id": 10};
+//		websocket.send(JSON.stringify(object));
+//	},
+	browse: function (objectId, startIndex, count) {
+		console.log("browse");
+		var object = {"jsonrpc": "2.0", "method": "dmc::browse", "id": 10, "objectId": objectId, "startIndex": startIndex, "count" : count};
+		websocket.send(JSON.stringify(object));
+	},
 	volume : function(up) { // TODO
 		if(up == true) {
 		}
@@ -101,18 +125,16 @@ var _K = Class.extend({
 		}
 		u = u.split('/');
 		return pcol + u[0];
+	},
+	createControl: function() {
+		control = new _Control();
 	}
 });
+
 
 
 (function() {
 	var K = window.K = new _K();
 })();
-
-var Control = window.K.Control = Class.extend({
-	init : function() {
-		
-	},
-});
 
 

@@ -15,18 +15,18 @@
 	 css.attr({
 	       rel:  "stylesheet",
 	       type: "text/css",
-	       href: "skins/default/tv_master.css"
+	       href: "skins/default/periodictable.css"
 	 });
 
-	 var K;
 	 $(document).ready(function() {
 		 K.addEventListener(systemEventListener);
-		//const uri = "ws://192.168.1.36:8080";
-		const uri = "ws://192.168.0.27:8080";
+		const uri = "ws://192.168.1.36:8080";
+		//const uri = "ws://192.168.0.27:8080";
 		//const uri = K.getWebSocketURL();
 		console.log(uri);
+		
 		K.bind(uri);
-
+		K.createControl();
 		 $(window).bind('beforeunload', function(){
 		     //save info somewhere
 			console.log("beforeunload");
@@ -35,23 +35,64 @@
 		});
 	});
 
+	 
+	 function createDeviceButton(text, icon, uuid) {
+		 var $input = $("<input>", {id: uuid, type: "image", value: text, src: icon});
+		 $input.click(function() {
+			 var uuid = this.id;
+			 console.log(uuid);
+			 K.subscribeServer(uuid);
+			 K.browse('0', 0, 10);
+		 });
+		 $('#space') // Replace this selector with one suitable for you
+		 .append($input)
+		 //.button() // Ask jQuery UI to buttonize it
+		 //.click(function(){
+		//	console.log(this);
+			 //K.subscribeServer(uuid);
+			 //K.browse('0', 0, 10);
+		// }); // Add a click handler
+	 }
+	function removeDeviceButton(uuid) {
+		 $('#' + uuid) // Replace this selector with one suitable for you
+		.remove();
+	}
+	
+	 function createMediaButton(text, icon, objectId) {
+		 var $input = $("<input>", {id: objectId, type: "button", value: text, src: icon});
+		 $input.click(function() {
+			 var objectId = this.id;
+			 K.browse(objectId, 0, 10);
+		 });
+		 $('#space') // Replace this selector with one suitable for you
+		 .append($input)
+	 }
+	function removeDeviceButton(objectId) {
+		 $('#' + objectId) // Replace this selector with one suitable for you
+		.remove();
+	}
+	
 	 function systemEventListener(e) {
 		console.log(e);
 		switch(e.event) {
-		case 'open': // if you call k.bind and it success, this routine will be called.
+		case 'open':  {// if you call k.bind and it success, this routine will be called.
 			K.addDmsEvent();
 			// K.subscribeEvent('dmsEvent''); // It looks better way to subscribe an event that you want to monitor.
 			break;
-			
+		}
 		case 'close':
 			break;
 			
-		case 'dmsAdded':
-			//TODO:
+		case 'dmsAdded': {
+			//TODO: This is a test
+			createDeviceButton(e.friendlyName, e.icon, e.uuid);
+			//K.subscribeServer(e.uuid);
+			//K.browse('0', 0, 10);
 			break;
-		
+		}
 		case 'dmsRemoved':
 			//TODO:
+			removeDeviceButton(e.uuid);
 			break;
 
 		case 'dmrAdded':
@@ -66,11 +107,40 @@
 			//TODO:
 			break;
 			
+		case 'subscribeServer': {
+			break;
+		}
+		case 'browse': {
+			var icon = null;
+			switch(e.class) {
+			case 'object.container': {
+				icon = "images/EPG_colorkey_blue.png";
+				break;
+			}
+			case 'object.item.videoItem': {
+				icon = "images/EPG_colorkey_red.png";
+				break;
+			}
+			case  'object.item.audioItem.musicTrack': {
+				icon = "images/EPG_colorkey_yellow.png";
+				break;
+			}
+			case  'object.item.imageItem.photo': {
+				icon = "images/EPG_colorkey_yellow.png";
+				break;
+			}
+			default :
+				alert("unknowns");
+				break;
+			}
+			createMediaButton(e.title, icon ,e.objectId);
+			break;
+		}
 		default:
 			alert("unknown: " + e);
 			break;
 		}
-	 };
+	 }
 	 
 	 
  </script>
@@ -79,7 +149,7 @@
  <body>
  	<div id="log">
  	</div>
- 	<div id="menu">
+ 	<div id="space">
  	</div>
  </body>
 
