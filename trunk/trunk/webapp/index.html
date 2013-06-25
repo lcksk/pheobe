@@ -18,7 +18,12 @@
 	       href: "skins/default/periodictable.css"
 	 });
 
+
+		
 	 $(document).ready(function() {
+		 init3();
+		 animate();
+		 
 		 K.addEventListener(systemEventListener);
 		const uri = "ws://192.168.1.36:8080";
 		//const uri = "ws://192.168.0.27:8080";
@@ -35,6 +40,144 @@
 		});
 	});
 
+		var camera, scene, renderer;
+		var controls;
+		var objects = [];
+		var helix = [];
+		var i = 0;
+		
+	 function init3() {
+			camera = new THREE.PerspectiveCamera( 75, window.innerWidth / window.innerHeight, 1, 5000 );
+			camera.position.z = 1800;
+			
+			scene = new THREE.Scene();
+			
+			renderer = new THREE.CSS3DRenderer();
+			renderer.setSize( window.innerWidth, window.innerHeight );
+			renderer.domElement.style.position = 'absolute';
+			document.getElementById( 'container' ).appendChild( renderer.domElement );
+			
+			
+			controls = new THREE.TrackballControls( camera, renderer.domElement );
+			controls.rotateSpeed = 0.5;
+			controls.addEventListener( 'change', render );
+			
+			
+			console.log("init3 : ");
+			transform( helix, 2000 );
+			console.log("init3 : ");
+			window.addEventListener( 'resize', onWindowResize, false );
+	 }
+
+	 
+		function transform( targets, duration ) {
+			console.log("transform : ");
+			TWEEN.removeAll();
+			console.log("transform");
+			for ( var i = 0; i < objects.length; i ++ ) {
+				console.log("transform");
+				var object = objects[ i ];
+				var target = targets[ i ];
+				console.log("transform");
+				console.log("object position: " + object.position);
+				new TWEEN.Tween( object.position )
+					.to( { x: target.position.x, y: target.position.y, z: target.position.z }, Math.random() * duration + duration )
+					.easing( TWEEN.Easing.Exponential.InOut )
+					.start();
+				console.log("transform");
+				new TWEEN.Tween( object.rotation )
+					.to( { x: target.rotation.x, y: target.rotation.y, z: target.rotation.z }, Math.random() * duration + duration )
+					.easing( TWEEN.Easing.Exponential.InOut )
+					.start();
+				console.log("transform");
+			}
+			console.log("transform");
+			new TWEEN.Tween( this )
+				.to( {}, duration * 2 )
+				.onUpdate( render )
+				.start();
+			console.log("transform");
+		}
+	
+		function onWindowResize() {
+
+			camera.aspect = window.innerWidth / window.innerHeight;
+			camera.updateProjectionMatrix();
+
+			renderer.setSize( window.innerWidth, window.innerHeight );
+
+		}
+
+		function animate() {
+
+			requestAnimationFrame( animate );
+
+			TWEEN.update();
+			controls.update();
+
+		}
+
+		function render() {
+
+			renderer.render( scene, camera );
+
+		}
+		
+		function createObject(name) {
+			var item = helix[i] = [name, "Hydrogen", "1.00794", 1, 1];
+			console.log("createObject : " + name);
+			var element = document.createElement( 'div' );
+			element.className = 'element';
+			element.style.backgroundColor = 'rgba(0,127,127,' + ( Math.random() * 0.5 + 0.25 ) + ')';
+			var number = document.createElement( 'div' );
+			number.className = 'number';
+			number.textContent = i + 1;
+			element.appendChild( number );
+
+			var symbol = document.createElement( 'div' );
+			symbol.className = 'symbol';
+			symbol.textContent = item[ 0 ];
+			element.appendChild( symbol );
+
+			var details = document.createElement( 'div' );
+			details.className = 'details';
+			details.innerHTML = item[ 1 ] + '<br>' + item[ 2 ];
+			element.appendChild( details );
+
+			var object = new THREE.CSS3DObject( element );
+			object.position.x = Math.random() * 4000 - 2000;
+			object.position.y = Math.random() * 4000 - 2000;
+			object.position.z = Math.random() * 4000 - 2000;
+			scene.add( object );
+			objects.push( object );
+			
+			var vector = new THREE.Vector3();
+
+			for ( var i = 0, l = objects.length; i < l; i ++ ) {
+
+				var phi = i * 0.175 + Math.PI;
+
+				var object = new THREE.Object3D();
+
+				object.position.x = 1100 * Math.sin( phi );
+				object.position.y = - ( i * 8 ) + 450;
+				object.position.z = 1100 * Math.cos( phi );
+
+				vector.copy( object.position );
+				vector.x *= 2;
+				vector.z *= 2;
+
+				object.lookAt( vector );
+				helix.push( object );
+			}
+			
+			
+			console.log("createObject : DONE!!!!" + name);
+			helix.push(object);
+			console.log("createObject : DONE!!!!" + name);
+			transform( helix, 5000 );
+			console.log("createObject : DONE!!!!" + name);
+		}
 	 
 	 function createDeviceButton(text, icon, uuid) {
 		 var $input = $("<input>", {id: uuid, type: "image", value: text, src: icon});
@@ -46,13 +189,8 @@
 		 });
 		 $('#space') // Replace this selector with one suitable for you
 		 .append($input)
-		 //.button() // Ask jQuery UI to buttonize it
-		 //.click(function(){
-		//	console.log(this);
-			 //K.subscribeServer(uuid);
-			 //K.browse('0', 0, 10);
-		// }); // Add a click handler
 	 }
+
 	function removeDeviceButton(uuid) {
 		 $('#' + uuid) // Replace this selector with one suitable for you
 		.remove();
@@ -85,14 +223,17 @@
 			
 		case 'dmsAdded': {
 			//TODO: This is a test
-			createDeviceButton(e.friendlyName, e.icon, e.uuid);
+			//createDeviceButton(e.friendlyName, e.icon, e.uuid);
 			//K.subscribeServer(e.uuid);
 			//K.browse('0', 0, 10);
+			createObject(e.friendlyName);
+			i++;
 			break;
 		}
 		case 'dmsRemoved':
 			//TODO:
 			removeDeviceButton(e.uuid);
+			i--;
 			break;
 
 		case 'dmrAdded':
@@ -147,9 +288,15 @@
  </head>
  
  <body>
+  	<script type="text/javascript" src="js/lib/three.min.js"></script>
+	<script src="js/libs/tween.min.js"></script>
+	<script src="js/controls/TrackballControls.js"></script>
+	<script src="js/renderers/CSS3DRenderer.js"></script>
+
  	<div id="log">
  	</div>
  	<div id="space">
  	</div>
+ 	<div id="container"></div>
  </body>
 
