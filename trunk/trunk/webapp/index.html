@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+ <!--meta charset=utf-8 /-->
+<meta charset="utf-8" />
+ <title>TEST</title>
+ 
+ <script type="text/javascript" src="js/lib/jquery-2.0.2.js"></script>
+ <script type="text/javascript" src="js/lib/class.js"></script>
+ <script type="text/javascript" src="js/lib/three.min.js"></script>
+ <script type="text/javascript" src="js/K.js"></script>
+ <script type="text/javascript">
+	 $("head").append("<link>");
+	 var css = $("head").children(":last");
+	 css.attr({
+	       rel:  "stylesheet",
+	       type: "text/css",
+	       href: "skins/default/tv_master.css"
+	 });
+
+	 var K;
+	 $(document).ready(function() {
+		 K.addEventListener(systemEventListener);
+		//const uri = "ws://192.168.1.36:8080";
+		const uri = "ws://192.168.0.27:8080";
+		//const uri = K.getWebSocketURL();
+		console.log(uri);
+		K.bind(uri);
+
+		 $(window).bind('beforeunload', function(){
+		     //save info somewhere
+			console.log("beforeunload");
+		    K.uninit();
+		    return 'are you sure you want to leave?';
+		});
+	});
+
+	 function systemEventListener(e) {
+		console.log(e);
+		switch(e.event) {
+		case 'open': // if you call k.bind and it success, this routine will be called.
+			K.addDmsEvent();
+			// K.subscribeEvent('dmsEvent''); // It looks better way to subscribe an event that you want to monitor.
+			break;
+			
+		case 'close':
+			break;
+			
+		case 'dmsAdded':
+			//TODO:
+			break;
+		
+		case 'dmsRemoved':
+			//TODO:
+			break;
+
+		case 'dmrAdded':
+			//TODO:
+			break;
+		
+		case 'dmrRemoved':
+			//TODO:
+			break;
+		
+		case 'channelChanged':
+			//TODO:
+			break;
+			
+		default:
+			alert("unknown: " + e);
+			break;
+		}
+	 };
+	 
+	 
+ </script>
+ </head>
+ 
+ <body>
+ 	<div id="log">
+ 	</div>
+ 	<div id="menu">
+ 	</div>
+ </body>
+
