@@ -180,15 +180,15 @@
 		function createObject(name, a, b) {
 			
 			//var x = document.createElement( "canvas" );
-			var xc = canvas.getContext("2d");
+			var context = canvas.getContext("2d");
 			canvas.width = 300;
 			canvas.height = 200;
-			xc.shadowColor = "#000";
-			xc.shadowBlur = 7;
-			xc.fillStyle = 'rgba(127,255,255,0.5)';
-			xc.fillRect(0, 0, 300, 200);
-			xc.font = "30pt arial bold";
-			xc.fillText(name, 10, 64);
+			context.shadowColor = "#000";
+			context.shadowBlur = 7;
+			context.fillStyle = 'rgba(127,255,255,0.5)';
+			context.fillRect(0, 0, 300, 200);
+			context.font = "30pt arial bold";
+			context.fillText(name, 10, 64);
 			
 			//var material = new THREE.MeshLambertMaterial({color:0xBFFFFF});
 			var material = new THREE.MeshBasicMaterial({ map: new THREE.Texture(canvas), transparent: true });
