@@ -5,11 +5,15 @@
 <meta charset="utf-8" />
  <title>TEST</title>
  
- <script type="text/javascript" src="js/lib/jquery-2.0.2.js"></script>
- <script type="text/javascript" src="js/lib/class.js"></script>
- <script type="text/javascript" src="js/lib/three.min.js"></script>
- <script type="text/javascript" src="js/K.js"></script>
- <script type="text/javascript">
+<script type="text/javascript" src="js/lib/three.min.js"></script>
+<script src="js/libs/tween.min.js"></script>
+<script src="js/controls/TrackballControls.js"></script>
+<script src="js/Detector.js"></script>
+<script src="js/libs/stats.min.js"></script>
+<script type="text/javascript" src="js/lib/jquery-2.0.2.js"></script>
+<script type="text/javascript" src="js/lib/class.js"></script>
+<script type="text/javascript" src="js/K.js"></script>
+<script type="text/javascript">
 	 $("head").append("<link>");
 	 var css = $("head").children(":last");
 	 css.attr({
@@ -20,13 +24,14 @@
 
 
 		
+	 
 	 $(document).ready(function() {
 		 init3();
 		 animate();
 		 
 		 K.addEventListener(systemEventListener);
-		const uri = "ws://192.168.1.36:8080";
-		//const uri = "ws://192.168.0.27:8080";
+		//const uri = "ws://192.168.1.36:8080";
+		const uri = "ws://192.168.0.27:8080";
 		//const uri = K.getWebSocketURL();
 		console.log(uri);
 		
@@ -40,65 +45,94 @@
 		});
 	});
 
-		var camera, scene, renderer;
-		var controls;
+		var container,stats;
+
+		var camera, scene;
+		var canvasRenderer, webglRenderer;
+
+		var mesh, zmesh, geometry;
+
+		var mouseX = 0, mouseY = 0;
+
+		var windowHalfX = window.innerWidth / 2;
+		var windowHalfY = window.innerHeight / 2;
+
+		var render_canvas = 1, render_gl = 1;
+		var has_gl = 0;
+		var FLOOR = -250;
+		var x;
+		
 		var objects = [];
 		var helix = [];
-		var i = 0;
 		
+	// document.addEventListener( 'mousemove', onDocumentMouseMove, false );
+
 	 function init3() {
+			container = document.createElement( 'div' );
+			document.body.appendChild( container );
+			
 			camera = new THREE.PerspectiveCamera( 75, window.innerWidth / window.innerHeight, 1, 5000 );
 			camera.position.z = 1800;
 			
 			scene = new THREE.Scene();
 			
-			renderer = new THREE.CSS3DRenderer();
+			geometry = new THREE.PlaneGeometry( 100, 100, 15, 10 );
+
+			// GROUND
+
+			x = document.createElement( "canvas" );
+			var xc = x.getContext("2d");
+			x.width = x.height = 128;
+			xc.fillStyle = "#fff";
+			xc.fillRect(0, 0, 128, 128);
+			xc.fillStyle = "#000";
+			xc.fillRect(0, 0, 64, 64);
+			xc.fillStyle = "#999";
+			xc.fillRect(32, 32, 32, 32);
+			xc.fillStyle = "#000";
+			xc.fillRect(64, 64, 64, 64);
+			xc.fillStyle = "#555";
+			xc.fillRect(96, 96, 32, 32);
+			var xm = new THREE.MeshBasicMaterial( { map: new THREE.Texture( x, new THREE.UVMapping(), THREE.RepeatWrapping, THREE.RepeatWrapping ) } );
+			xm.map.needsUpdate = true;
+			xm.map.repeat.set( 10, 10 );
+			
+			mesh = new THREE.Mesh( geometry, xm );
+			mesh.position.set( 0, FLOOR, 0 );
+			mesh.rotation.x = - Math.PI / 2;
+			mesh.scale.set( 10, 10, 10 );
+			scene.add( mesh );
+
+
+			// LIGHTS
+
+			var ambient = new THREE.AmbientLight( 0x221100 );
+			scene.add( ambient );
+
+			var directionalLight = new THREE.DirectionalLight( 0xffeedd );
+			directionalLight.position.set( 0, -70, 100 ).normalize();
+			scene.add( directionalLight );
+
+			renderer = new THREE.WebGLRenderer();
 			renderer.setSize( window.innerWidth, window.innerHeight );
-			renderer.domElement.style.position = 'absolute';
-			document.getElementById( 'container' ).appendChild( renderer.domElement );
-			
-			
+			renderer.domElement.style.position = "relative";
+
+			container.appendChild( renderer.domElement );
+
 			controls = new THREE.TrackballControls( camera, renderer.domElement );
 			controls.rotateSpeed = 0.5;
 			controls.addEventListener( 'change', render );
-			
-			
-			console.log("init3 : ");
-			transform( helix, 2000 );
-			console.log("init3 : ");
-			window.addEventListener( 'resize', onWindowResize, false );
+
+			// STATS
+
+			stats = new Stats();
+			stats.domElement.style.position = 'absolute';
+			stats.domElement.style.top = '0px';
+			stats.domElement.style.zIndex = 100;
+			container.appendChild( stats.domElement );
+
 	 }
 
-	 
-		function transform( targets, duration ) {
-			console.log("transform : ");
-			TWEEN.removeAll();
-			console.log("transform");
-			for ( var i = 0; i < objects.length; i ++ ) {
-				console.log("transform");
-				var object = objects[ i ];
-				var target = targets[ i ];
-				console.log("transform");
-				console.log("object position: " + object.position);
-				new TWEEN.Tween( object.position )
-					.to( { x: target.position.x, y: target.position.y, z: target.position.z }, Math.random() * duration + duration )
-					.easing( TWEEN.Easing.Exponential.InOut )
-					.start();
-				console.log("transform");
-				new TWEEN.Tween( object.rotation )
-					.to( { x: target.rotation.x, y: target.rotation.y, z: target.rotation.z }, Math.random() * duration + duration )
-					.easing( TWEEN.Easing.Exponential.InOut )
-					.start();
-				console.log("transform");
-			}
-			console.log("transform");
-			new TWEEN.Tween( this )
-				.to( {}, duration * 2 )
-				.onUpdate( render )
-				.start();
-			console.log("transform");
-		}
-	
 		function onWindowResize() {
 
 			camera.aspect = window.innerWidth / window.innerHeight;
@@ -108,75 +142,72 @@
 
 		}
 
+		function transform( targets, duration ) {
+			TWEEN.removeAll();
+			for ( var i = 0; i < objects.length; i ++ ) {
+				var object = objects[ i ];
+				var target = targets[ i ];
+				console.log("object position: " + object.position.x + ":" + object.position.y + ":" + object.position.z);
+				new TWEEN.Tween( object.position )
+					.to( { x: target.position.x, y: target.position.y, z: target.position.z }, Math.random() * duration + duration )
+					.easing( TWEEN.Easing.Exponential.InOut )
+					.start();
+				new TWEEN.Tween( object.rotation )
+					.to( { x: target.rotation.x, y: target.rotation.y, z: target.rotation.z }, Math.random() * duration + duration )
+					.easing( TWEEN.Easing.Exponential.InOut )
+					.start();
+			}
+
+			new TWEEN.Tween( this )
+				.to( {}, duration * 2 )
+				.onUpdate( render )
+				.start();
+		}
+		
 		function animate() {
-
 			requestAnimationFrame( animate );
-
 			TWEEN.update();
 			controls.update();
-
 		}
 
 		function render() {
-
 			renderer.render( scene, camera );
-
 		}
 		
-		function createObject(name) {
-			var item = helix[i] = [name, "Hydrogen", "1.00794", 1, 1];
-			console.log("createObject : " + name);
-			var element = document.createElement( 'div' );
-			element.className = 'element';
-			element.style.backgroundColor = 'rgba(0,127,127,' + ( Math.random() * 0.5 + 0.25 ) + ')';
-			var number = document.createElement( 'div' );
-			number.className = 'number';
-			number.textContent = i + 1;
-			element.appendChild( number );
-
-			var symbol = document.createElement( 'div' );
-			symbol.className = 'symbol';
-			symbol.textContent = item[ 0 ];
-			element.appendChild( symbol );
-
-			var details = document.createElement( 'div' );
-			details.className = 'details';
-			details.innerHTML = item[ 1 ] + '<br>' + item[ 2 ];
-			element.appendChild( details );
-
-			var object = new THREE.CSS3DObject( element );
-			object.position.x = Math.random() * 4000 - 2000;
-			object.position.y = Math.random() * 4000 - 2000;
-			object.position.z = Math.random() * 4000 - 2000;
-			scene.add( object );
+		function createObject(name, a, b) {
+			var sphereMaterial = new THREE.MeshLambertMaterial({color:0xCC0000});
+			var object = new THREE.Mesh( new THREE.CubeGeometry( 50, 16, 16 ),  sphereMaterial);
+			object.position.x = Math.random() * 800 - 400;
+			object.position.y = Math.random() * 800 - 400;
+			object.position.z = Math.random() * 800 - 400;
+			object.scale.x = Math.random() * 2 + 1;
+			object.scale.y = Math.random() * 2 + 1;
+			object.scale.z = Math.random() * 2 + 1;
+			scene.add(object);
 			objects.push( object );
 			
 			var vector = new THREE.Vector3();
-
+			
+			var object = new THREE.Object3D();
+			
 			for ( var i = 0, l = objects.length; i < l; i ++ ) {
 
 				var phi = i * 0.175 + Math.PI;
 
-				var object = new THREE.Object3D();
-
-				object.position.x = 1100 * Math.sin( phi );
+				object.position.x = 2200 * Math.sin( phi );
 				object.position.y = - ( i * 8 ) + 450;
-				object.position.z = 1100 * Math.cos( phi );
+				object.position.z = 2200 * Math.cos( phi );
 
 				vector.copy( object.position );
-				vector.x *= 2;
-				vector.z *= 2;
-
+				vector.x *= 16;
+				vector.z *= 16;
+		
+				
 				object.lookAt( vector );
-				helix.push( object );
+				//helix.push( object );
 			}
-			
-			
-			console.log("createObject : DONE!!!!" + name);
 			helix.push(object);
-			console.log("createObject : DONE!!!!" + name);
-			transform( helix, 5000 );
-			console.log("createObject : DONE!!!!" + name);
+			transform( helix, 2000 );
 		}
 	 
 	 function createDeviceButton(text, icon, uuid) {
@@ -226,14 +257,14 @@
 			//createDeviceButton(e.friendlyName, e.icon, e.uuid);
 			//K.subscribeServer(e.uuid);
 			//K.browse('0', 0, 10);
-			createObject(e.friendlyName);
-			i++;
+			createObject(e.friendlyName,0, 1);
+			K.subscribeServer(e.uuid);
+			K.browse('0', 0, 10);
 			break;
 		}
 		case 'dmsRemoved':
 			//TODO:
 			removeDeviceButton(e.uuid);
-			i--;
 			break;
 
 		case 'dmrAdded':
@@ -274,7 +305,8 @@
 				alert("unknowns");
 				break;
 			}
-			createMediaButton(e.title, icon ,e.objectId);
+			//createMediaButton(e.title, icon ,e.objectId);
+			createObject(e.title, 0, 1);
 			break;
 		}
 		default:
@@ -288,11 +320,6 @@
  </head>
  
  <body>
-  	<script type="text/javascript" src="js/lib/three.min.js"></script>
-	<script src="js/libs/tween.min.js"></script>
-	<script src="js/controls/TrackballControls.js"></script>
-	<script src="js/renderers/CSS3DRenderer.js"></script>
-
  	<div id="log">
  	</div>
  	<div id="space">
