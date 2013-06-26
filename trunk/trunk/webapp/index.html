@@ -80,6 +80,7 @@
 
 			// GROUND
 
+			/*
 			x = document.createElement( "canvas" );
 			var xc = x.getContext("2d");
 			x.width = x.height = 128;
@@ -102,7 +103,7 @@
 			mesh.rotation.x = - Math.PI / 2;
 			mesh.scale.set( 10, 10, 10 );
 			scene.add( mesh );
-
+			*/
 
 			// LIGHTS
 
@@ -175,14 +176,14 @@
 		}
 		
 		function createObject(name, a, b) {
-			var sphereMaterial = new THREE.MeshLambertMaterial({color:0xCC0000});
-			var object = new THREE.Mesh( new THREE.CubeGeometry( 50, 16, 16 ),  sphereMaterial);
-			object.position.x = Math.random() * 800 - 400;
-			object.position.y = Math.random() * 800 - 400;
-			object.position.z = Math.random() * 800 - 400;
-			object.scale.x = Math.random() * 2 + 1;
-			object.scale.y = Math.random() * 2 + 1;
-			object.scale.z = Math.random() * 2 + 1;
+			var material = new THREE.MeshLambertMaterial({color:0xCC0000});
+			var object = new THREE.Mesh( new THREE.CubeGeometry( 50, 16, 16 ),  material);
+			object.position.x = Math.random() * 4000 - 2000;
+			object.position.y = Math.random() * 4000 - 2000;
+			object.position.z = Math.random() * 4000 - 2000;
+			//object.scale.x = Math.random() * 2 + 1;
+			//object.scale.y = Math.random() * 2 + 1;
+			//object.scale.z = Math.random() * 2 + 1;
 			scene.add(object);
 			objects.push( object );
 			
