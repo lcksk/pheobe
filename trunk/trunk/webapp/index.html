@@ -60,11 +60,11 @@
 		var render_canvas = 1, render_gl = 1;
 		var has_gl = 0;
 		var FLOOR = -250;
-		var x;
+		
 		
 		var objects = [];
 		var helix = [];
-		
+		var canvas;
 	// document.addEventListener( 'mousemove', onDocumentMouseMove, false );
 
 	 function init3() {
@@ -79,7 +79,9 @@
 			geometry = new THREE.PlaneGeometry( 100, 100, 15, 10 );
 
 			// GROUND
-
+			canvas = document.createElement( "canvas" );
+						
+			
 			/*
 			x = document.createElement( "canvas" );
 			var xc = x.getContext("2d");
@@ -176,8 +178,22 @@
 		}
 		
 		function createObject(name, a, b) {
-			var material = new THREE.MeshLambertMaterial({color:0xCC0000});
-			var object = new THREE.Mesh( new THREE.CubeGeometry( 50, 16, 16 ),  material);
+			
+			//var x = document.createElement( "canvas" );
+			var xc = canvas.getContext("2d");
+			canvas.width = 300;
+			canvas.height = 200;
+			xc.shadowColor = "#000";
+			xc.shadowBlur = 7;
+			xc.fillStyle = 'rgba(127,255,255,0.5)';
+			xc.fillRect(0, 0, 300, 200);
+			xc.font = "30pt arial bold";
+			xc.fillText(name, 10, 64);
+			
+			//var material = new THREE.MeshLambertMaterial({color:0xBFFFFF});
+			var material = new THREE.MeshBasicMaterial({ map: new THREE.Texture(canvas), transparent: true });
+			material.map.needsUpdate = true;
+			var object = new THREE.Mesh( new THREE.CubeGeometry( 300, 200, 16 ),  material);
 			object.position.x = Math.random() * 4000 - 2000;
 			object.position.y = Math.random() * 4000 - 2000;
 			object.position.z = Math.random() * 4000 - 2000;
