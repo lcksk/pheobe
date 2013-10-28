@@ -17,12 +17,20 @@
 #include <fcntl.h>
 #include <assert.h>
 #include "multicastcapture.h"
+#include <uriparser/Uri.h>
+
+
+typedef enum {
+	eUDP = 0,
+	eRTP
+} eProtocol;
 
 typedef struct  {
 	char* multicast_ip;
 	unsigned short multicast_port;
 	char* filepath;
 	FILE* fp;
+	eProtocol prot;
 } application_info_t;
 
 static application_info_t* getcontext() {
@@ -123,6 +131,45 @@ static void decode_options(application_info_t* application_info, int argc, char 
         	usage(name);
         	exit(0);
         }
+    }
+
+    int i;
+    for(i = optind; i < argc; i++) {
+//    	application_info->uri = strdup(argv[i]);
+    	fprintf(stderr, "argv[%d]: %s\n", i, argv[i]);
+
+    	UriParserStateA state;
+        UriUriA _uri;
+    	state.uri = &_uri;
+    	char* uri = argv[i];
+        if (uriParseUriA(&state, uri) != URI_SUCCESS) {
+                /* Failure */
+    		uriFreeUriMembersA(&_uri);
+    		fprintf(stderr, "failed to <uriParseUriA>\n");
+    		exit(0);
+        }
+
+        if(memcmp("rtp", _uri.scheme.first, _uri.scheme.afterLast - _uri.scheme.first)==0) {
+        	application_info->prot = eRTP;
+        }
+        else if(memcmp("udp", _uri.scheme.first, _uri.scheme.afterLast - _uri.scheme.first)==0) {
+        	application_info->prot = eUDP;
+        }
+        else {
+        	fprintf(stderr, "Unknown protocol\n");
+        	usage(name);
+        }
+
+        /* group address */
+        char tmp[512] = {0};
+        sprintf(tmp, "%d.%d.%d.%d", _uri.hostData.ip4->data[0], _uri.hostData.ip4->data[1], _uri.hostData.ip4->data[2], _uri.hostData.ip4->data[3]);
+        if(application_info->multicast_ip)
+        	free(application_info->multicast_ip);
+        application_info->multicast_ip = strdup(tmp);
+
+        /* port */
+        application_info->multicast_port = atoi(_uri.portText.first);
+        uriFreeUriMembersA(&_uri);
     }
 }
 
