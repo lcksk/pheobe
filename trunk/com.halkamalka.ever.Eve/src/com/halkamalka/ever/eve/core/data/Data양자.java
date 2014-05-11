@@ -29,7 +29,7 @@ public class Data양자 extends Data{
 //		Document doc = Jsoup.parse(file,  "ks_c_5601-1987", file.toURI().toString());
 		byte[] raw = org.apache.commons.io.FileUtils.readFileToByteArray(file);
 //		Document doc = Jsoup.parse(file,  "ksc5601", file.toURI().toString());
-		Document doc = Jsoup.parse(new String(raw));
+		Document doc = Jsoup.parse(new String(raw,  "ksc5601"));
 		
 		Elements td = doc.select("td.td");
 		
