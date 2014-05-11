@@ -69,7 +69,8 @@ public class DataManager implements DataEventSource, WebsocketListener {
 		client.addWebsocketListener(this);
 		try {
 			client.connect(PreferenceConstants.getWebsockURI());
-		} catch (URISyntaxException e) {
+		}
+		catch (URISyntaxException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
@@ -195,19 +196,24 @@ public class DataManager implements DataEventSource, WebsocketListener {
 			// DOM BUILD HERE
 			createHTML();
 
-		} catch (FileNotFoundException e) {
+		}
+		catch (FileNotFoundException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
-		} catch (IOException e) {
+		}
+		catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
-		} catch (IllegalArgumentException e) {
+		}
+		catch (IllegalArgumentException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
-		} catch (SecurityException e) {
+		} 
+		catch (SecurityException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
-		} finally {
+		} 
+		finally {
 			if(inputStream != null) {
 				try {
 					inputStream.close();
@@ -281,33 +287,19 @@ public class DataManager implements DataEventSource, WebsocketListener {
 					if(o instanceof Data) {
 						DataManager.getInstance().add((Data)o);	
 					}
-				} catch (Exception e) {
+				} 
+				catch (Exception e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
 			}
-		} catch (ClassNotFoundException e1) {
+		} 
+		catch (ClassNotFoundException | InstantiationException | IllegalAccessException |
+				IllegalArgumentException | InvocationTargetException | NoSuchMethodException | SecurityException
+				e) {
 			// TODO Auto-generated catch block
-			e1.printStackTrace();
-		} catch (InstantiationException e1) {
-			// TODO Auto-generated catch block
-			e1.printStackTrace();
-		} catch (IllegalAccessException e1) {
-			// TODO Auto-generated catch block
-			e1.printStackTrace();
-		} catch (IllegalArgumentException e1) {
-			// TODO Auto-generated catch block
-			e1.printStackTrace();
-		} catch (InvocationTargetException e1) {
-			// TODO Auto-generated catch block
-			e1.printStackTrace();
-		} catch (NoSuchMethodException e1) {
-			// TODO Auto-generated catch block
-			e1.printStackTrace();
-		} catch (SecurityException e1) {
-			// TODO Auto-generated catch block
-			e1.printStackTrace();
-		}
+			e.printStackTrace();
+		} 
 	}
 
 	public void joinEcho() {
@@ -336,11 +328,11 @@ public class DataManager implements DataEventSource, WebsocketListener {
 		try {
 			File file = new File(path);
 			// TODO
-//			if(!file.exists())
-			{
+			if(!file.exists()) {
 				org.apache.commons.io.FileUtils.copyURLToFile(url, file);
 			}
-		} catch (IOException e) {
+		}
+		catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
@@ -352,7 +344,8 @@ public class DataManager implements DataEventSource, WebsocketListener {
 			url = new URL(PreferenceConstants.getDBFileURI());
 			db =  System.getProperty("user.home") + File.separator + ".eve" + File.separator + PreferenceConstants.P_DB_NAME;
 			downloadDB(url);
-		} catch (MalformedURLException e) {
+		} 
+		catch (MalformedURLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
@@ -385,7 +378,8 @@ public class DataManager implements DataEventSource, WebsocketListener {
 						outputStream = new FileOutputStream(file);
 						outputStream.write(b);
 					}
-				} catch (IOException e) {
+				} 
+				catch (IOException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
@@ -409,7 +403,8 @@ public class DataManager implements DataEventSource, WebsocketListener {
 			r.close();
 			stmt.close();
 			conn.close();
-		} catch (ClassNotFoundException | SQLException e) {
+		} 
+		catch (ClassNotFoundException | SQLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
@@ -431,7 +426,8 @@ public class DataManager implements DataEventSource, WebsocketListener {
 				DomBuilder dom = new DomBuilder(url);
 				try {
 					dom.build(data, product);
-				} catch (ParserConfigurationException e) {
+				} 
+				catch (ParserConfigurationException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
@@ -475,7 +471,8 @@ public class DataManager implements DataEventSource, WebsocketListener {
 						out = null;
 					}
 				}
-			} catch (IOException e) {
+			} 
+    		catch (IOException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
@@ -483,7 +480,8 @@ public class DataManager implements DataEventSource, WebsocketListener {
     			if(in!=null) {
     				try {
 						in.close();
-					} catch (IOException e) {
+					} 
+    				catch (IOException e) {
 						// TODO Auto-generated catch block
 						e.printStackTrace();
 					}
@@ -491,7 +489,8 @@ public class DataManager implements DataEventSource, WebsocketListener {
     			if(out != null) {
     				try {
 						out.close();
-					} catch (IOException e) {
+					} 
+    				catch (IOException e) {
 						// TODO Auto-generated catch block
 						e.printStackTrace();
 					}
