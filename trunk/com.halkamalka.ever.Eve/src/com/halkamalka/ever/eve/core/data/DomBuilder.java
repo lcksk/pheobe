@@ -6,6 +6,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Path;
 
 import javax.xml.parsers.ParserConfigurationException;
@@ -36,7 +37,7 @@ public class DomBuilder {
 			meta.attr("content", "text/html; charset=euc-kr");
 		}
 		
-		System.out.println(html.toString());
+//		System.out.println(html.toString());
 
 		Product p = product[0];
 		Element majorId = doc.select("#majorId").first();
@@ -106,7 +107,7 @@ public class DomBuilder {
 		try {
 			byte[] b = new byte[in.available()];
 			in.read(b);
-			html = new String(b);
+			html = new String(b, StandardCharsets.UTF_8);
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

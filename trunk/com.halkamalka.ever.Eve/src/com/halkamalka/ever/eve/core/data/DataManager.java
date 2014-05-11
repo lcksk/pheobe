@@ -15,6 +15,7 @@ import java.net.MalformedURLException;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.sql.Connection;
@@ -165,7 +166,7 @@ public class DataManager implements DataEventSource, WebsocketListener {
 			tmp.toFile().deleteOnExit();
 			
 			inputStream = new FileInputStream(path);
-			zipInputStream = new ZipInputStream(new BufferedInputStream(inputStream), Charset.forName("ms_949"));
+			zipInputStream = new ZipInputStream(new BufferedInputStream(inputStream), Charset.forName("MS949"));
 
 			while ((entry = zipInputStream.getNextEntry()) != null) {
 				
@@ -366,8 +367,15 @@ public class DataManager implements DataEventSource, WebsocketListener {
 			while (r.next() ) {
 				String  major0 = r.getString("major");
 				String  minor0 = r.getString("minor");
-				String  description = r.getString("description");
-				description = new String(Base64.decode(description.getBytes()));
+//				String  description = r.getString("description");
+				Charset charset = null;
+				if(org.apache.commons.exec.OS.isFamilyWindows()) {
+					charset = Charset.forName("EUC-KR");
+				}
+				else {
+					charset = Charset.defaultCharset();
+				}
+				String description = new String(Base64.decode(r.getBytes("description")), charset);
 				String  image = r.getString("image");
 				File file = new File(getTempPath().toString() + File.separator + image.hashCode());
 				OutputStream outputStream = null;
