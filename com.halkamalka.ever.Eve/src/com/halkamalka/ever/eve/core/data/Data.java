@@ -94,7 +94,7 @@ public abstract class Data implements HtmlParserable {
 		log.info(">>>>>>>> " + file.toString());
 //		Document doc = Jsoup.parse(file,  "ks_c_5601-1987", file.toURI().toString());
 		byte[] raw = org.apache.commons.io.FileUtils.readFileToByteArray(file);
-		Document doc = Jsoup.parse(new String(raw));
+		Document doc = Jsoup.parse(new String(raw, "MS949"));
 
 		Elements td = doc.select("td.td[align=middle]");
 		int i=0;
