@@ -1,7 +1,6 @@
 package com.halkamalka.ever.eve.core.data;
 
 import java.nio.charset.Charset;
-import java.nio.charset.StandardCharsets;
 import java.util.Iterator;
 import java.util.logging.Logger;
 
@@ -28,24 +27,25 @@ public class Product {
 		this.minor = minor;
 		this.image = image;
 		
-		if(org.apache.commons.exec.OS.isFamilyWindows())
-		{
+		if(org.apache.commons.exec.OS.isFamilyWindows()) {
 			Document doc = Jsoup.parse(description);	
 			Elements elements = doc.select("img");
 			for(Iterator<Element> it = elements.iterator(); it.hasNext(); ) {
 				Element e = it.next();
 				String tmp = null;
+				//
 				tmp = e.attr("data-cke-saved-src");
-				tmp = new String(tmp.getBytes(StandardCharsets.UTF_8), Charset.forName("euc-kr"));
+				tmp = tmp.replace("/", "\\");
 				e.attr("data-cke-saved-src", tmp);
-				log.info("****" + tmp);
+				
+				//
 				tmp = e.attr("src");
-				tmp = new String(tmp.getBytes(StandardCharsets.UTF_8), Charset.forName("euc-kr"));
+				tmp = tmp.replace("/", "\\");
 				e.attr("src", tmp);
-				log.info("****" +tmp);
+				
 				description = doc.html();
-				log.info("****" +description);
 			}
+			description = new String(description.getBytes(), Charset.forName("MS949"));
 		}
 		
 		this.description = description;

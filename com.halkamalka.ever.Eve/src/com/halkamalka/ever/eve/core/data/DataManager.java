@@ -460,7 +460,6 @@ public class DataManager implements DataEventSource, WebsocketListener {
 					File tmp = new File(base, entry.getName());
 					log.info("file : " + tmp.toString());
 					if(entry.isDirectory()) {
-//						tmp.mkdirs();
 						org.apache.commons.io.FileUtils.forceMkdir(tmp);
 					}
 					else {

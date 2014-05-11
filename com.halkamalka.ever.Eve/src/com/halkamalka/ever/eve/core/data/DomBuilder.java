@@ -10,12 +10,9 @@ import java.nio.file.Path;
 
 import javax.xml.parsers.ParserConfigurationException;
 
-import org.eclipse.swt.internal.gtk.OS;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
-
-import com.halkamalka.ever.eve.views.BrowserViewPart;
 
 public class DomBuilder {
 	
@@ -49,10 +46,10 @@ public class DomBuilder {
 		minorId.text(p.getMinor());
 		
 		Element scope = doc.select("#scope").first();
-		scope.text("fdasfdasfdas");
+//		scope.text("fdasfdasfdas");
 		
 		Element value = doc.select("#value").first();
-		value.text("asdd");
+//		value.text("asdd");
 		
 		Element result = doc.select("#result").first();
 		if(data.getPrescription() != null) {
@@ -62,7 +59,7 @@ public class DomBuilder {
 		Element productImage = doc.select("#productImage").first();
 //		productImage.attr("src", "data:image/*;base64,"+p.getImage());
 		productImage.attr("src", p.getImage());
-		productImage.html("<p>lorem ipsum</p>");
+//		productImage.html("<p>lorem ipsum</p>");
 
 		Element intro = doc.select("#productDescription").first();
 		intro.html(replacePath(p.getDescription()));
@@ -97,7 +94,10 @@ public class DomBuilder {
 	}
 
 	private String replacePath(String str) {
-		return str.replaceAll("/userfiles", System.getProperty("user.home") + File.separator + ".eve" + File.separator + "userfiles");
+		if(org.apache.commons.exec.OS.isFamilyWindows()){
+			return str.replace("\\userfiles", System.getProperty("user.home") + File.separator + ".eve" + File.separator + "userfiles");
+		}
+		return str.replace("/userfiles", System.getProperty("user.home") + File.separator + ".eve" + File.separator + "userfiles");
 	}
 	
 	private String loadTemplate() {
