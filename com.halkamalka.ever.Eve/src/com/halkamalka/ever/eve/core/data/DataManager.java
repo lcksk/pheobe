@@ -447,55 +447,7 @@ public class DataManager implements DataEventSource, WebsocketListener {
     		File base = new File(System.getProperty("user.home") + File.separator + ".eve");
     		
     		log.info("base dir : " + base.toString());
- 			TarArchiveInputStream in = null;
- 			OutputStream out = null;
-    		try {
-				in = new TarArchiveInputStream(new GzipCompressorInputStream(new ByteArrayInputStream(Base64.decode(data.getBytes()))));
-				TarArchiveEntry entry = null;
-				while ((entry = in.getNextTarEntry()) != null) {
-					File tmp = new File(base, entry.getName());
-					log.info("file : " + tmp.toString());
-					if(entry.isDirectory()) {
-						org.apache.commons.io.FileUtils.forceMkdir(tmp);
-					}
-					else {
-						if(!tmp.getParentFile().exists()) {
-							org.apache.commons.io.FileUtils.forceMkdir(tmp.getParentFile());
-						}
-						tmp.createNewFile();
-						byte[] buf = new byte[(int) entry.getSize()];
-						in.read(buf);
-						out = new FileOutputStream(tmp);
-						out.write(buf);
-						out.close();
-						out = null;
-					}
-				}
-			} 
-    		catch (IOException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-    		finally {
-    			if(in!=null) {
-    				try {
-						in.close();
-					} 
-    				catch (IOException e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
-					}
-    			}
-    			if(out != null) {
-    				try {
-						out.close();
-					} 
-    				catch (IOException e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
-					}
-    			}
-    		}
+    		extractGZip(Base64.decode(data.getBytes()), base);
     	}
     	else if(method.equals("echo::broadcast")) {
     		// TODO : Something has been changed in the server side.
@@ -512,5 +464,57 @@ public class DataManager implements DataEventSource, WebsocketListener {
 	public void onClose(Session session) {
 		// TODO Auto-generated method stub
 		
+	}
+	
+	private void extractGZip(byte[] data, File base) {
+		TarArchiveInputStream in = null;
+			OutputStream out = null;
+		try {
+			in = new TarArchiveInputStream(new GzipCompressorInputStream(new ByteArrayInputStream(data)));
+			TarArchiveEntry entry = null;
+			while ((entry = in.getNextTarEntry()) != null) {
+				File tmp = new File(base, entry.getName());
+				log.info("file : " + tmp.toString());
+				if(entry.isDirectory()) {
+					org.apache.commons.io.FileUtils.forceMkdir(tmp);
+				}
+				else {
+					if(!tmp.getParentFile().exists()) {
+						org.apache.commons.io.FileUtils.forceMkdir(tmp.getParentFile());
+					}
+					tmp.createNewFile();
+					byte[] buf = new byte[(int) entry.getSize()];
+					in.read(buf);
+					out = new FileOutputStream(tmp);
+					out.write(buf);
+					out.close();
+					out = null;
+				}
+			}
+		} 
+		catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		finally {
+			if(in!=null) {
+				try {
+					in.close();
+				} 
+				catch (IOException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			}
+			if(out != null) {
+				try {
+					out.close();
+				} 
+				catch (IOException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			}
+		}
 	}
 }
