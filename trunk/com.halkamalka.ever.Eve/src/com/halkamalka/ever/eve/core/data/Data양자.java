@@ -1,6 +1,8 @@
 package com.halkamalka.ever.eve.core.data;
 
 import java.io.File;
+import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.logging.Logger;
@@ -9,11 +11,11 @@ import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.select.Elements;
 
-public class Data양자  extends Data{
+public class Data양자 extends Data{
 
 	final private static Logger log = Logger.getLogger(Data양자.class.getName());
 	
-	public Data양자(String name, String path) {
+	public Data양자 (String name, String path) {
 		super(name, path);
 	}
 
@@ -42,7 +44,12 @@ public class Data양자  extends Data{
 			//recommend
 			System.out.println(Td1.get(a).text());
 			String prescription = Td1.get(a).text();
-			data.setPrescription(prescription);
+			if(org.apache.commons.exec.OS.isFamilyWindows()) {
+				data.setPrescription(prescription);
+			}
+			else {
+				data.setPrescription(prescription);
+			}
 
 			// TODO : notify to UI.
 		}
