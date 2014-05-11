@@ -1,6 +1,5 @@
 package com.halkamalka.ever.eve.core.data;
 
-import java.nio.charset.Charset;
 import java.util.Iterator;
 import java.util.logging.Logger;
 
@@ -37,7 +36,7 @@ public class Product {
 				tmp = e.attr("data-cke-saved-src");
 				tmp = tmp.replace("/", "\\");
 				e.attr("data-cke-saved-src", tmp);
-				
+
 				//
 				tmp = e.attr("src");
 				tmp = tmp.replace("/", "\\");
@@ -45,7 +44,13 @@ public class Product {
 				
 				description = doc.html();
 			}
-			description = new String(description.getBytes(), Charset.forName("MS949"));
+
+//			try {
+//				description = new String(description.getBytes("UTF-8"), Charset.forName("EUC-KR"));
+//			} catch (UnsupportedEncodingException e) {
+//				// TODO Auto-generated catch block
+//				e.printStackTrace();
+//			}
 		}
 		
 		this.description = description;

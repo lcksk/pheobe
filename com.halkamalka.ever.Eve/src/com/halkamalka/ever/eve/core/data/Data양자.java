@@ -3,8 +3,9 @@ package com.halkamalka.ever.eve.core.data;
 import java.io.File;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
-import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.Set;
+import java.util.SortedMap;
 import java.util.logging.Logger;
 
 import org.jsoup.Jsoup;
@@ -25,7 +26,10 @@ public class Data양자 extends Data{
 		
 		File file = new File(path);
 //		log.info(">>>>>>>> " + file.toString());
-		Document doc = Jsoup.parse(file,  "ks_c_5601-1987", file.toURI().toString());
+//		Document doc = Jsoup.parse(file,  "ks_c_5601-1987", file.toURI().toString());
+		byte[] raw = org.apache.commons.io.FileUtils.readFileToByteArray(file);
+//		Document doc = Jsoup.parse(file,  "ksc5601", file.toURI().toString());
+		Document doc = Jsoup.parse(new String(raw));
 		
 		Elements td = doc.select("td.td");
 		
@@ -45,6 +49,15 @@ public class Data양자 extends Data{
 			System.out.println(Td1.get(a).text());
 			String prescription = Td1.get(a).text();
 			if(org.apache.commons.exec.OS.isFamilyWindows()) {
+//				SortedMap<String, Charset> charsets = Charset.availableCharsets();
+//				Set<String> keys = charsets.keySet();
+//				for(Iterator<String> it = keys.iterator(); it.hasNext();) {
+//					String key = it.next();
+//					Charset charset = charsets.get(key);
+//					log.info(key + charset.toString());
+//					log.info(new String(prescription.getBytes(), charset));
+//				}
+				prescription = new String(prescription.getBytes(), Charset.forName("EUC-KR"));
 				data.setPrescription(prescription);
 			}
 			else {
