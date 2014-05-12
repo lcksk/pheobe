@@ -8,6 +8,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Path;
+import java.util.logging.Logger;
 
 import javax.xml.parsers.ParserConfigurationException;
 
@@ -18,7 +19,7 @@ import org.jsoup.nodes.Element;
 import com.halkamalka.ever.eve.preferences.PreferenceConstants;
 
 public class DomBuilder {
-	
+	final private static Logger log = Logger.getLogger(DomBuilder.class.getName());
 	Document html;
 	String name;
 
@@ -28,9 +29,9 @@ public class DomBuilder {
 	}
 	
 	public void build(Data data, Product[] product) throws ParserConfigurationException {
-		String html = loadTemplate();
-		Document doc = Jsoup.parse(html);
-		
+
+		Document doc = Jsoup.parse(loadTemplate());
+		Document sub = Jsoup.parse(loadSubTemplate());
 //		Element body = html.createElement("body");
 
 		if(org.apache.commons.exec.OS.isFamilyWindows()) {
@@ -41,59 +42,39 @@ public class DomBuilder {
 		
 //		System.out.println(html.toString());
 
-		Product p = product[0];
-		Element majorId = doc.select("#majorId").first();
-		majorId.text(p.getMajor());
-		
-		Element minorId = doc.select("#minorId").first();
-		minorId.text(p.getMinor());
-		
-		Element scope = doc.select("#scope").first();
-//		scope.text("fdasfdasfdas");
-		
-		Element value = doc.select("#value").first();
-//		value.text("asdd");
-		
-		Element result = doc.select("#result").first();
-		if(data.getPrescription() != null) {
-			result.text(data.getPrescription());
-		}
-		
-		Element productImage = doc.select("#productImage").first();
-//		productImage.attr("src", "data:image/*;base64,"+p.getImage());
-		productImage.attr("src", p.getImage());
-//		productImage.html("<p>lorem ipsum</p>");
-
-		Element intro = doc.select("#productDescription").first();
-		intro.html(replacePath(p.getDescription()));
-
-		Path tmp = DataManager.getInstance().getTempPath();
-		
-		System.out.println(doc.html());
-		
-		OutputStream outputStream = null;
-		try {
-			outputStream = new FileOutputStream(tmp.toString() + File.separator + name);
-			outputStream.write(doc.html().getBytes());
-			outputStream.flush();
-		} catch (FileNotFoundException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} finally{
-		
-			if(outputStream != null) {
-				try {
-					outputStream.close();
-				} catch (IOException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
+		for(int i = 0; i < product.length; i++) {
+			
+			Product p = product[i];
+			Element majorId = doc.select("#majorId").first();
+			majorId.text(p.getMajor());
+			
+			Element minorId = doc.select("#minorId").first();
+			minorId.text(p.getMinor());
+			
+			Element scope = doc.select("#scope").first();
+			
+			Element value = doc.select("#value").first();
+//			value.text("asdd");
+			
+			Element result = doc.select("#result").first();
+			if(data.getPrescription() != null) {
+				result.text(data.getPrescription());
 			}
-			outputStream = null;
+			
+			Element productImage = sub.select("#productImage").first();
+//			productImage.attr("src", "data:image/*;base64,"+p.getImage());
+			productImage.attr("src", p.getImage());
+//			productImage.html("<p>lorem ipsum</p>");
+
+			Element intro = sub.select("#productDescription").first();
+			intro.html(replacePath(p.getDescription()));
+
+			Element products = doc.select("#products").first();
+			products.after(sub.html());
+			
+			System.out.println(doc.html());
 		}
+		save(DataManager.getInstance().getTempPath(), doc.html());
 	}
 
 	private String replacePath(String str) {
@@ -115,5 +96,46 @@ public class DomBuilder {
 			e.printStackTrace();
 		}
 		return html;
+	}
+	
+	private String loadSubTemplate() {
+		String html = null;
+		InputStream in = getClass().getResourceAsStream("/res/sub.htm");
+		try {
+			byte[] b = new byte[in.available()];
+			in.read(b);
+			html = new String(b, StandardCharsets.UTF_8);
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return html;
+	}
+	
+	private void save(Path tmp, String html) {
+		tmp = DataManager.getInstance().getTempPath();
+		OutputStream outputStream = null;
+		try {
+			outputStream = new FileOutputStream(tmp.toString() + File.separator + name);
+			outputStream.write(html.getBytes());
+			outputStream.flush();
+		} catch (FileNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} finally{
+		
+			if(outputStream != null) {
+				try {
+					outputStream.close();
+				} catch (IOException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			}
+			outputStream = null;
+		}
 	}
 }
