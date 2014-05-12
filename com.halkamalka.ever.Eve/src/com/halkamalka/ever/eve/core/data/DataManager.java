@@ -443,13 +443,11 @@ public class DataManager implements DataEventSource, WebsocketListener {
 
 	@Override
 	public void onMessage(JSONObject o) {
-		// TODO Auto-generated method stub
     	String method = (String) o.get("event");
     	log.info(method);
     	if(method.equals("product::download_images")) {
     		String data = (String) o.get("data");
 //    		data = new String(Base64.decode(data.getBytes()));
-
     		File base = new File(PreferenceConstants.P_EVE_HOME);
     		
     		log.info("base dir : " + base.toString());
