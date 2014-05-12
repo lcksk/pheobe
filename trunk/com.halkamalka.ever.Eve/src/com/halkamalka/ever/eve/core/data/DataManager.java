@@ -303,7 +303,7 @@ public class DataManager implements DataEventSource, WebsocketListener {
 	}
 
 	public void joinEcho() {
-		if(client != null) {
+		if(client != null && client.isConnected()) {
 			JSONObject o = new JSONObject();
 			o.put("jsonrpc", "2.0");
 			o.put("method", "echo::join");
@@ -313,7 +313,7 @@ public class DataManager implements DataEventSource, WebsocketListener {
 	}
 	
 	public void downloadImage() {
-		if(client != null) {
+		if(client != null && client.isConnected()) {
 			JSONObject o = new JSONObject();
 			o.put("jsonrpc", "2.0");
 			o.put("method", "product::download_images");
