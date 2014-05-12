@@ -14,15 +14,6 @@ public class UpdateDBHandler extends AbstractHandler {
 
 	@Override
 	public Object execute(ExecutionEvent event) throws ExecutionException {
-//		IWorkbenchWindow window = HandlerUtil.getActiveWorkbenchWindowChecked(event);
-////		BusyIndicator.showWhile(display, runnable); 
-//		window.getShell().getDisplay().asyncExec(new Runnable(){
-//			@Override
-//			public void run() {
-//				DataManager.getInstance().downloadImage();
-//				DataManager.getInstance().downloadDB();
-//			}
-//		});
 		Job job = new Job("db update") {
 			@Override
 			protected IStatus run(IProgressMonitor monitor) {
