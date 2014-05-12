@@ -42,6 +42,7 @@ import com.halkamalka.ever.eve.core.data.DataEventObject;
 import com.halkamalka.ever.eve.core.data.DataItem;
 import com.halkamalka.ever.eve.core.data.DataManager;
 import com.halkamalka.util.CustomSharedImage;
+import com.halkamalka.util.WebsocketManager;
 
 public class CategoryViewPart extends ViewPart implements DataEventListener, DropTargetListener {
 
@@ -58,7 +59,14 @@ public class CategoryViewPart extends ViewPart implements DataEventListener, Dro
 
 	@Override
 	public void createPartControl(Composite parent) {
-		updateDB();
+		if(!DataManager.getInstance().dbExists()) {
+			if( WebsocketManager.getInstance().isConnected()) {
+				updateDBCommand();
+			}
+			else {
+				// TODO
+			}
+		}
 		viewer = new TreeViewer(parent, SWT.MULTI | SWT.H_SCROLL | SWT.V_SCROLL);
 		viewContentProvider = new ViewContentProvider();
 		viewer.setContentProvider(viewContentProvider);
@@ -79,7 +87,8 @@ public class CategoryViewPart extends ViewPart implements DataEventListener, Dro
 					return;
 				}
 				
-				IWorkbenchPage page = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage();
+//				IWorkbenchPage page = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage();
+				IWorkbenchPage page = getViewSite().getPage(); 
 				if(page == null) {
 					return;
 				}
@@ -386,24 +395,24 @@ public class CategoryViewPart extends ViewPart implements DataEventListener, Dro
 			log.info(data.getName());
 			viewContentProvider.add(data);
 			
-			IWorkbenchPage page = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage();
-			if(page == null) {
-				return;
-			}
-			
-			try {
-				page.showView(BrowserViewPart.ID);
-				IViewPart part = page.findView(BrowserViewPart.ID);
-				if(!(part instanceof BrowserViewPart)) {
-					return;
-				}
-				BrowserViewPart browser = (BrowserViewPart) part;
-				browser.setUrl(data.getPath());
-				browser.setTitleLabel(data.getName().substring(0, data.getName().indexOf(".htm")));
-				
-			} catch (PartInitException ex) {
-				ex.printStackTrace();
-			}
+//			IWorkbenchPage page = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage();
+//			if(page == null) {
+//				return;
+//			}
+//			
+//			try {
+//				page.showView(BrowserViewPart.ID);
+//				IViewPart part = page.findView(BrowserViewPart.ID);
+//				if(!(part instanceof BrowserViewPart)) {
+//					return;
+//				}
+//				BrowserViewPart browser = (BrowserViewPart) part;
+//				browser.setUrl(data.getPath());
+//				browser.setTitleLabel(data.getName().substring(0, data.getName().indexOf(".htm")));
+//				
+//			} catch (PartInitException ex) {
+//				ex.printStackTrace();
+//			}
 		}
 	}
 
@@ -475,17 +484,43 @@ public class CategoryViewPart extends ViewPart implements DataEventListener, Dro
 	public void dragLeave(DropTargetEvent event) {		
 	}
 	
-	private void updateDB() {
+	private void updateDBCommand() {
+		IHandlerService handlerService = (IHandlerService) getSite().getService(IHandlerService.class);
+		try {
+			handlerService.executeCommand("com.halkamalka.ever.Eve.commands.updateDBCommand", null);
+		} 
+		catch (ExecutionException | NotDefinedException | NotEnabledException | NotHandledException e) {
+			e.printStackTrace();
+		} 
+	}
+
+
+	@Override
+	public void dataLoadCompleted() {
+		log.info("");
 		getSite().getShell().getDisplay().asyncExec(new Runnable(){
 			@Override
 			public void run() {
-				IHandlerService handlerService = (IHandlerService) getSite().getService(IHandlerService.class);
-				  try {
-					handlerService.executeCommand("com.halkamalka.ever.Eve.commands.updateDBCommand", null);
-				} catch (ExecutionException | NotDefinedException | NotEnabledException | NotHandledException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				} 
+				// TODO Auto-generated method stub
+				IWorkbenchPage page = getViewSite().getPage(); 
+				if(page == null) {
+					return;
+				}
+				
+				try {
+					page.showView(BrowserViewPart.ID);
+					IViewPart part = page.findView(BrowserViewPart.ID);
+					if(!(part instanceof BrowserViewPart)) {
+						return;
+					}
+					BrowserViewPart browser = (BrowserViewPart) part;
+					Data data = DataManager.getInstance().getLastData();
+					browser.setUrl(data.getPath());
+					browser.setTitleLabel(data.getName().substring(0, data.getName().indexOf(".htm")));
+					
+				} catch (PartInitException ex) {
+					ex.printStackTrace();
+				}
 			}
 		});
 	}

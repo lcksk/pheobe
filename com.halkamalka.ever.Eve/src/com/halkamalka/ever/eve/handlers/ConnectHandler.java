@@ -27,9 +27,15 @@ public class ConnectHandler extends AbstractHandler {
 					monitor.beginTask("start task", 100);
 					monitor.subTask("disconnect...");
 					client.close();
-
+					try {
+						Thread.sleep(100);
+					} 
+					catch (InterruptedException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
 					monitor.worked(100);
-					monitor.subTask("loading completed");
+					monitor.subTask("disconnected.");
 					return Status.OK_STATUS;
 
 				}
@@ -42,14 +48,23 @@ public class ConnectHandler extends AbstractHandler {
 				protected IStatus run(IProgressMonitor monitor) {
 					monitor.beginTask("start task", 100);
 					monitor.subTask("connect...");
+					monitor.worked(50);
 					try {
 						client.connect(PreferenceConstants.getWebsockURI());
-					} catch (URISyntaxException e) {
+					}
+					catch (URISyntaxException e) {
 						// TODO Auto-generated catch block
 						e.printStackTrace();
 					}
-					monitor.worked(100);
-					monitor.subTask("loading completed");
+					monitor.worked(50);
+					monitor.subTask("connected");
+					try {
+						Thread.sleep(100);
+					}
+					catch (InterruptedException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
 					return Status.OK_STATUS;
 
 				}

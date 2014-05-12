@@ -129,13 +129,17 @@ public class DataManager implements DataEventSource, WebsocketListener {
 	
 	public void add(Data data) {
 		log.info("" + data.getPath());
-		this.data.add(data);
+		synchronized(lck) {
+			this.data.add(data);
+		}
 		fireDataEvent(DataStatus.DATA_ADDED, data);
 	}
 	
 	public void remove(Data data) {
 		fireDataEvent(DataStatus.DATA_REMOVED, data);
-		this.data.remove(data);
+		synchronized(lck) {
+			this.data.remove(data);
+		}
 	}
 	
 	public void clear() {
@@ -143,14 +147,18 @@ public class DataManager implements DataEventSource, WebsocketListener {
 //			Data data = it.next();
 //			this.remove(data);
 //		}
-		this.data.clear();
+		synchronized(lck) {
+			this.data.clear();
+		}
 	}
 
 	public Data findByName(String name) {
-		for(Iterator<Data> it = data.iterator(); it.hasNext();) {
-			Data data = it.next();
-			if(data.getName().contains(name)) {
-				return data;
+		synchronized(lck) {
+			for(Iterator<Data> it = data.iterator(); it.hasNext();) {
+				Data data = it.next();
+				if(data.getName().contains(name)) {
+					return data;
+				}
 			}
 		}
 		return null;
@@ -204,30 +212,19 @@ public class DataManager implements DataEventSource, WebsocketListener {
 			
 			// DOM BUILD HERE
 			createHTML();
+			
+			fireDataEvent(DataStatus.DATA_LOAD_COMPLATED, null);
 
 		}
-		catch (FileNotFoundException e) {
-			// TODO Auto-generated catch block
+		catch (IOException | IllegalArgumentException | SecurityException e) {
 			e.printStackTrace();
 		}
-		catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		catch (IllegalArgumentException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} 
-		catch (SecurityException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} 
 		finally {
 			if(inputStream != null) {
 				try {
 					inputStream.close();
-				} catch (IOException e) {
-					// TODO Auto-generated catch block
+				}
+				catch (IOException e) {
 					e.printStackTrace();
 				}
 			}
@@ -237,7 +234,6 @@ public class DataManager implements DataEventSource, WebsocketListener {
 				try {
 					zipInputStream.close();
 				} catch (IOException e) {
-					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
 			}
@@ -247,7 +243,6 @@ public class DataManager implements DataEventSource, WebsocketListener {
 	
 	@Override
 	public void addDataEventListener(DataEventListener listener) {
-		// TODO Auto-generated method stub
 		synchronized(lck) {
 			dataEventListener.add(listener);	
 		}
@@ -255,7 +250,6 @@ public class DataManager implements DataEventSource, WebsocketListener {
 
 	@Override
 	public void removeDataEventListener(DataEventListener listener) {
-		// TODO Auto-generated method stub
 		synchronized(lck) {
 			dataEventListener.remove(listener);	
 		}		
@@ -275,6 +269,9 @@ public class DataManager implements DataEventSource, WebsocketListener {
 				}
 				else if(status == DataStatus.DATA_RESET) {
 					listener.dataReset();	
+				}
+				else if(status == DataStatus.DATA_LOAD_COMPLATED) {
+					listener.dataLoadCompleted();
 				}
 				else {
 					log.warning("unknown DeviceStatus");
@@ -321,6 +318,16 @@ public class DataManager implements DataEventSource, WebsocketListener {
 		}
 	}
 	
+	public void leaveEcho() {
+		if(client != null && client.isConnected()) {
+			JSONObject o = new JSONObject();
+			o.put("jsonrpc", "2.0");
+			o.put("method", "echo::leave");
+			o.put("id", "10");
+			client.send(o);
+		}
+	}
+	
 	public void downloadImage() {
 		if(client != null && client.isConnected()) {
 			JSONObject o = new JSONObject();
@@ -332,8 +339,6 @@ public class DataManager implements DataEventSource, WebsocketListener {
 	}
 	
 	public void downloadDB(URL url) {
-//		String path = db;
-//		log.info("path: " + path);
 		try {
 			File file = new File(db);
 			// TODO
@@ -498,7 +503,7 @@ public class DataManager implements DataEventSource, WebsocketListener {
 	public void onClose(Session session) {
 		// TODO Auto-generated method stub
 		log.info("");
-		
+		leaveEcho();
 	}
 	
 	private void extractGZip(byte[] data, File base) {
@@ -551,5 +556,23 @@ public class DataManager implements DataEventSource, WebsocketListener {
 				}
 			}
 		}
+	}
+	
+	public Data getFirstData() {
+		if((data == null) || (data.size() == 0)) {
+			return null;
+		}
+		return data.get(0);
+	}
+	
+	public Data getLastData() {
+		if((data == null) || (data.size() == 0)) {
+			return null;
+		}
+		return data.get(data.size()-1);
+	}
+	
+	public boolean dbExists() {
+		return new File(db).exists();
 	}
 }
