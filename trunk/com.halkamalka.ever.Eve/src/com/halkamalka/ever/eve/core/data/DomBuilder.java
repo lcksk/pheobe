@@ -15,6 +15,8 @@ import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 
+import com.halkamalka.ever.eve.preferences.PreferenceConstants;
+
 public class DomBuilder {
 	
 	Document html;
@@ -96,9 +98,9 @@ public class DomBuilder {
 
 	private String replacePath(String str) {
 		if(org.apache.commons.exec.OS.isFamilyWindows()){
-			return str.replace("\\userfiles", System.getProperty("user.home") + File.separator + ".eve" + File.separator + "userfiles");
+			return str.replace("\\userfiles", PreferenceConstants.P_EVE_HOME + File.separator + "userfiles");
 		}
-		return str.replace("/userfiles", System.getProperty("user.home") + File.separator + ".eve" + File.separator + "userfiles");
+		return str.replace("/userfiles", PreferenceConstants.P_EVE_HOME + File.separator + "userfiles");
 	}
 	
 	private String loadTemplate() {

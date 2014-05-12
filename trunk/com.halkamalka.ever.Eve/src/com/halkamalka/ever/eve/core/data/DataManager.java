@@ -15,7 +15,6 @@ import java.net.MalformedURLException;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.nio.charset.Charset;
-import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.sql.Connection;
@@ -52,7 +51,7 @@ public class DataManager implements DataEventSource, WebsocketListener {
 	private Object lck;
 	private Path tmp = null;
 	private ArrayList<DataEventListener> dataEventListener = new ArrayList<DataEventListener>();
-	final private static String db  =  System.getProperty("user.home") + File.separator + ".eve" + File.separator + PreferenceConstants.P_DB_NAME;
+	final private static String db  =  PreferenceConstants.P_EVE_HOME + File.separator + PreferenceConstants.P_DB_NAME;
 	private WebsocketManager client = null;
 //	private ThreadPoolExecutor workerthread = null;
 
@@ -324,10 +323,10 @@ public class DataManager implements DataEventSource, WebsocketListener {
 	}
 	
 	public void downloadDB(URL url) {
-		String path = System.getProperty("user.home") + File.separator + ".eve" + File.separator + PreferenceConstants.P_DB_NAME;
-		log.info("path: " + path);
+//		String path = db;
+//		log.info("path: " + path);
 		try {
-			File file = new File(path);
+			File file = new File(db);
 			// TODO
 			if(!file.exists()) {
 				org.apache.commons.io.FileUtils.copyURLToFile(url, file);
@@ -451,7 +450,7 @@ public class DataManager implements DataEventSource, WebsocketListener {
     		String data = (String) o.get("data");
 //    		data = new String(Base64.decode(data.getBytes()));
 
-    		File base = new File(System.getProperty("user.home") + File.separator + ".eve");
+    		File base = new File(PreferenceConstants.P_EVE_HOME);
     		
     		log.info("base dir : " + base.toString());
     		extractGZip(Base64.decode(data.getBytes()), base);
