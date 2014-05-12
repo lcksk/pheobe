@@ -52,7 +52,7 @@ public class DataManager implements DataEventSource, WebsocketListener {
 	private Object lck;
 	private Path tmp = null;
 	private ArrayList<DataEventListener> dataEventListener = new ArrayList<DataEventListener>();
-	private String db = null;
+	final private static String db  =  System.getProperty("user.home") + File.separator + ".eve" + File.separator + PreferenceConstants.P_DB_NAME;
 	private WebsocketManager client = null;
 //	private ThreadPoolExecutor workerthread = null;
 
@@ -343,7 +343,6 @@ public class DataManager implements DataEventSource, WebsocketListener {
 		URL url = null;
 		try {
 			url = new URL(PreferenceConstants.getDBFileURI());
-			db =  System.getProperty("user.home") + File.separator + ".eve" + File.separator + PreferenceConstants.P_DB_NAME;
 			downloadDB(url);
 		} 
 		catch (MalformedURLException e) {
