@@ -67,14 +67,7 @@ public class DataManager implements DataEventSource, WebsocketListener {
 		
 		client = WebsocketManager.getInstance();
 		client.addWebsocketListener(this);
-//		try {
-//			client.connect(PreferenceConstants.getWebsockURI());
-//		}
-//		catch (URISyntaxException e) {
-//			// TODO Auto-generated catch block
-//			e.printStackTrace();
-//		}
-		
+
 //		workerthread = ThreadPoolExecutor.getInstance(NUMOF_THREAD);
 //		workerthread.execute(FileServer.getInstance());
 		
@@ -393,7 +386,7 @@ public class DataManager implements DataEventSource, WebsocketListener {
 				query = "SELECT * FROM product;";
 			}
 			
-			ResultSet r = stmt.executeQuery( "SELECT * FROM product;" );
+			ResultSet r = stmt.executeQuery(query);
 
 			while (r.next() ) {
 				String  major0 = r.getString("major");
@@ -401,11 +394,12 @@ public class DataManager implements DataEventSource, WebsocketListener {
 //				String  description = r.getString("description");
 				Charset charset = null;
 				if(org.apache.commons.exec.OS.isFamilyWindows()) {
-					charset = Charset.forName("EUC-KR");
+					charset = Charset.forName("UTF-8");
 				}
 				else {
 					charset = Charset.defaultCharset();
 				}
+				@SuppressWarnings("restriction")
 				String description = new String(Base64.decode(r.getBytes("description")), charset);
 				String  image = r.getString("image");
 				
