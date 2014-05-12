@@ -177,6 +177,10 @@ public class WebsocketManager {
     	listener.add(l);
     }
     
+    public boolean isConnected() {
+    	return connected;
+    }
+    
     public void removeWebsocketListener(WebsocketListener l) {
     	listener.remove(l);
     }
