@@ -1,11 +1,8 @@
 package com.halkamalka.ever.eve.core.data;
 
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.nio.charset.Charset;
-import java.nio.charset.StandardCharsets;
-import java.util.Iterator;
-import java.util.Set;
-import java.util.SortedMap;
 import java.util.logging.Logger;
 
 import org.jsoup.Jsoup;
@@ -22,13 +19,19 @@ public class Data양자 extends Data{
 
 	@Override
 	public void parse() throws Exception {
-		// TODO Auto-generated method stub
 		
 		File file = new File(path);
-//		log.info(">>>>>>>> " + file.toString());
-//		Document doc = Jsoup.parse(file,  "ks_c_5601-1987", file.toURI().toString());
+		if(!file.exists()) {
+			throw new FileNotFoundException();
+		}
+
 		byte[] raw = org.apache.commons.io.FileUtils.readFileToByteArray(file);
-//		Document doc = Jsoup.parse(file,  "ksc5601", file.toURI().toString());
+		
+		if(!Charset.isSupported( "ksc5601")) {
+			log.warning("ksc5601 is not supported");
+			throw new Exception();
+		}
+		
 		Document doc = Jsoup.parse(new String(raw,  "ksc5601"));
 		
 		Elements td = doc.select("td.td");
