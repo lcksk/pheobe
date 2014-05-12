@@ -23,6 +23,8 @@ public class PreferenceConstants {
 	
 	public static final String P_DB_NAME = "product.db";
 	
+	public static final String P_EVE_HOME = System.getProperty("user.home") + File.separator + ".eve";
+	
 //	public static final String P_HTTP_SERVER_URL = "dbUrlPreference";
 
 	public static String getDBFileURI() {
