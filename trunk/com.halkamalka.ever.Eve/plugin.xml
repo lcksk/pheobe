@@ -68,8 +68,18 @@
                   visible="true">
             </separator>
             <command
+                  commandId="com.halkamalka.ever.Eve.commands.connectCommand"
+                  label="Connect"
+                  style="push">
+            </command>
+            <command
                   commandId="com.halkamalka.ever.Eve.commands.updateDBCommand"
                   label="Update"
+                  style="push">
+            </command>
+            <command
+                  commandId="com.halkamalka.ever.Eve.commands.listProductCommand"
+                  label="List Products"
                   style="push">
             </command>
             <separator
@@ -148,6 +158,16 @@
             id="com.halkamalka.ever.Eve.commands.updateDBCommand"
             name="Update DB">
       </command>
+      <command
+            categoryId="com.halkamalka.ever.Eve.commands.category"
+            id="com.halkamalka.ever.Eve.commands.connectCommand"
+            name="Connect">
+      </command>
+      <command
+            categoryId="com.halkamalka.ever.Eve.commands.category"
+            id="com.halkamalka.ever.Eve.commands.updateDBCommand"
+            name="List Products">
+      </command>
    </extension>
    <extension
          point="org.eclipse.ui.handlers">
@@ -162,6 +182,14 @@
       <handler
             class="com.halkamalka.ever.eve.handlers.UpdateDBHandler"
             commandId="com.halkamalka.ever.Eve.commands.updateDBCommand">
+      </handler>
+      <handler
+            class="com.halkamalka.ever.eve.handlers.ConnectHandler"
+            commandId="com.halkamalka.ever.Eve.commands.connectCommand">
+      </handler>
+      <handler
+            class="com.halkamalka.ever.eve.handlers.ListProductHandler"
+            commandId="com.halkamalka.ever.Eve.commands.listProductCommand">
       </handler>
    </extension>
    <extension
