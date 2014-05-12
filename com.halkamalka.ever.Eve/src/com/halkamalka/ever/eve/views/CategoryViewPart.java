@@ -476,12 +476,17 @@ public class CategoryViewPart extends ViewPart implements DataEventListener, Dro
 	}
 	
 	private void updateDB() {
-		IHandlerService handlerService = (IHandlerService) getSite().getService(IHandlerService.class);
-		  try {
-			handlerService.executeCommand("com.halkamalka.ever.Eve.commands.updateDBCommand", null);
-		} catch (ExecutionException | NotDefinedException | NotEnabledException | NotHandledException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} 
+		getSite().getShell().getDisplay().asyncExec(new Runnable(){
+			@Override
+			public void run() {
+				IHandlerService handlerService = (IHandlerService) getSite().getService(IHandlerService.class);
+				  try {
+					handlerService.executeCommand("com.halkamalka.ever.Eve.commands.updateDBCommand", null);
+				} catch (ExecutionException | NotDefinedException | NotEnabledException | NotHandledException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				} 
+			}
+		});
 	}
 }
