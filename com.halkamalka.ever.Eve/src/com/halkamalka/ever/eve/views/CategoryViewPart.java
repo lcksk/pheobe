@@ -58,23 +58,7 @@ public class CategoryViewPart extends ViewPart implements DataEventListener, Dro
 
 	@Override
 	public void createPartControl(Composite parent) {
-		IHandlerService handlerService = (IHandlerService) getSite().getService(IHandlerService.class);
-		  try {
-			handlerService.executeCommand("com.halkamalka.ever.Eve.commands.updateDBCommand", null);
-		} catch (ExecutionException e1) {
-			// TODO Auto-generated catch block
-			e1.printStackTrace();
-		} catch (NotDefinedException e1) {
-			// TODO Auto-generated catch block
-			e1.printStackTrace();
-		} catch (NotEnabledException e1) {
-			// TODO Auto-generated catch block
-			e1.printStackTrace();
-		} catch (NotHandledException e1) {
-			// TODO Auto-generated catch block
-			e1.printStackTrace();
-		}
-
+		updateDB();
 		viewer = new TreeViewer(parent, SWT.MULTI | SWT.H_SCROLL | SWT.V_SCROLL);
 		viewContentProvider = new ViewContentProvider();
 		viewer.setContentProvider(viewContentProvider);
@@ -491,5 +475,13 @@ public class CategoryViewPart extends ViewPart implements DataEventListener, Dro
 	public void dragLeave(DropTargetEvent event) {		
 	}
 	
-
+	private void updateDB() {
+		IHandlerService handlerService = (IHandlerService) getSite().getService(IHandlerService.class);
+		  try {
+			handlerService.executeCommand("com.halkamalka.ever.Eve.commands.updateDBCommand", null);
+		} catch (ExecutionException | NotDefinedException | NotEnabledException | NotHandledException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} 
+	}
 }
