@@ -425,7 +425,7 @@ public class DataManager implements DataEventSource, WebsocketListener {
 				// build page
 				Product[] product = getProducts(null/*TODO*/, null /*TODO*/);
 				for(int i = 0; i < product.length; i++) {
-					log.info(product[i].getImage());
+//					log.info(product[i].getImage());
 				}
 		
 				String url = data.getName().substring(0, data.getName().indexOf(".htm")) + "_pres.htm";
