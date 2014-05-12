@@ -38,7 +38,7 @@ public class WebsocketManager {
    
     @SuppressWarnings("unused")
     private Session session;
-    private boolean connected = false;
+//    private boolean connected = false;
     
 	private WebsocketManager() {
         this.closeLatch = new CountDownLatch(1);
@@ -47,18 +47,18 @@ public class WebsocketManager {
 	
 	
 	public boolean connect(URI uri) {
-		if(connected) {
+		if(client.isRunning()) {
 			log.warning("already connected");
 			return true;
 		}
 		
 		try {
 			client.start();
-//			ClientUpgradeRequest request = new ClientUpgradeRequest();
-//			client.connect(this, uri, request);
 			client.connect(this, uri);
 			log.info("Connecting to : " + uri);
 			awaitClose(5, TimeUnit.SECONDS);
+//			ClientUpgradeRequest request = new ClientUpgradeRequest();
+//			client.connect(this, uri, request);
 			
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
@@ -79,7 +79,7 @@ public class WebsocketManager {
     public void onClose(int statusCode, String reason) {
     	fireClosed(session);
         System.out.printf("Connection closed: %d - %s%n", statusCode, reason);
-        connected = true;
+//        connected = true;
         this.session = null;
         this.closeLatch.countDown();
     }
@@ -87,7 +87,7 @@ public class WebsocketManager {
     @OnWebSocketConnect
     public void onConnect(Session session) {
     	log.info("Got connect: " +  session.toString());
-        connected = true;
+//        connected = true;
         this.session = session;
         fireConnected(session);
 //        try {
@@ -119,7 +119,13 @@ public class WebsocketManager {
    }
     
     public void close() {
+		log.info("close");
     	try {
+    		if(client.isStopped()) {
+    			log.warning("already stopped");
+    			return;
+    		}
+    		this.onClose(0, "manual close");
 			client.stop();
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
@@ -176,12 +182,13 @@ public class WebsocketManager {
     public void addWebsocketListener(WebsocketListener l) {
     	listener.add(l);
     }
-    
-    public boolean isConnected() {
-    	return connected;
-    }
-    
+
     public void removeWebsocketListener(WebsocketListener l) {
     	listener.remove(l);
+    }
+
+    public boolean isConnected() {
+//    	return connected;
+    	return client.isRunning();
     }
 }

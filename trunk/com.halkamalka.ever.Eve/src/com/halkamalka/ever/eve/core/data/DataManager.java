@@ -67,13 +67,13 @@ public class DataManager implements DataEventSource, WebsocketListener {
 		
 		client = WebsocketManager.getInstance();
 		client.addWebsocketListener(this);
-		try {
-			client.connect(PreferenceConstants.getWebsockURI());
-		}
-		catch (URISyntaxException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+//		try {
+//			client.connect(PreferenceConstants.getWebsockURI());
+//		}
+//		catch (URISyntaxException e) {
+//			// TODO Auto-generated catch block
+//			e.printStackTrace();
+//		}
 		
 //		workerthread = ThreadPoolExecutor.getInstance(NUMOF_THREAD);
 //		workerthread.execute(FileServer.getInstance());
@@ -101,6 +101,7 @@ public class DataManager implements DataEventSource, WebsocketListener {
 	}
 
 	public void close() throws IOException {
+		log.info("");
 		if(tmp != null) {
 			deleteTempDirectory(tmp);
 		}
@@ -127,7 +128,7 @@ public class DataManager implements DataEventSource, WebsocketListener {
 	}
 	
 	public void add(Data data) {
-		log.info("");
+		log.info("" + data.getPath());
 		this.data.add(data);
 		fireDataEvent(DataStatus.DATA_ADDED, data);
 	}
@@ -489,12 +490,14 @@ public class DataManager implements DataEventSource, WebsocketListener {
 	@Override
 	public void onConnect(Session session) {
 		// TODO Auto-generated method stub
+		log.info("");
 		joinEcho();
 	}
 
 	@Override
 	public void onClose(Session session) {
 		// TODO Auto-generated method stub
+		log.info("");
 		
 	}
 	
