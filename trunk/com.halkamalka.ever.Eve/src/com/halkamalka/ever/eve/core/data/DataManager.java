@@ -107,6 +107,14 @@ public class DataManager implements DataEventSource, WebsocketListener {
 	}
 	
 	public Path getTempPath() {
+		if(tmp == null) {
+			try {
+				tmp = Files.createTempDirectory(null);
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+			tmp.toFile().deleteOnExit();
+		}
 		return tmp;
 	}
 	
@@ -350,6 +358,10 @@ public class DataManager implements DataEventSource, WebsocketListener {
 		}
 	}
 	
+	public Product[] getProducts() {
+		return getProducts(null, null);
+	}
+	
 	public Product[] getProducts(String major, String minor) {
 		ArrayList<Product> tmp = new ArrayList<Product>();
 		Connection conn = null;
@@ -360,6 +372,21 @@ public class DataManager implements DataEventSource, WebsocketListener {
 			log.info("path: " + db);
 			
 			stmt = conn.createStatement();
+			
+			String query = null;
+			if(major == null && minor == null) {
+				query = "SELECT * FROM product;";
+			}
+			if(major != null && minor == null){
+				query = "SELECT * FROM product WHERE major=" + "\"" + major + "\"" + ";";
+			}
+			else if(major != null && minor != null) {
+				query = "SELECT * FROM product WHERE major=" + "\"" + major + "\"" + "minor=" + "\"" + minor + "\"" + ";";
+			}
+			else {
+				query = "SELECT * FROM product;";
+			}
+			
 			ResultSet r = stmt.executeQuery( "SELECT * FROM product;" );
 
 			while (r.next() ) {
@@ -375,6 +402,7 @@ public class DataManager implements DataEventSource, WebsocketListener {
 				}
 				String description = new String(Base64.decode(r.getBytes("description")), charset);
 				String  image = r.getString("image");
+				
 				File file = new File(getTempPath().toString() + File.separator + image.hashCode());
 				OutputStream outputStream = null;
 				try {

@@ -12,6 +12,7 @@ public class Product {
 
 	final private static Logger log = Logger.getLogger(Product.class.getName());
 	
+	private String name = null;
 	private String major = null;
 	private String minor = null;
 	private String description = null;
@@ -21,6 +22,11 @@ public class Product {
 		// TODO Auto-generated constructor stub
 	}
 
+	public Product(String name, String major, String minor, String description, String image) {
+		this(major, minor, description, image);
+		this.name = name;
+	}
+	
 	public Product(String major, String minor, String description, String image) {
 		this.major = major;
 		this.minor = minor;
@@ -70,5 +76,9 @@ public class Product {
 	
 	public String getImage() {
 		return image;
+	}
+	
+	public String getName() {
+		return name;
 	}
 }
