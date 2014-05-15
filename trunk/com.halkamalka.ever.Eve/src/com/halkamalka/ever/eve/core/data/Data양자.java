@@ -13,14 +13,17 @@ public class Data양자 extends Data{
 
 	final private static Logger log = Logger.getLogger(Data양자.class.getName());
 	
-	public Data양자 (String name, String path) {
-		super(name, path);
+	public Data양자 (String path) {
+		super(path);
+		// redefine. because it doesn't start with number.
+	
 	}
 
-	public String getMajor() {
-		return getName();
+	protected void setName(String path) {
+		this.name = fileName.substring(0, fileName.indexOf(".htm"));
 	}
 	
+
 	@Override
 	public void parse() throws Exception {
 		

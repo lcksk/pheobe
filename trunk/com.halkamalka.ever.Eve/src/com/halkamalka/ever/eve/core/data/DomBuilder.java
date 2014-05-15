@@ -98,7 +98,7 @@ public class DomBuilder {
 		}
 
 		Element majorId = doc.select("#majorId").first();
-		majorId.text(data.getMajor());
+		majorId.text(data.getName());
 		
 		for(int i = 0; i < bound.length; i++) {
 			

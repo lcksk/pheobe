@@ -11,10 +11,11 @@ public class Data99 extends Data{
 
 	final private static Logger log = Logger.getLogger(Data99.class.getName());
 
-	public Data99(String name, String path) {
-		super(name, path);
+	public Data99(String path) {
+		super(path);
 		// TODO Auto-generated constructor stub
 	}
+
 	
 	@Override
 	public void parse() throws Exception {
