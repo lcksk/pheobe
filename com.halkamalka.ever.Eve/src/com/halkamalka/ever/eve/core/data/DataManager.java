@@ -5,7 +5,6 @@ import java.io.BufferedOutputStream;
 import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -22,9 +21,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.Iterator;
-import java.util.Set;
 import java.util.logging.Logger;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
@@ -42,6 +39,11 @@ import com.halkamalka.ever.eve.preferences.PreferenceConstants;
 import com.halkamalka.util.WebsocketListener;
 import com.halkamalka.util.WebsocketManager;
 
+
+
+
+// major - category
+// minor - sub-category
 
 @SuppressWarnings("restriction")
 public class DataManager implements DataEventSource, WebsocketListener {
@@ -227,7 +229,7 @@ public class DataManager implements DataEventSource, WebsocketListener {
 			extractZipTo(path, tmp);
 
 			// additional DOM BUILD HERE
-			createHTML();
+			createHtmlFile();
 			
 			fireDataEvent(DataStatus.DATA_LOAD_COMPLATED, null);
 		}
@@ -280,7 +282,7 @@ public class DataManager implements DataEventSource, WebsocketListener {
 		Class<?> cls;
 		try {
 			cls = Class.forName(className);
-			Object o = cls.getConstructor(String.class, String.class).newInstance(name, base +  File.separator + name);
+			Object o = cls.getConstructor(String.class).newInstance(base +  File.separator + name);
 			if(o instanceof HtmlParserable) {
 				log.info("OK. instance of Html Parserable");
 				try {
@@ -583,23 +585,23 @@ public class DataManager implements DataEventSource, WebsocketListener {
 //		}
 //	}
 
-	private void createHTML() {
+	private void createHtmlFile() {
 		ArrayList<Data> lst = getData();
 		for(Iterator<Data> it = lst.iterator(); it.hasNext(); ) {
 			Data data = it.next();
 			if(data.hasAbnormal()) { // TODO
 				// build page
 				
-				String url = data.getName().substring(0, data.getName().indexOf(".htm")) + "_pres.htm";
+				String url = data.getFileName().substring(0, data.getFileName().indexOf(".htm")) + "_pres.htm";
 				DomBuilder dom = new DomBuilder(url);
 				try {
-					log.info("" + data.getMajor());
+					log.info("" + data.getName());
 					DataItem item = data.get(data.getName());
 					if(item != null) {
 						log.info("" + item.getName());
 					}
 //					Bound[] bound = getBounds(data.getMajor(), data.get(data.getName()).getName());
-					Bound[] bound = getBounds(data.getMajor());
+					Bound[] bound = getBounds(data.getName());
 					dom.build(data, bound);
 				} 
 				catch (ParserConfigurationException e) {

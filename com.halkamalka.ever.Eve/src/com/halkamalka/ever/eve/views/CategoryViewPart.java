@@ -154,6 +154,13 @@ public class CategoryViewPart extends ViewPart implements DataEventListener, Dro
 			return data.getName();
 		}
 
+		public String getFileName() {
+			if(data==null) {
+				return name;
+			}
+			return data.getFileName();
+		}
+		
 //		public String getBase() {
 //			return base;
 //		}
@@ -179,8 +186,8 @@ public class CategoryViewPart extends ViewPart implements DataEventListener, Dro
 		}
 
 		public String toString() {
-			if(getName().endsWith(".htm")) {
-				return getName().substring(0, getName().indexOf(".htm"));
+			if(getFileName().endsWith(".htm")) {
+				return getFileName().substring(0, getFileName().indexOf(".htm"));
 			}
 			return getName();
 //			return getName();
@@ -516,7 +523,8 @@ public class CategoryViewPart extends ViewPart implements DataEventListener, Dro
 					BrowserViewPart browser = (BrowserViewPart) part;
 					Data data = DataManager.getInstance().getLastData();
 					browser.setUrl(data.getPath());
-					browser.setTitleLabel(data.getName().substring(0, data.getName().indexOf(".htm")));
+//					browser.setTitleLabel(data.getName().substring(0, data.getName().indexOf(".htm")));
+					browser.setTitleLabel(data.getName());
 					
 				} catch (PartInitException ex) {
 					ex.printStackTrace();

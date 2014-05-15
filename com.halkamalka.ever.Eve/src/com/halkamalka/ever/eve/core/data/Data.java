@@ -25,19 +25,35 @@ public abstract class Data implements HtmlParserable {
 	public static final Integer HIGHER = new Integer(2);
 	public static final Integer HIGHEST = new Integer(3);
 	
+	protected String fileName = null;
 	protected String name = null;
 	protected String path = null;
 	protected String prescription = null;
 	protected Map<String, DataItem> map = null;
 	
-	public Data(String name, String path) {
-		this.name = name;
-		this.path = path;
-		this.map = new HashMap<String, DataItem>();
+	public Data(String path) {
+		try {
+			log.info("" + path);
+			this.path = path;
+			setFileName(path);
+			setName(path);
+			this.map = new HashMap<String, DataItem>();
+		}
+		catch(Exception e) {
+			e.printStackTrace();
+		}
+	}
+
+	protected void setName(String path) {
+		this.name = fileName.substring(3, fileName.indexOf(".htm"));
 	}
 	
-	public String getMajor() {
-		return name.substring(3, name.indexOf(".htm"));
+	protected void setFileName(String path) {
+		fileName = path.substring(path.lastIndexOf(File.separator) + 1);
+	}
+	
+	public String getFileName() {
+		return fileName;
 	}
 	
 	public Map<String, DataItem> getMap() {
@@ -52,7 +68,6 @@ public abstract class Data implements HtmlParserable {
 		return path;
 	}
 	
-	//TODO
 	public String getPrescriptionPath() {
 		return path.substring(0, path.indexOf(".htm")) + "_pres.htm";
 	}
