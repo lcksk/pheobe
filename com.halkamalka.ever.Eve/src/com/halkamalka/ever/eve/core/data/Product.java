@@ -13,24 +13,62 @@ public class Product {
 	final private static Logger log = Logger.getLogger(Product.class.getName());
 	
 	private String name = null;
-	private String major = null;
-	private String minor = null;
+//	private String major = null;
+//	private String minor = null;
 	private String description = null;
 	private String image = null;
+	private int hash = 0;
 	
-	public Product() {
-		// TODO Auto-generated constructor stub
-	}
+//	public Product() {
+//		// TODO Auto-generated constructor stub
+//	}
 
-	public Product(String name, String major, String minor, String description, String image) {
-		this(major, minor, description, image);
-		this.name = name;
-	}
-	
-	public Product(String major, String minor, String description, String image) {
-		this.major = major;
-		this.minor = minor;
+//	public Product(String name, String major, String minor, String description, String image) {
+//		this(major, minor, description, image);
+//		this.name = name;
+//	}
+//	
+//	public Product(String major, String minor, String description, String image) {
+//		this.major = major;
+//		this.minor = minor;
+//		this.image = image;
+//		
+//		if(org.apache.commons.exec.OS.isFamilyWindows()) {
+//			Document doc = Jsoup.parse(description);	
+//			Elements elements = doc.select("img");
+//			for(Iterator<Element> it = elements.iterator(); it.hasNext(); ) {
+//				Element e = it.next();
+//				String tmp = null;
+//				//
+//				tmp = e.attr("data-cke-saved-src");
+//				tmp = tmp.replace("/", "\\");
+//				e.attr("data-cke-saved-src", tmp);
+//
+//				//
+//				tmp = e.attr("src");
+//				tmp = tmp.replace("/", "\\");
+//				e.attr("src", tmp);
+//				
+//				description = doc.html();
+//			}
+//
+////			try {
+////				description = new String(description.getBytes("UTF-8"), Charset.forName("EUC-KR"));
+////			} catch (UnsupportedEncodingException e) {
+////				// TODO Auto-generated catch block
+////				e.printStackTrace();
+////			}
+//		}
+//		
+//		this.description = description;
+//	}
+
+	public Product(int hash, String name, String description, String image) {
+//		this.major = major;
+//		this.minor = minor;
 		this.image = image;
+		this.hash = hash;
+		this.name = name;
 		
 		if(org.apache.commons.exec.OS.isFamilyWindows()) {
 			Document doc = Jsoup.parse(description);	
@@ -62,13 +100,14 @@ public class Product {
 		this.description = description;
 	}
 
-	public String getMajor() {
-		return major;
-	}
 	
-	public String getMinor() {
-		return minor;
-	}
+//	public String getMajor() {
+//		return major;
+//	}
+//	
+//	public String getMinor() {
+//		return minor;
+//	}
 	
 	public String getDescription() {
 		return description;
@@ -80,5 +119,9 @@ public class Product {
 	
 	public String getName() {
 		return name;
+	}
+	
+	public int getHash() {
+		return hash;
 	}
 }

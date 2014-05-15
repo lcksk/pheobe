@@ -36,6 +36,10 @@ public abstract class Data implements HtmlParserable {
 		this.map = new HashMap<String, DataItem>();
 	}
 	
+	public String getMajor() {
+		return name.substring(3, name.indexOf(".htm"));
+	}
+	
 	public Map<String, DataItem> getMap() {
 		return map;
 	}
@@ -173,6 +177,7 @@ public abstract class Data implements HtmlParserable {
 			DataItem item = map.get(key);
 			
 			if(!(item.getStatus().equals(Data.NORMAL) || item.getStatus().equals(Data.LOW) || item.getStatus().equals(Data.HIGH))) {
+//			if(!(item.getStatus().equals(Data.NORMAL))) {
 				tmp.add(item);
 			}
 		}

@@ -40,16 +40,16 @@ public class DomBuilder {
 			meta.attr("content", "text/html; charset=euc-kr");
 		}
 		
-//		System.out.println(html.toString());
+		System.out.println(html.toString());
 
 		for(int i = 0; i < product.length; i++) {
 			
 			Product p = product[i];
-			Element majorId = doc.select("#majorId").first();
-			majorId.text(p.getMajor());
+//			Element majorId = doc.select("#majorId").first();
+//			majorId.text(p.getMajor());
 			
-			Element minorId = doc.select("#minorId").first();
-			minorId.text(p.getMinor());
+//			Element minorId = doc.select("#minorId").first();
+//			minorId.text(p.getMinor());
 			
 			Element scope = doc.select("#scope").first();
 			
@@ -62,7 +62,7 @@ public class DomBuilder {
 			}
 			
 			Element productImage = sub.select("#productImage").first();
-//			productImage.attr("src", "data:image/*;base64,"+p.getImage());
+			productImage.attr("src", "data:image/*;base64,"+p.getImage());
 			productImage.attr("src", p.getImage());
 //			productImage.html("<p>lorem ipsum</p>");
 
@@ -74,6 +74,70 @@ public class DomBuilder {
 			
 			System.out.println(doc.html());
 		}
+		
+//		getBound(data);
+		save(DataManager.getInstance().getTempPath(), doc.html());
+	}
+	
+	public void build(Data data, Bound[] bound) throws ParserConfigurationException {
+
+		Document doc = Jsoup.parse(loadTemplate());
+		Document sub = Jsoup.parse(loadSubTemplate());
+//		Element body = html.createElement("body");
+
+		if(org.apache.commons.exec.OS.isFamilyWindows()) {
+			// replace encoding to euc-kr
+			Element meta = doc.select("meta").first();
+			meta.attr("content", "text/html; charset=euc-kr");
+		}
+		
+//		System.out.println(html.toString());
+		Element result = doc.select("#result").first();
+		if(data.getPrescription() != null) {
+			result.text(data.getPrescription());
+		}
+
+		Element majorId = doc.select("#majorId").first();
+		majorId.text(data.getMajor());
+		
+		for(int i = 0; i < bound.length; i++) {
+			
+			Bound b = bound[i];
+
+			log.info("@@@@@@@@@@@@@@@@@@@@ " + b.getMajor());
+			
+//			Product[] products_ = DataManager.getInstance().getProducts(b.getMajor(), null);
+			Product[] products_ = DataManager.getInstance().getProducts(b.getName(), null);
+			for(int j = 0; j < products_.length; j++) {
+				Product product = products_[j];
+				log.info("@@@@@@@@@@@  " + product.getName() + "num : " + products_.length);
+				Element intro = sub.select("#productDescription").first();
+				intro.html(replacePath(product.getDescription()));
+
+				Element products = doc.select("#products").first();
+				products.after(sub.html());
+			}
+			
+			Element minorId = doc.select("#minorId").first();
+//			minorId.text(p.getMinor());
+			
+			Element scope = doc.select("#scope").first();
+			
+			Element value = doc.select("#value").first();
+//			value.text("asdd");
+			
+
+			
+			Element productImage = sub.select("#productImage").first();
+//			productImage.attr("src", "data:image/*;base64,"+p.getImage());
+//			productImage.attr("src", p.getImage());
+//			productImage.html("<p>lorem ipsum</p>");
+
+			
+			System.out.println(doc.html());
+		}
+		
+//		getBound(data);
 		save(DataManager.getInstance().getTempPath(), doc.html());
 	}
 

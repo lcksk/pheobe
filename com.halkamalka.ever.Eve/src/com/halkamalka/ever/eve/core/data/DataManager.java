@@ -12,7 +12,6 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.lang.reflect.InvocationTargetException;
 import java.net.MalformedURLException;
-import java.net.URISyntaxException;
 import java.net.URL;
 import java.nio.charset.Charset;
 import java.nio.file.Files;
@@ -23,7 +22,9 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.Iterator;
+import java.util.Set;
 import java.util.logging.Logger;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
@@ -42,6 +43,7 @@ import com.halkamalka.util.WebsocketListener;
 import com.halkamalka.util.WebsocketManager;
 
 
+@SuppressWarnings("restriction")
 public class DataManager implements DataEventSource, WebsocketListener {
 	final private static Logger log = Logger.getLogger(DataManager.class.getName());
 	public static final int NUMOF_THREAD = 10;
@@ -157,15 +159,63 @@ public class DataManager implements DataEventSource, WebsocketListener {
 		return null;
 	}
 	
-	public void reload(String path) {
-		this.clear();
-		fireDataEvent(DataStatus.DATA_RESET, null);
-		
+	private static void extractZipTo(String in, Path tmp) throws IOException {
 		InputStream inputStream = null;
 		ZipInputStream zipInputStream = null;
 		ZipEntry entry = null;
 		ZipEntry entry0 = null;
 		
+		inputStream = new FileInputStream(in);
+		zipInputStream = new ZipInputStream(new BufferedInputStream(inputStream), Charset.forName("MS949"));
+
+		while ((entry = zipInputStream.getNextEntry()) != null) {
+			//TODO
+			if(entry0 == null) {
+				entry0 = entry;
+			}
+			log.info(entry.getName());
+
+			int size;
+			byte[] buffer = new byte[2048];
+			FileOutputStream outputStream =	new FileOutputStream(tmp.toString() + File.separator +  entry.getName());
+			BufferedOutputStream bufferedOutputStream = new BufferedOutputStream(outputStream, buffer.length);
+
+			while ((size = zipInputStream.read(buffer, 0, buffer.length)) != -1) {
+				bufferedOutputStream.write(buffer, 0, size);                
+			}
+			bufferedOutputStream.flush();
+			bufferedOutputStream.close();
+
+			//
+			if(entry.getName().endsWith("htm") || entry.getName().endsWith("html")) {
+//				viewContentProvider.add(tmp.toString(), entry.getName());
+				parse(tmp.toString(), entry.getName());
+			}
+		} // while
+		if(inputStream != null) {
+			try {
+				inputStream.close();
+			}
+			catch (IOException e) {
+				e.printStackTrace();
+			}
+		}
+		inputStream = null;
+		
+		if(zipInputStream != null) {
+			try {
+				zipInputStream.close();
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+		}
+		zipInputStream = null;
+	}
+	
+	public void reload(String path) {
+		clear();
+		fireDataEvent(DataStatus.DATA_RESET, null);
+
 		try {
 			if(tmp != null) {
 				deleteTempDirectory(tmp);
@@ -174,64 +224,16 @@ public class DataManager implements DataEventSource, WebsocketListener {
 			tmp = Files.createTempDirectory(null);
 			tmp.toFile().deleteOnExit();
 			
-			inputStream = new FileInputStream(path);
-			zipInputStream = new ZipInputStream(new BufferedInputStream(inputStream), Charset.forName("MS949"));
+			extractZipTo(path, tmp);
 
-			while ((entry = zipInputStream.getNextEntry()) != null) {
-				
-				//TODO
-				if(entry0 == null) {
-					entry0 = entry;
-				}
-				log.info(entry.getName());
-
-				int size;
-				byte[] buffer = new byte[2048];
-				FileOutputStream outputStream =	new FileOutputStream(tmp.toString() + File.separator +  entry.getName());
-				BufferedOutputStream bufferedOutputStream = new BufferedOutputStream(outputStream, buffer.length);
-
-				while ((size = zipInputStream.read(buffer, 0, buffer.length)) != -1) {
-					bufferedOutputStream.write(buffer, 0, size);                
-				}
-				bufferedOutputStream.flush();
-				bufferedOutputStream.close();
-
-				//
-				if(entry.getName().endsWith("htm") || entry.getName().endsWith("html")) {
-//					viewContentProvider.add(tmp.toString(), entry.getName());
-					parse(tmp.toString(), entry.getName());
-				}
-			} // while
-			
-			// DOM BUILD HERE
+			// additional DOM BUILD HERE
 			createHTML();
 			
 			fireDataEvent(DataStatus.DATA_LOAD_COMPLATED, null);
-
 		}
 		catch (IOException | IllegalArgumentException | SecurityException e) {
 			e.printStackTrace();
-		}
-		finally {
-			if(inputStream != null) {
-				try {
-					inputStream.close();
-				}
-				catch (IOException e) {
-					e.printStackTrace();
-				}
-			}
-			inputStream = null;
-			
-			if(zipInputStream != null) {
-				try {
-					zipInputStream.close();
-				} catch (IOException e) {
-					e.printStackTrace();
-				}
-			}
-			zipInputStream = null;
-		}
+		}		
 	}
 	
 	@Override
@@ -273,7 +275,7 @@ public class DataManager implements DataEventSource, WebsocketListener {
 		}
 	}
 
-	private void parse(String base, String name) {
+	private static void parse(String base, String name) {
 		String className = "com.halkamalka.ever.eve.core.data.Data" + name.substring(0, 2);
 		Class<?> cls;
 		try {
@@ -294,13 +296,13 @@ public class DataManager implements DataEventSource, WebsocketListener {
 			}
 		} 
 		catch (ClassNotFoundException | InstantiationException | IllegalAccessException |
-				IllegalArgumentException | InvocationTargetException | NoSuchMethodException | SecurityException
-				e) {
+				IllegalArgumentException | InvocationTargetException | NoSuchMethodException | SecurityException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		} 
 	}
 
+	@SuppressWarnings("unchecked")
 	public void joinEcho() {
 		if(client != null && client.isConnected()) {
 			JSONObject o = new JSONObject();
@@ -311,6 +313,7 @@ public class DataManager implements DataEventSource, WebsocketListener {
 		}
 	}
 	
+	@SuppressWarnings("unchecked")
 	public void leaveEcho() {
 		if(client != null && client.isConnected()) {
 			JSONObject o = new JSONObject();
@@ -321,6 +324,7 @@ public class DataManager implements DataEventSource, WebsocketListener {
 		}
 	}
 	
+	@SuppressWarnings("unchecked")
 	public void downloadImage() {
 		if(client != null && client.isConnected()) {
 			JSONObject o = new JSONObject();
@@ -356,12 +360,134 @@ public class DataManager implements DataEventSource, WebsocketListener {
 			e.printStackTrace();
 		}
 	}
+
+	private String resolveBoundQuery(String major, String minor, Integer status) {
+		String query;
+		if(major == null && minor == null) {
+			query = "SELECT * FROM bound;";
+		}
+		if(major != null && minor == null){
+			query = "SELECT * FROM bound WHERE major=" + "\"" + major + "\"" + ";";
+		}
+		else if(major != null && minor != null) {
+			query = "SELECT * FROM bound WHERE major=" + "\"" + major + "\"" + "minor=" + "\"" + minor + "\"" + ";";
+		}
+		else if(major != null && minor != null && status != null) {
+			query = "SELECT * FROM bound WHERE major=" + "\"" + major + "\"" + "minor=" + "\"" + minor + "\"" + "status=" + status.intValue() +  ";";
+		}
+		else {
+			query = "SELECT * FROM bound;";
+		}
+		return query;
+	}
+
+	public Bound[] getBounds() {
+		return getBounds(null, null, null);
+	}
+	
+	public Bound[] getBounds(String major) {
+		return getBounds(major, null, null);
+	}
+	
+	public Bound[] getBounds(String major, String minor) {
+		return getBounds(major, minor, null);
+	}
+	
+	public Bound[] getBounds(String major, String minor, Integer status) {
+		ArrayList<Bound> tmp = new ArrayList<Bound>();
+		Connection conn = null;
+		Statement stmt = null;
+		try {
+			Class.forName("org.sqlite.JDBC");
+			conn = DriverManager.getConnection("jdbc:sqlite:" + db);
+			log.info("path: " + db);
+			
+			stmt = conn.createStatement();
+			
+			String query = resolveBoundQuery(major, minor, status);
+			ResultSet r = stmt.executeQuery(query);
+
+			while (r.next() ) {
+				String  major0 = r.getString("major");
+				String  minor0 = r.getString("minor");
+				String name = r.getString("name");
+				int hash = r.getInt("hash");
+				Integer stat = null;
+				switch(r.getInt("status")) {
+				case -3:
+					stat = Data.LOWEST;
+					break;
+					
+				case -2:
+					stat = Data.LOWER;
+					break;
+					
+				case -1:
+					stat = Data.LOW;
+					break;
+					
+				case 0:
+					stat = Data.NORMAL;
+					break;
+					
+				case 1:
+					stat = Data.HIGH;
+					break;
+					
+				case 2:
+					stat = Data.HIGHER;
+					break;
+					
+				case 3:
+					stat = Data.HIGHEST;
+					break;
+				}
+				
+				Charset charset = null;
+				if(org.apache.commons.exec.OS.isFamilyWindows()) {
+					charset = Charset.forName("UTF-8");
+				}
+				else {
+					charset = Charset.defaultCharset();
+				}
+
+				Bound bound = new Bound(hash, name, major0, minor0, stat);
+				tmp.add(bound);
+			}
+			r.close();
+			stmt.close();
+			conn.close();
+		} 
+		catch (ClassNotFoundException | SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return tmp.toArray(new Bound[tmp.size()]);
+	}
 	
 	public Product[] getProducts() {
 		return getProducts(null, null);
 	}
 	
-	public Product[] getProducts(String major, String minor) {
+	private String resolveProductQuery(String name, Integer hash) {
+		String query = null;
+		
+		if(hash != null) {
+			query = "SELECT * FROM product WHERE hash=" +  hash.intValue()  + ";";
+			return query;
+		}
+		
+		if(name == null) {
+			query = "SELECT * FROM product;";
+		}
+		else {
+			query = "SELECT * FROM product WHERE name=" + "\"" + name + "\"" + ";";
+		}
+
+		return query;
+	}
+	
+	public Product[] getProducts(String productName, Integer nameHash) {
 		ArrayList<Product> tmp = new ArrayList<Product>();
 		Connection conn = null;
 		Statement stmt = null;
@@ -372,25 +498,13 @@ public class DataManager implements DataEventSource, WebsocketListener {
 			
 			stmt = conn.createStatement();
 			
-			String query = null;
-			if(major == null && minor == null) {
-				query = "SELECT * FROM product;";
-			}
-			if(major != null && minor == null){
-				query = "SELECT * FROM product WHERE major=" + "\"" + major + "\"" + ";";
-			}
-			else if(major != null && minor != null) {
-				query = "SELECT * FROM product WHERE major=" + "\"" + major + "\"" + "minor=" + "\"" + minor + "\"" + ";";
-			}
-			else {
-				query = "SELECT * FROM product;";
-			}
+			String query = resolveProductQuery(productName, nameHash);
 			
 			ResultSet r = stmt.executeQuery(query);
 
 			while (r.next() ) {
-				String  major0 = r.getString("major");
-				String  minor0 = r.getString("minor");
+				String name = r.getString("name");
+				int hash = r.getInt("hash");
 //				String  description = r.getString("description");
 				Charset charset = null;
 				if(org.apache.commons.exec.OS.isFamilyWindows()) {
@@ -401,7 +515,7 @@ public class DataManager implements DataEventSource, WebsocketListener {
 				}
 				@SuppressWarnings("restriction")
 				String description = new String(Base64.decode(r.getBytes("description")), charset);
-				String  image = r.getString("image");
+				String  image = r.getString("thumbnail");
 				
 				File file = new File(getTempPath().toString() + File.separator + image.hashCode());
 				OutputStream outputStream = null;
@@ -431,7 +545,7 @@ public class DataManager implements DataEventSource, WebsocketListener {
 			
 				image = file.getPath();
 				log.info("description : " + description);
-				Product product = new Product(major0, minor0, description, image);
+				Product product = new Product(hash, name, description, image);
 				tmp.add(product);
 			}
 			r.close();
@@ -442,24 +556,51 @@ public class DataManager implements DataEventSource, WebsocketListener {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		return (Product[]) tmp.toArray(new Product[tmp.size()]);
+		return tmp.toArray(new Product[tmp.size()]);
 	}
 	
+//	private void createHTML() {
+//		ArrayList<Data> lst = getData();
+//		for(Iterator<Data> it = lst.iterator(); it.hasNext(); ) {
+//			Data data = it.next();
+//			if(data.hasAbnormal()) { // TODO
+//				// build page
+//				Product[] product = getProducts(null/*TODO*/, null /*TODO*/);
+//				for(int i = 0; i < product.length; i++) {
+////					log.info(product[i].getImage());
+//				}
+//		
+//				String url = data.getName().substring(0, data.getName().indexOf(".htm")) + "_pres.htm";
+//				DomBuilder dom = new DomBuilder(url);
+//				try {
+//					dom.build(data, product);
+//				} 
+//				catch (ParserConfigurationException e) {
+//					// TODO Auto-generated catch block
+//					e.printStackTrace();
+//				}
+//			}
+//		}
+//	}
+
 	private void createHTML() {
 		ArrayList<Data> lst = getData();
 		for(Iterator<Data> it = lst.iterator(); it.hasNext(); ) {
 			Data data = it.next();
 			if(data.hasAbnormal()) { // TODO
 				// build page
-				Product[] product = getProducts(null/*TODO*/, null /*TODO*/);
-				for(int i = 0; i < product.length; i++) {
-//					log.info(product[i].getImage());
-				}
-		
+				
 				String url = data.getName().substring(0, data.getName().indexOf(".htm")) + "_pres.htm";
 				DomBuilder dom = new DomBuilder(url);
 				try {
-					dom.build(data, product);
+					log.info("" + data.getMajor());
+					DataItem item = data.get(data.getName());
+					if(item != null) {
+						log.info("" + item.getName());
+					}
+//					Bound[] bound = getBounds(data.getMajor(), data.get(data.getName()).getName());
+					Bound[] bound = getBounds(data.getMajor());
+					dom.build(data, bound);
 				} 
 				catch (ParserConfigurationException e) {
 					// TODO Auto-generated catch block
@@ -468,21 +609,21 @@ public class DataManager implements DataEventSource, WebsocketListener {
 			}
 		}
 	}
-
+	
 	@Override
 	public void onMessage(JSONObject o) {
     	String method = (String) o.get("event");
     	log.info(method);
     	if(method.equals("product::download_images")) {
-    		String data = (String) o.get("data");
-//    		data = new String(Base64.decode(data.getBytes()));
+    		String data = (String) o.get("data"); 
     		File base = new File(PreferenceConstants.P_EVE_HOME);
     		
     		log.info("base dir : " + base.toString());
-    		extractGZip(Base64.decode(data.getBytes()), base);
+    		extractGZipTo(Base64.decode(data.getBytes()), base);
     	}
     	else if(method.equals("echo::broadcast")) {
     		// TODO : Something has been changed in the server side.
+    		log.info(method);
     	}
 	}
 
@@ -500,7 +641,7 @@ public class DataManager implements DataEventSource, WebsocketListener {
 		leaveEcho();
 	}
 	
-	private void extractGZip(byte[] data, File base) {
+	private void extractGZipTo(byte[] data, File base) {
 		TarArchiveInputStream in = null;
 			OutputStream out = null;
 		try {

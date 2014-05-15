@@ -25,7 +25,7 @@ public class ListProductHandler extends AbstractHandler {
 				for(int i = 0; i < product.length; i++) {
 					System.out.println(product[i].getDescription());
 					monitor.worked(100/product.length);
-					monitor.subTask(product[i].getMajor());
+//					monitor.subTask(product[i].getMajor());
 					try {
 						Thread.sleep(100);
 					} catch (InterruptedException e) {

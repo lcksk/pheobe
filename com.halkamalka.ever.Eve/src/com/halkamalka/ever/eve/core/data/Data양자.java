@@ -17,6 +17,10 @@ public class Data양자 extends Data{
 		super(name, path);
 	}
 
+	public String getMajor() {
+		return getName();
+	}
+	
 	@Override
 	public void parse() throws Exception {
 		
