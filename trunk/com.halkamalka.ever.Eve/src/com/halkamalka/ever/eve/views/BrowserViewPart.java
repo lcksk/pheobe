@@ -25,6 +25,9 @@ public class BrowserViewPart extends ViewPart {
 		else {
 			browser = new Browser(parent, SWT.WEBKIT);
 		}
+		if(!browser.getJavascriptEnabled()) 
+			browser.setJavascriptEnabled(true);
+		
 //		browser.setUrl("http://www.google.com");
 	}
 
