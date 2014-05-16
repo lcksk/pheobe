@@ -8,8 +8,7 @@ import org.eclipse.ui.part.ViewPart;
 public class BrowserViewPart extends ViewPart {
 
 	public static final String ID = "com.halkamalka.ever.eve.views.BrowserViewPart";
-//	private static final String OS = System.getProperty("os.name").toLowerCase();
-	
+
 	private Browser browser = null;
 	
 	public BrowserViewPart() {
@@ -44,8 +43,4 @@ public class BrowserViewPart extends ViewPart {
 	public void setTitleLabel(String title) {
 		setPartName(title);
 	}
-	
-//	public static boolean isWindows() {
-//		return (OS.indexOf("win") >= 0);
-//	}
 }
