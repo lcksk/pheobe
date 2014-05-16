@@ -165,14 +165,12 @@ public class DataManager implements DataEventSource, WebsocketListener {
 		return null;
 	}
 	
-	private static void extractZipTo(String in, Path tmp) throws IOException {
-		InputStream inputStream = null;
+	private static void extractZipTo(InputStream inputStream, Path tmp, Charset charset) throws IOException {
 		ZipInputStream zipInputStream = null;
 		ZipEntry entry = null;
 		ZipEntry entry0 = null;
-		
-		inputStream = new FileInputStream(in);
-		zipInputStream = new ZipInputStream(new BufferedInputStream(inputStream), Charset.forName("MS949"));
+
+		zipInputStream = new ZipInputStream(new BufferedInputStream(inputStream), charset);
 
 		while ((entry = zipInputStream.getNextEntry()) != null) {
 			//TODO
@@ -198,16 +196,7 @@ public class DataManager implements DataEventSource, WebsocketListener {
 				parse(tmp.toString(), entry.getName());
 			}
 		} // while
-		if(inputStream != null) {
-			try {
-				inputStream.close();
-			}
-			catch (IOException e) {
-				e.printStackTrace();
-			}
-		}
-		inputStream = null;
-		
+
 		if(zipInputStream != null) {
 			try {
 				zipInputStream.close();
@@ -216,6 +205,19 @@ public class DataManager implements DataEventSource, WebsocketListener {
 			}
 		}
 		zipInputStream = null;
+	}
+	
+	private static void extractZipTo(String in, Path tmp, Charset charset) throws IOException {
+		InputStream inputStream = new FileInputStream(in);
+		extractZipTo(inputStream, tmp, charset);
+		if(inputStream != null) {
+			inputStream.close();
+			inputStream = null;
+		}
+	}
+	
+	private void extractQuantumContents(String path) throws IOException {
+		extractZipTo(path, tmp, Charset.forName("MS949"));
 	}
 	
 	public void reload(String path) {
@@ -230,8 +232,8 @@ public class DataManager implements DataEventSource, WebsocketListener {
 			tmp = Files.createTempDirectory(null);
 			tmp.toFile().deleteOnExit();
 			
-			extractZipTo(path, tmp);
-
+			extractQuantumContents(path);
+	
 			// additional DOM BUILD HERE
 			createHtmlFile();
 			
