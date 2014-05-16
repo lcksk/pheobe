@@ -96,8 +96,8 @@ public class DomBuilder {
 			result.text(data.getPrescription());
 		}
 
-		Element majorId = doc.select("#majorId").first();
-		majorId.text(data.getName());
+		Element major = doc.select("#major").first();
+		major.text(data.getName());
 		
 		for(int i = 0; i < bound.length; i++) {
 			Bound b = bound[i];
@@ -112,7 +112,13 @@ public class DomBuilder {
 				Element intro = sub.select("#productDescription").first();
 				intro.html(replacePath(p.getDescription()));
 
-				Element $products = doc.select("#products").first();
+				
+				
+//				Element $products = doc.select("#products").first();
+				Element $products = doc.select("#wrapper").first();
+				
+				Element productName = sub.select("#productName").first();
+				productName.html(p.getName());
 				
 				Element productImage = sub.select("#productImage").first();
 //				productImage.attr("src", "data:image/*;base64,"+ product.getImage());
@@ -121,12 +127,12 @@ public class DomBuilder {
 				$products.after(sub.html());
 			}
 			
-			Element minorId = doc.select("#minorId").first();
+//			Element minorId = doc.select("#minorId").first();
 //			minorId.text(p.getMinor());
 			
-			Element scope = doc.select("#scope").first();
+//			Element scope = doc.select("#scope").first();
 			
-			Element value = doc.select("#value").first();
+//			Element value = doc.select("#value").first();
 //			value.text("asdd");
 			
 
