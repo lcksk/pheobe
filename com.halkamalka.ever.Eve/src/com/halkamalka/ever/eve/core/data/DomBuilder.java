@@ -84,15 +84,13 @@ public class DomBuilder {
 
 		Document doc = Jsoup.parse(loadTemplate());
 		Document sub = Jsoup.parse(loadSubTemplate());
-//		Element body = html.createElement("body");
 
 		if(org.apache.commons.exec.OS.isFamilyWindows()) {
 			// replace encoding to euc-kr
 			Element meta = doc.select("meta").first();
 			meta.attr("content", "text/html; charset=euc-kr");
 		}
-		
-//		System.out.println(html.toString());
+
 		Element result = doc.select("#result").first();
 		if(data.getPrescription() != null) {
 			result.text(data.getPrescription());
@@ -102,21 +100,25 @@ public class DomBuilder {
 		majorId.text(data.getName());
 		
 		for(int i = 0; i < bound.length; i++) {
-			
 			Bound b = bound[i];
 
 			log.info("@@@@@@@@@@@@@@@@@@@@ " + b.getMajor());
 			
 //			Product[] products_ = DataManager.getInstance().getProducts(b.getMajor(), null);
-			Product[] products_ = DataManager.getInstance().getProducts(b.getName(), null);
-			for(int j = 0; j < products_.length; j++) {
-				Product product = products_[j];
-				log.info("@@@@@@@@@@@  " + product.getName() + "num : " + products_.length);
+			Product[] products = DataManager.getInstance().getProducts(b.getName(), null);
+			for(int j = 0; j < products.length; j++) {
+				Product p = products[j];
+				log.info("@@@@@@@@@@@  " + p.getName() + "num : " + products.length);
 				Element intro = sub.select("#productDescription").first();
-				intro.html(replacePath(product.getDescription()));
+				intro.html(replacePath(p.getDescription()));
 
-				Element products = doc.select("#products").first();
-				products.after(sub.html());
+				Element $products = doc.select("#products").first();
+				
+				Element productImage = sub.select("#productImage").first();
+//				productImage.attr("src", "data:image/*;base64,"+ product.getImage());
+				productImage.attr("src", p.getImage());
+				
+				$products.after(sub.html());
 			}
 			
 			Element minorId = doc.select("#minorId").first();
@@ -129,8 +131,7 @@ public class DomBuilder {
 			
 
 			
-			Element productImage = sub.select("#productImage").first();
-//			productImage.attr("src", "data:image/*;base64,"+p.getImage());
+
 //			productImage.attr("src", p.getImage());
 //			productImage.html("<p>lorem ipsum</p>");
 
