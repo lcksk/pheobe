@@ -519,8 +519,8 @@ public class DataManager implements DataEventSource, WebsocketListener {
 					charset = Charset.defaultCharset();
 				}
 				@SuppressWarnings("restriction")
-//				String description = new String(Base64.decode(r.getBytes("description")), charset);
-				String description = new String(Base64.decode(r.getString("description").getBytes()));
+				String description = new String(Base64.decode(r.getBytes("description")), charset);
+//				String description = new String(Base64.decode(r.getString("description").getBytes()));
 				String  image = r.getString("thumbnail");
 				
 				File file = new File(getTempPath().toString() + File.separator + image.hashCode());
