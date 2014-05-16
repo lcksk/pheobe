@@ -207,39 +207,23 @@ public class DomBuilder {
 	}
 	
 	private void batchJQuery(Path tmp) {
-//		InputStream in = getClass().getResourceAsStream("/res/jQuery.zip"); // TODO
-//		OutputStream out = null;
-//		try {
-//			byte[] b = new byte[in.available()];
-//			in.read(b);
-//			out = new FileOutputStream(tmp.toString() + File.separator + "..."); // TODO
-//			out.write(b);
-//			out.flush();
-//		} 
-//		catch (IOException e) {
-//			// TODO Auto-generated catch block
-//			e.printStackTrace();
-//		}
-//		finally {
-//			if(in != null) {
-//				try {
-//					in.close();
-//				} catch (IOException e) {
-//					// TODO Auto-generated catch block
-//					e.printStackTrace();
-//				}
-//				in = null;
-//			}
-//			
-//			if(out != null) {
-//				try {
-//					out.close();
-//				} catch (IOException e) {
-//					// TODO Auto-generated catch block
-//					e.printStackTrace();
-//				}
-//				out = null;
-//			}
-//		}
+		InputStream in = getClass().getResourceAsStream("/res/js.zip"); // TODO
+		try {
+			DataManager.extractZipTo(in, tmp, StandardCharsets.UTF_8);
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		finally {
+			if(in != null) {
+				try {
+					in.close();
+				} catch (IOException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+				in = null;
+			}
+		}
 	}
 }
