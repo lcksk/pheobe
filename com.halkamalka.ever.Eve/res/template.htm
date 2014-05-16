@@ -1,22 +1,49 @@
 <html>
 	<head>
 		<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
-		<title>ccc</title>
+		<title>template</title>
+		<script type="text/javascript">
+		
+			function applyDomBuild() {
+				
+				var product = document.getElementsByClassName("product");
+				
+				for(var i=0; i<product.length; i++) {
+					var currentProduct = product[i];
+					currentProduct.addEventListener('click', function(e) {
+						console.log(e);
+						var description = e.target.parentElement.children[2];
+						if(description.style.display == "none") {
+							description.style.display = "block";
+						} else {
+							description.style.display = "none";
+						}
+					}, false);
+					
+					
+			//			e.target.parentElement.style.display = "none";
+			//		}, false);
+				}
+			}
+		
+		</script>
 	</head>
-	<body>
-		<div class="wrapper">
-			<div class="header">
-				<div id="majorId"></div>
-				<div id="minorId"></div>
-				<div id="scope"></div>
-				<div id="value"></div>
-				<div id="result"></div>
-			</div>
-			<div id="products">
-				<img id="productImage" src="">
-				<div id="productDescription"></div>
-			</div>
-			<div class="footer"></div>
+	<body onload="applyDomBuild()">
+		<div id="wrapper" style="margin:0 auto;">
+			<table border="1" cellpadding="1" cellspacing="1" style="width:80%">
+				<tbody>
+					<tr>
+						<td id="major" colspan="2" style="text-align:center; width:100%"></td>
+					</tr>
+					<tr>
+						<td style="text-align:center; width:20%">전문가 제안</td>
+						<td id="result" style="width:80%"></td>
+					</tr>
+				</tbody>
+			</table>
+			
+			<!-- new product -->
+			
 		</div>
 	</body>
 </html>
