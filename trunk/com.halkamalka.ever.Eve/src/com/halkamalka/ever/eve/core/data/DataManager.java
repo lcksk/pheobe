@@ -660,7 +660,7 @@ public class DataManager implements DataEventSource, WebsocketListener {
 		leaveEcho();
 	}
 	
-	private void extractGZipTo(byte[] data, File base) {
+	public static void extractGZipTo(byte[] data, File base) {
 		TarArchiveInputStream in = null;
 			OutputStream out = null;
 		try {
