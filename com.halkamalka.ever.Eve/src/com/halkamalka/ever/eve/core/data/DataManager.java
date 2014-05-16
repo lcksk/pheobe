@@ -9,9 +9,11 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.io.UnsupportedEncodingException;
 import java.lang.reflect.InvocationTargetException;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.net.URLDecoder;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
@@ -521,7 +523,15 @@ public class DataManager implements DataEventSource, WebsocketListener {
 				}
 				@SuppressWarnings("restriction")
 				String description = new String(Base64.decode(r.getBytes("description")), charset);
-//				String description = new String(Base64.decode(r.getString("description").getBytes()));
+				if(org.apache.commons.exec.OS.isFamilyWindows()) {
+					try {
+						description = URLDecoder.decode(description, charset.name());
+					} catch (UnsupportedEncodingException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+				}
+
 				String  image = r.getString("thumbnail");
 				
 				File file = new File(getTempPath().toString() + File.separator + image.hashCode());
