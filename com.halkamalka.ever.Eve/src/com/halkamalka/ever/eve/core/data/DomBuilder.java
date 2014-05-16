@@ -207,12 +207,15 @@ public class DomBuilder {
 	}
 	
 	private void batchJQuery(Path tmp) {
-		InputStream in = getClass().getResourceAsStream("/res/js.zip"); // TODO
+		InputStream in = getClass().getResourceAsStream("/res/jslib.tar.gz"); // TODO
+
 		try {
-			DataManager.extractZipTo(in, tmp, StandardCharsets.UTF_8);
-		} catch (IOException e) {
+			byte[] b = new byte[in.available()];
+			in.read(b);
+			DataManager.extractGZipTo(b, tmp.toFile());
+		} catch (IOException e1) {
 			// TODO Auto-generated catch block
-			e.printStackTrace();
+			e1.printStackTrace();
 		}
 		finally {
 			if(in != null) {
