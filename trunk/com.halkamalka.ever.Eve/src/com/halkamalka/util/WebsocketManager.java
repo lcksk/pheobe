@@ -136,14 +136,17 @@ public class WebsocketManager {
     public void send(JSONObject o) {
     	try {
     		log.info(o.toString());
-			this.session.getRemote().sendString(o.toString());
+    		if(this.session != null) {
+    			this.session.getRemote().sendString(o.toString());
+    		}
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
     }
     
-    public void test_send() {
+    @SuppressWarnings("unchecked")
+	public void test_send() {
     	JSONObject o = new JSONObject();
 //    	{"jsonrpc":"2.0","method":"merchant_check","params":{"hostID":150999,"orderID":107,"amount":"7777","currency":"051","mid":15001038,"tid":15531038,"mtpass":"12345","trxnDetails":""},"id":107}
     	o.put("jsonrpc", "2.0");
