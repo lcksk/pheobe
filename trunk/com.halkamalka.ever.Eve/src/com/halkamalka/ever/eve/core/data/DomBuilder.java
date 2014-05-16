@@ -28,8 +28,9 @@ public class DomBuilder {
 		this.name = name;
 	}
 	
+	
+	@Deprecated
 	public void build(Data data, Product[] product) throws ParserConfigurationException {
-
 		Document doc = Jsoup.parse(loadTemplate());
 		Document sub = Jsoup.parse(loadSubTemplate());
 //		Element body = html.createElement("body");
@@ -76,6 +77,7 @@ public class DomBuilder {
 		}
 		
 //		getBound(data);
+		batchJQuery(DataManager.getInstance().getTempPath());
 		save(DataManager.getInstance().getTempPath(), doc.html());
 	}
 	
@@ -138,6 +140,7 @@ public class DomBuilder {
 		}
 		
 //		getBound(data);
+		batchJQuery(DataManager.getInstance().getTempPath()); // TODO
 		save(DataManager.getInstance().getTempPath(), doc.html());
 	}
 
@@ -201,5 +204,42 @@ public class DomBuilder {
 			}
 			outputStream = null;
 		}
+	}
+	
+	private void batchJQuery(Path tmp) {
+//		InputStream in = getClass().getResourceAsStream("/res/jQuery.zip"); // TODO
+//		OutputStream out = null;
+//		try {
+//			byte[] b = new byte[in.available()];
+//			in.read(b);
+//			out = new FileOutputStream(tmp.toString() + File.separator + "..."); // TODO
+//			out.write(b);
+//			out.flush();
+//		} 
+//		catch (IOException e) {
+//			// TODO Auto-generated catch block
+//			e.printStackTrace();
+//		}
+//		finally {
+//			if(in != null) {
+//				try {
+//					in.close();
+//				} catch (IOException e) {
+//					// TODO Auto-generated catch block
+//					e.printStackTrace();
+//				}
+//				in = null;
+//			}
+//			
+//			if(out != null) {
+//				try {
+//					out.close();
+//				} catch (IOException e) {
+//					// TODO Auto-generated catch block
+//					e.printStackTrace();
+//				}
+//				out = null;
+//			}
+//		}
 	}
 }
