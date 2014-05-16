@@ -514,8 +514,7 @@ public class DataManager implements DataEventSource, WebsocketListener {
 //				String  description = r.getString("description");
 				Charset charset = null;
 				if(org.apache.commons.exec.OS.isFamilyWindows()) {
-//					charset = Charset.forName("UTF-8");
-					charset = StandardCharsets.ISO_8859_1;
+					charset = StandardCharsets.UTF_8;
 				}
 				else {
 					charset = Charset.defaultCharset();
