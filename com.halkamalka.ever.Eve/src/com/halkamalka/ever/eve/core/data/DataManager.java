@@ -34,6 +34,7 @@ import org.apache.commons.compress.compressors.gzip.GzipCompressorInputStream;
 import org.eclipse.core.internal.preferences.Base64;
 import org.eclipse.jetty.websocket.api.Session;
 import org.json.simple.JSONObject;
+import org.sqlite.SQLiteConfig;
 
 import com.halkamalka.ever.eve.preferences.PreferenceConstants;
 import com.halkamalka.util.WebsocketListener;
@@ -495,6 +496,8 @@ public class DataManager implements DataEventSource, WebsocketListener {
 		Statement stmt = null;
 		try {
 			Class.forName("org.sqlite.JDBC");
+			SQLiteConfig config = new SQLiteConfig();
+			config.setEncoding(SQLiteConfig.Encoding.UTF8);
 			conn = DriverManager.getConnection("jdbc:sqlite:" + db);
 			log.info("path: " + db);
 			
