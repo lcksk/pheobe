@@ -13,6 +13,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.sql.Connection;
@@ -448,7 +449,7 @@ public class DataManager implements DataEventSource, WebsocketListener {
 				
 				Charset charset = null;
 				if(org.apache.commons.exec.OS.isFamilyWindows()) {
-					charset = Charset.forName("UTF-8");
+					charset = StandardCharsets.UTF_8;
 				}
 				else {
 					charset = Charset.defaultCharset();
@@ -513,7 +514,8 @@ public class DataManager implements DataEventSource, WebsocketListener {
 //				String  description = r.getString("description");
 				Charset charset = null;
 				if(org.apache.commons.exec.OS.isFamilyWindows()) {
-					charset = Charset.forName("UTF-8");
+//					charset = Charset.forName("UTF-8");
+					charset = StandardCharsets.ISO_8859_1;
 				}
 				else {
 					charset = Charset.defaultCharset();
