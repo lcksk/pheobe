@@ -3,27 +3,31 @@
 
 <product name="eve" uid="com.halkamalka.ever.Eve.product" id="com.halkamalka.ever.Eve.product" application="com.halkamalka.ever.Eve.application" useFeatures="false" includeLaunchers="true">
 
+
    <configIni use="default">
    </configIni>
 
    <launcherArgs>
-      <programArgs>-consoleLog</programArgs>
       <vmArgs>-Dosgi.requiredJavaVersion=1.6 -XX:MaxPermSize=256m -Xms40m -Xmx512m</vmArgs>
       <vmArgsMac>-XstartOnFirstThread -Dorg.eclipse.swt.internal.carbon.smallFonts</vmArgsMac>
    </launcherArgs>
 
+   <windowImages/>
 
-   <launcher>
+
+   <launcher name="eve">
       <solaris/>
       <win useIco="false">
          <bmp/>
       </win>
    </launcher>
 
+
    <vm>
       <linux include="true">org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JRE-1.1</linux>
       <windows include="true">org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JRE-1.1</windows>
    </vm>
+
 
    <plugins>
       <plugin id="com.halkamalka.ever.Eve"/>
@@ -43,7 +47,7 @@
       <plugin id="org.eclipse.core.databinding.property"/>
       <plugin id="org.eclipse.core.expressions"/>
       <plugin id="org.eclipse.core.filesystem"/>
-      <plugin id="org.eclipse.core.filesystem.linux.x86_64" fragment="true"/>
+      <plugin id="org.eclipse.core.filesystem.win32.x86" fragment="true"/>
       <plugin id="org.eclipse.core.jobs"/>
       <plugin id="org.eclipse.core.resources"/>
       <plugin id="org.eclipse.core.runtime"/>
@@ -86,7 +90,7 @@
       <plugin id="org.eclipse.osgi"/>
       <plugin id="org.eclipse.osgi.services"/>
       <plugin id="org.eclipse.swt"/>
-      <plugin id="org.eclipse.swt.gtk.linux.x86_64" fragment="true"/>
+      <plugin id="org.eclipse.swt.win32.win32.x86" fragment="true"/>
       <plugin id="org.eclipse.ui"/>
       <plugin id="org.eclipse.ui.workbench"/>
       <plugin id="org.w3c.css.sac"/>
