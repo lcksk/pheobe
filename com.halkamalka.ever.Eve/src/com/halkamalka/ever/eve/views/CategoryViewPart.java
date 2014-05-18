@@ -59,7 +59,11 @@ public class CategoryViewPart extends ViewPart implements DataEventListener, Dro
 
 	@Override
 	public void createPartControl(Composite parent) {
-		if(!DataManager.getInstance().dbExists()) {
+
+		// connect to websocket server
+		connectCommand();
+		
+		if(!DataManager.getInstance().dbExists() /* has newer */ ) {
 			if( WebsocketManager.getInstance().isConnected()) {
 				updateDBCommand();
 			}
@@ -501,6 +505,15 @@ public class CategoryViewPart extends ViewPart implements DataEventListener, Dro
 		} 
 	}
 
+	private void connectCommand() {
+		IHandlerService handlerService = (IHandlerService) getSite().getService(IHandlerService.class);
+		try {
+			handlerService.executeCommand("com.halkamalka.ever.Eve.commands.connectCommand", null);
+		} 
+		catch (ExecutionException | NotDefinedException | NotEnabledException | NotHandledException e) {
+			e.printStackTrace();
+		} 
+	}
 
 	@Override
 	public void dataLoadCompleted() {
