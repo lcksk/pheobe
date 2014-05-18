@@ -1,14 +1,20 @@
 package com.halkamalka.ever.eve.views;
 
+import java.io.File;
+import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.logging.Logger;
 
+import org.apache.commons.io.FileUtils;
 import org.eclipse.core.commands.ExecutionException;
 import org.eclipse.core.commands.NotEnabledException;
 import org.eclipse.core.commands.NotHandledException;
 import org.eclipse.core.commands.common.NotDefinedException;
+import org.eclipse.core.internal.preferences.Base64;
 import org.eclipse.core.runtime.IAdaptable;
+import org.eclipse.jetty.websocket.api.Session;
 import org.eclipse.jface.viewers.DoubleClickEvent;
 import org.eclipse.jface.viewers.IDoubleClickListener;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
@@ -35,6 +41,7 @@ import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.handlers.IHandlerService;
 import org.eclipse.ui.part.ViewPart;
+import org.json.simple.JSONObject;
 
 import com.halkamalka.ever.eve.core.data.Data;
 import com.halkamalka.ever.eve.core.data.DataEventListener;
@@ -42,9 +49,10 @@ import com.halkamalka.ever.eve.core.data.DataEventObject;
 import com.halkamalka.ever.eve.core.data.DataItem;
 import com.halkamalka.ever.eve.core.data.DataManager;
 import com.halkamalka.util.CustomSharedImage;
+import com.halkamalka.util.WebsocketListener;
 import com.halkamalka.util.WebsocketManager;
 
-public class CategoryViewPart extends ViewPart implements DataEventListener, DropTargetListener {
+public class CategoryViewPart extends ViewPart implements DataEventListener, DropTargetListener, WebsocketListener {
 
 	public static final String ID = "com.halkamalka.ever.eve.views.CategoryViewPart";
 	private TreeViewer viewer;
@@ -54,6 +62,7 @@ public class CategoryViewPart extends ViewPart implements DataEventListener, Dro
 	
 	public CategoryViewPart() {
 		DataManager.getInstance().addDataEventListener(this);
+		WebsocketManager.getInstance().addWebsocketListener(this);
 	}
 
 
@@ -62,15 +71,7 @@ public class CategoryViewPart extends ViewPart implements DataEventListener, Dro
 
 		// connect to websocket server
 		connectCommand();
-		
-		if(!DataManager.getInstance().dbExists() /* has newer */ ) {
-			if( WebsocketManager.getInstance().isConnected()) {
-				updateDBCommand();
-			}
-			else {
-				// TODO
-			}
-		}
+
 		viewer = new TreeViewer(parent, SWT.MULTI | SWT.H_SCROLL | SWT.V_SCROLL);
 		viewContentProvider = new ViewContentProvider();
 		viewer.setContentProvider(viewContentProvider);
@@ -545,4 +546,53 @@ public class CategoryViewPart extends ViewPart implements DataEventListener, Dro
 			}
 		});
 	}
+
+
+	@SuppressWarnings("restriction")
+	private String getLocalDBHash() {
+		byte[] sha1 = null;
+		try {
+			sha1 = Base64.encode(org.apache.commons.codec.digest.DigestUtils.sha1(FileUtils.readFileToByteArray(new File(DataManager.getDBPath()))));
+		} 
+		catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return new String(sha1);
+	}
+
+	@Override
+	public void onMessage(JSONObject o) {
+		// TODO Auto-generated method stub
+    	String method = (String) o.get("event");
+    	log.info(method);
+    	if(method.equals("product::db_ver")) {
+    		String remote = (String) o.get("db_ver"); 
+//    		log.info("base dir : " + base.toString());
+    		log.info(remote);
+    		log.info(getLocalDBHash());
+    		if(remote.compareTo(getLocalDBHash()) != 0) {
+    			updateDBCommand();
+    		}
+    	}
+	}
+
+
+	@Override
+	public void onConnect(Session session) {
+		log.info("");
+		if(!DataManager.getInstance().dbExists()) {
+			updateDBCommand();
+		}
+		
+		DataManager.getInstance().requestDBVer();
+	}
+
+
+	@Override
+	public void onClose(Session session) {
+		// TODO Auto-generated method stub
+		
+	}
+	
 }
