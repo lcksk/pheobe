@@ -29,7 +29,7 @@
       <view
             class="com.halkamalka.ever.eve.views.CategoryViewPart"
             id="com.halkamalka.ever.eve.views.CategoryViewPart"
-            name="시험결과"
+            name="Analysis"
             restorable="true">
       </view>
    </extension>
@@ -113,16 +113,6 @@
       </menuContribution>
       <menuContribution
             locationURI="menu:org.eclipse.ui.main.menu?after=additions">
-         <menu
-               id="com.halkamalka.ever.Eve.menus.sampleMenu"
-               label="Sample Menu"
-               mnemonic="M">
-            <command
-                  commandId="com.halkamalka.ever.Eve.commands.sampleCommand"
-                  id="com.halkamalka.ever.Eve.menus.sampleCommand"
-                  mnemonic="S">
-            </command>
-         </menu>
       </menuContribution>
       <menuContribution
             locationURI="toolbar:org.eclipse.ui.main.toolbar?after=additions">
