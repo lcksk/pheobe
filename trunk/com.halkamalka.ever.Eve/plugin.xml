@@ -24,7 +24,7 @@
       <view
             class="com.halkamalka.ever.eve.views.BrowserViewPart"
             id="com.halkamalka.ever.eve.views.BrowserViewPart"
-            name="Browser View">
+            name="Browser">
       </view>
       <view
             class="com.halkamalka.ever.eve.views.CategoryViewPart"
