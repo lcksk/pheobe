@@ -227,5 +227,17 @@
             class="com.halkamalka.ever.eve.preferences.PreferenceInitializer">
       </initializer>
    </extension>
+   <extension
+         id="product"
+         point="org.eclipse.core.runtime.products">
+      <product
+            application="com.halkamalka.ever.Eve.application"
+            name="eve">
+         <property
+               name="appName"
+               value="eve">
+         </property>
+      </product>
+   </extension>
 
 </plugin>
