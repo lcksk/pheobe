@@ -95,7 +95,12 @@ public class DataManager implements DataEventSource, WebsocketListener {
 			File actual = path.toFile();
 			for(File f : actual.listFiles()) {
 				log.info(f.getName());
-				f.delete();
+				if(f.isDirectory()) {
+					deleteTempDirectory(f.toPath());
+				}
+				else {
+					f.delete();
+				}
 			}
 			Files.deleteIfExists(path);
 		}
