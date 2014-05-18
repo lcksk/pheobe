@@ -90,6 +90,10 @@ public class DataManager implements DataEventSource, WebsocketListener {
 //		}).start();
 	}
 
+	public static String getDBPath() {
+		return db;
+	}
+	
 	static private void deleteTempDirectory(Path path) throws IOException{
 		if(path != null) {
 			File actual = path.toFile();
@@ -315,6 +319,18 @@ public class DataManager implements DataEventSource, WebsocketListener {
 		} 
 	}
 
+	
+	@SuppressWarnings("unchecked")
+	public void requestDBVer() {
+		if(client != null && client.isConnected()) {
+			JSONObject o = new JSONObject();
+			o.put("jsonrpc", "2.0");
+			o.put("method", "product::db_ver");
+			o.put("id", "10");
+			client.send(o);
+		}
+	}
+	
 	@SuppressWarnings("unchecked")
 	public void joinEcho() {
 		if(client != null && client.isConnected()) {
