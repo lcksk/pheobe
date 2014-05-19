@@ -2,11 +2,13 @@
 	<head>
 		<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
 		<title>template</title>
+		<script type="text/javascript" src="js/jquery-2.1.0.min.js"></script>
 		<script type="text/javascript">
 		
 			function applyDomBuild() {
 				
-				var product = document.getElementsByClassName("productFold");
+			//	var product = document.getElementsByClassName("productFold");
+				var product = $(".productFold");
 				
 				for(var i=0; i<product.length; i++) {
 					var currentProduct = product[i];
@@ -26,15 +28,15 @@
 	</head>
 	<body onload="applyDomBuild()">
 		<div id="wrapper" style=" text-align:center; width: 100%; left: 10%; position: relative">
-			<table border="1px" style="width:100%; border-collapse: collapse; border: 1px gray solid;">
+			<table border="1px" style="width:100%; border-collapse: collapse; border: 1px gray solid; background-color: lightgray">
 				<tbody>
 					<tr>
-						<td colspan="3" style="background-color: lightgreen; text-align:center; width:100%; height:50px;">측정 결과</td>
+						<td colspan="3" style="background-color: yellow; text-align:center; width:100%; height:50px;">측정 결과</td>
 					</tr>
 					<tr>
 						<td id="major" rowspan="3" style="text-align:center; width:20%"></td>
 						<td id="minor" style="width:20%; text-align:center; padding:20px;"></td>
-						<td colspan="3" style="text-align:center; width:60%"><img id="degree" alt="" src="" style="height:50px; width:70%;"/></td>
+						<td colspan="3" style="text-align:center; width:60%"><img id="degree" alt="" src="" style="height:7%; width:55%;"/></td>
 					</tr>
 					<!-- if when add minor, degree -->
 					<!-- 
@@ -50,10 +52,10 @@
 				</tbody>
 			</table>
 			<div id="subContainer" style="position: relative; left:0;/* padding:10px; */ width: 100%; margin-top: 30px;">
-				<div style="position: relative; width: 20%; float: left; height:50px; line-height:50px; background-color: coral;">추천제품</div>
-				<div style="position: relative; width: 20%; float: left; height:50px; line-height:50px; background-color: coral;">품명</div>
-				<div style="position: relative; width: 20%; float: left; height:50px; line-height:50px; background-color: coral;">가격</div>
-				<div style="position: relative; width: 40%; float: left; height:50px; line-height:50px; background-color: coral;">상세보기</div>
+				<div style="position: relative; width: 20%; float: left; height:50px; line-height:50px; background-color: yellow;">추천 제품</div>
+				<div style="position: relative; width: 20%; float: left; height:50px; line-height:50px; background-color: yellow;">품 명</div>
+				<div style="position: relative; width: 20%; float: left; height:50px; line-height:50px; background-color: yellow;">가 격</div>
+				<div style="position: relative; width: 40%; float: left; height:50px; line-height:50px; background-color: yellow;">상세보기</div>
 			</div>
 		</div>
 	</body>

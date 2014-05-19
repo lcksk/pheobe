@@ -110,28 +110,27 @@ public class DomBuilder {
 //			TODO
 			minor.text(b.getMinor());
 			
-			
 			switch(b.getStatus()) {
 			case -3:
-				status.text("-3");
+				status.attr("src", "YC01.gif");
 			break;
 			case -2:
-				status.text("-2");
+				status.attr("src", "YC02.gif");
 			break;
 			case -1:
-				status.text("-1");
+				status.attr("src", "YC03.gif");
 			break;
 			case 0:
-				status.text("0");
+				status.attr("src", "YC04.gif");
 			break;
 			case 1:
-				status.text("1");
+				status.attr("src", "YC05.gif");
 			break;
 			case 2:
-				status.text("2");
+				status.attr("src", "YC06.gif");
 			break;
 			case 3:
-				status.text("3");
+				status.attr("src", "YC07.gif");
 			break;
 			}
 			
@@ -140,6 +139,7 @@ public class DomBuilder {
 			
 //			Product[] products_ = DataManager.getInstance().getProducts(b.getMajor(), null);
 			Product[] products = DataManager.getInstance().getProducts(b.getProductName(), null);
+			
 			for(int j = 0; j < products.length; j++) {
 				Product p = products[j];
 				log.info("@@@@@@@@@@@  " + p.getName() + "num : " + products.length);
