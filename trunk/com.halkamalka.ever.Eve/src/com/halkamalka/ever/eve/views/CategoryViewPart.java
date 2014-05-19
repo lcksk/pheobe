@@ -548,15 +548,8 @@ public class CategoryViewPart extends ViewPart implements DataEventListener, Dro
 
 
 	@SuppressWarnings("restriction")
-	private String getLocalDBHash() {
-		byte[] sha1 = null;
-		try {
-			sha1 = Base64.encode(org.apache.commons.codec.digest.DigestUtils.sha1(FileUtils.readFileToByteArray(new File(DataManager.getDBPath()))));
-		} 
-		catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+	private String getLocalDBHash() throws IOException{
+		byte[] sha1 = Base64.encode(org.apache.commons.codec.digest.DigestUtils.sha1(FileUtils.readFileToByteArray(new File(DataManager.getDBPath()))));
 		return new String(sha1);
 	}
 
@@ -569,10 +562,16 @@ public class CategoryViewPart extends ViewPart implements DataEventListener, Dro
     		String remote = (String) o.get("db_ver"); 
 //    		log.info("base dir : " + base.toString());
     		log.info(remote);
-    		log.info(getLocalDBHash());
-    		if(remote.compareTo(getLocalDBHash()) != 0) {
-    			updateDBCommand();
-    		}
+    		try {
+				log.info(getLocalDBHash());
+	    		if(remote.compareTo(getLocalDBHash()) != 0) {
+	    			updateDBCommand();
+	    		}
+			}
+    		catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
     	}
 	}
 
