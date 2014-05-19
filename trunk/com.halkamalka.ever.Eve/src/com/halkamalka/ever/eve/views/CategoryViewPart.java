@@ -563,10 +563,15 @@ public class CategoryViewPart extends ViewPart implements DataEventListener, Dro
 //    		log.info("base dir : " + base.toString());
     		log.info(remote);
     		try {
-				log.info(getLocalDBHash());
-	    		if(remote.compareTo(getLocalDBHash()) != 0) {
+//				log.info(getLocalDBHash());
+    			if(new File(DataManager.getDBPath()).exists()) {
+    	    		if(remote.compareTo(getLocalDBHash()) != 0) {
+    	    			updateDBCommand();
+    	    		}
+    			}
+    			else {
 	    			updateDBCommand();
-	    		}
+    			}
 			}
     		catch (IOException e) {
 				// TODO Auto-generated catch block
