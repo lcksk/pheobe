@@ -368,9 +368,7 @@ public class DataManager implements DataEventSource, WebsocketListener {
 		try {
 			File file = new File(db);
 			// TODO
-			if(!file.exists()) {
-				org.apache.commons.io.FileUtils.copyURLToFile(url, file);
-			}
+			org.apache.commons.io.FileUtils.copyURLToFile(url, file);
 		}
 		catch (IOException e) {
 			// TODO Auto-generated catch block
@@ -639,6 +637,7 @@ public class DataManager implements DataEventSource, WebsocketListener {
 						log.info("" + item.getName());
 					}
 //					Bound[] bound = getBounds(data.getMajor(), data.get(data.getName()).getName());
+//					Bound[] bound = getBounds(data.getName(), data.get(data.getName()).getName());
 					Bound[] bound = getBounds(data.getName());
 					dom.build(data, bound);
 				} 
