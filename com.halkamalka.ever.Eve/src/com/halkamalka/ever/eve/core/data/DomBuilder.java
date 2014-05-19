@@ -224,7 +224,9 @@ public class DomBuilder {
 
 		try {
 			byte[] b = new byte[in.available()];
-			in.read(b);
+			for(int offset=0,n=0; offset < b.length; n+=offset) {
+				n = in.read(b, offset, b.length - offset);
+			}
 			DataManager.extractGZipTo(b, tmp.toFile());
 		} catch (IOException e1) {
 			// TODO Auto-generated catch block
