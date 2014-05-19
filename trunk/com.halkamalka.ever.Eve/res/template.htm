@@ -2,11 +2,13 @@
 	<head>
 		<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
 		<title>template</title>
+		<script type="text/javascript" src="js/jquery-2.1.0.min.js"></script>
 		<script type="text/javascript">
 		
 			function applyDomBuild() {
 				
-				var product = document.getElementsByClassName("product");
+			//	var product = document.getElementsByClassName("product");
+				var product = $(".product");
 				
 				for(var i=0; i<product.length; i++) {
 					var currentProduct = product[i];
@@ -25,25 +27,29 @@
 			//		}, false);
 				}
 			}
-		
 		</script>
 	</head>
 	<body onload="applyDomBuild()">
-		<div id="wrapper" style="margin:0 auto;">
-			<table border="1" cellpadding="1" cellspacing="1" style="width:80%">
-				<tbody>
+		<div id="wrapper" style="margin:0 auto; text-align:center;">
+			<table cellpadding="10px" cellspacing="1" style="width:80%">
+				<tbody id="attach">
 					<tr>
-						<td id="major" colspan="2" style="text-align:center; width:100%"></td>
+						<td colspan="5" style="text-align:center; width:100%; background-color:lightgreen;">&nbsp;측정 결과</td>
 					</tr>
 					<tr>
-						<td style="text-align:center; width:20%">전문가 제안</td>
-						<td id="result" style="width:80%"></td>
+						<td id="major" rowspan="2" style="text-align:center; width:20%"></td>
+						<td id="minor" style="text-align:center; width:20%"></td>
+						<td colspan="3" style="text-align:center; width:70%"><img id="degree" alt="" src="" style="height:20px; width:50%" /></td>
 					</tr>
+					<tr>
+						<td style="text-align:center">전문가 제안</td>
+						<td id="result" colspan="3"></td>
+					</tr>
+					
+					
+					
 				</tbody>
 			</table>
-			
-			<!-- new product -->
-			
 		</div>
 	</body>
 </html>

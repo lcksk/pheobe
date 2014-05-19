@@ -94,10 +94,15 @@ public class DomBuilder {
 		Element result = doc.select("#result").first();
 		if(data.getPrescription() != null) {
 			result.text(data.getPrescription());
+//			result.text(data.getMap().toString());
 		}
 
 		Element major = doc.select("#major").first();
 		major.text(data.getName());
+		
+//		TODO minor
+//		Element minor = doc.select("#minor").first();
+//		minor.text(data.get(data.getName()).toString());
 		
 		for(int i = 0; i < bound.length; i++) {
 			Bound b = bound[i];
@@ -105,7 +110,7 @@ public class DomBuilder {
 			log.info("@@@@@@@@@@@@@@@@@@@@ " + b.getMajor());
 			
 //			Product[] products_ = DataManager.getInstance().getProducts(b.getMajor(), null);
-			Product[] products = DataManager.getInstance().getProducts(b.getName(), null);
+			Product[] products = DataManager.getInstance().getProducts(b.getProductName(), null);
 			for(int j = 0; j < products.length; j++) {
 				Product p = products[j];
 				log.info("@@@@@@@@@@@  " + p.getName() + "num : " + products.length);
@@ -115,7 +120,7 @@ public class DomBuilder {
 				
 				
 //				Element $products = doc.select("#products").first();
-				Element $products = doc.select("#wrapper").first();
+				Element $products = doc.select("#attach").first();
 				
 				Element productName = sub.select("#productName").first();
 				productName.html(p.getName());
@@ -124,7 +129,9 @@ public class DomBuilder {
 //				productImage.attr("src", "data:image/*;base64,"+ product.getImage());
 				productImage.attr("src", p.getImage());
 				
-				$products.after(sub.html());
+				
+				$products.append(sub.html());
+				
 			}
 			
 //			Element minorId = doc.select("#minorId").first();
