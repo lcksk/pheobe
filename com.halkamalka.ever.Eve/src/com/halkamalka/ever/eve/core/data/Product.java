@@ -15,12 +15,14 @@ public class Product {
 	private String name = null;
 	private String description = null;
 	private String image = null;
+	private String price0 = null;
 	private int hash = 0;
 
-	public Product(int hash, String name, String description, String image) {
+	public Product(int hash, String name, String description, String image, String price0) {
 		this.image = image;
 		this.hash = hash;
 		this.name = name;
+		this.price0 = price0;
 		
 		if(org.apache.commons.exec.OS.isFamilyWindows()) {
 			Document doc = Jsoup.parse(description);	
@@ -66,5 +68,9 @@ public class Product {
 	
 	public int getHash() {
 		return hash;
+	}
+	
+	public String getPrice0() {
+		return price0;
 	}
 }
