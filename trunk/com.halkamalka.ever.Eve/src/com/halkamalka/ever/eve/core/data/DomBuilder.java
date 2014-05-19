@@ -94,18 +94,47 @@ public class DomBuilder {
 		Element result = doc.select("#result").first();
 		if(data.getPrescription() != null) {
 			result.text(data.getPrescription());
-//			result.text(data.getMap().toString());
 		}
 
 		Element major = doc.select("#major").first();
 		major.text(data.getName());
 		
-//		TODO minor
-//		Element minor = doc.select("#minor").first();
-//		minor.text(data.get(data.getName()).toString());
+		
+		Element minor = doc.select("#minor").first();
+		
+		Element status = doc.select("#degree").first();
 		
 		for(int i = 0; i < bound.length; i++) {
 			Bound b = bound[i];
+			
+//			TODO
+			minor.text(b.getMinor());
+			
+			
+			switch(b.getStatus()) {
+			case -3:
+				status.text("-3");
+			break;
+			case -2:
+				status.text("-2");
+			break;
+			case -1:
+				status.text("-1");
+			break;
+			case 0:
+				status.text("0");
+			break;
+			case 1:
+				status.text("1");
+			break;
+			case 2:
+				status.text("2");
+			break;
+			case 3:
+				status.text("3");
+			break;
+			}
+			
 
 			log.info("@@@@@@@@@@@@@@@@@@@@ " + b.getMajor());
 			
@@ -120,7 +149,7 @@ public class DomBuilder {
 				
 				
 //				Element $products = doc.select("#products").first();
-				Element $products = doc.select("#attach").first();
+				Element $products = doc.select("#subContainer").first();
 				
 				Element productName = sub.select("#productName").first();
 				productName.html(p.getName());
@@ -129,9 +158,10 @@ public class DomBuilder {
 //				productImage.attr("src", "data:image/*;base64,"+ product.getImage());
 				productImage.attr("src", p.getImage());
 				
+				Element productPrice = sub.select("#productPrice").first();
+				productPrice.html(p.getPrice0());
 				
 				$products.append(sub.html());
-				
 			}
 			
 //			Element minorId = doc.select("#minorId").first();
