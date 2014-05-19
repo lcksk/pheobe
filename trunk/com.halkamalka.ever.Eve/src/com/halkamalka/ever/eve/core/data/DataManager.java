@@ -533,6 +533,7 @@ public class DataManager implements DataEventSource, WebsocketListener {
 
 			while (r.next() ) {
 				String name = r.getString("name");
+				String price = r.getString("price0");
 				int hash = r.getInt("hash");
 //				String  description = r.getString("description");
 				Charset charset = null;
@@ -583,7 +584,7 @@ public class DataManager implements DataEventSource, WebsocketListener {
 			
 				image = file.getPath();
 				log.info("description : " + description);
-				Product product = new Product(hash, name, description, image);
+				Product product = new Product(hash, name, description, image, price);
 				tmp.add(product);
 			}
 			r.close();
