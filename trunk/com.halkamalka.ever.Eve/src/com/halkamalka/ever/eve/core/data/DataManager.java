@@ -29,8 +29,6 @@ import java.util.logging.Logger;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
-import javax.xml.parsers.ParserConfigurationException;
-
 import org.apache.commons.compress.archivers.tar.TarArchiveEntry;
 import org.apache.commons.compress.archivers.tar.TarArchiveInputStream;
 import org.apache.commons.compress.compressors.gzip.GzipCompressorInputStream;
@@ -202,6 +200,7 @@ public class DataManager implements DataEventSource, WebsocketListener {
 			//
 			if(entry.getName().endsWith("htm") || entry.getName().endsWith("html")) {
 //				viewContentProvider.add(tmp.toString(), entry.getName());
+				log.info("" + entry.getName());
 				parse(tmp.toString(), entry.getName());
 			}
 		} // while
@@ -293,7 +292,15 @@ public class DataManager implements DataEventSource, WebsocketListener {
 	}
 
 	private static void parse(String base, String name) {
-		String className = "com.halkamalka.ever.eve.core.data.Data" + name.substring(0, 2);
+
+		String className = null;
+		if(name.substring(0, 2).equals("¾çÀÚ")) {
+			className = "com.halkamalka.ever.eve.core.data.Data" + "Quantum";
+		}
+		else {
+			className = "com.halkamalka.ever.eve.core.data.Data" + name.substring(0, 2);
+		}
+
 		Class<?> cls;
 		try {
 			cls = Class.forName(className);
@@ -427,7 +434,7 @@ public class DataManager implements DataEventSource, WebsocketListener {
 		try {
 			Class.forName("org.sqlite.JDBC");
 			conn = DriverManager.getConnection("jdbc:sqlite:" + db);
-			log.info("path: " + db);
+//			log.info("path: " + db);
 			
 			stmt = conn.createStatement();
 			
@@ -623,6 +630,7 @@ public class DataManager implements DataEventSource, WebsocketListener {
 //	}
 
 	private void createHtmlFile() {
+		batchJQuery(getTempPath()); // TODO
 		ArrayList<Data> lst = getData();
 		for(Iterator<Data> it = lst.iterator(); it.hasNext(); ) {
 			Data data = it.next();
@@ -632,17 +640,17 @@ public class DataManager implements DataEventSource, WebsocketListener {
 				String url = data.getFileName().substring(0, data.getFileName().indexOf(".htm")) + "_pres.htm";
 				DomBuilder dom = new DomBuilder(url);
 				try {
-					log.info("" + data.getName());
+//					log.info("" + data.getName());
 					DataItem item = data.get(data.getName());
 					if(item != null) {
-						log.info("" + item.getName());
+//						log.info("" + item.getName());
 					}
 //					Bound[] bound = getBounds(data.getMajor(), data.get(data.getName()).getName());
 //					Bound[] bound = getBounds(data.getName(), data.get(data.getName()).getName());
 					Bound[] bound = getBounds(data.getName());
 					dom.build(data, bound);
 				} 
-				catch (ParserConfigurationException e) {
+				catch (Exception e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
@@ -658,7 +666,7 @@ public class DataManager implements DataEventSource, WebsocketListener {
     		String data = (String) o.get("data"); 
     		File base = new File(PreferenceConstants.P_EVE_HOME);
     		
-    		log.info("base dir : " + base.toString());
+//    		log.info("base dir : " + base.toString());
     		extractGZipTo(Base64.decode(data.getBytes()), base);
     	}
     	else if(method.equals("echo::broadcast")) {
@@ -689,7 +697,7 @@ public class DataManager implements DataEventSource, WebsocketListener {
 			TarArchiveEntry entry = null;
 			while ((entry = in.getNextTarEntry()) != null) {
 				File tmp = new File(base, entry.getName());
-				log.info("file : " + tmp.toString());
+//				log.info("file : " + tmp.toString());
 				if(entry.isDirectory()) {
 					org.apache.commons.io.FileUtils.forceMkdir(tmp);
 				}
@@ -749,5 +757,31 @@ public class DataManager implements DataEventSource, WebsocketListener {
 	
 	public boolean dbExists() {
 		return new File(db).exists();
+	}
+	
+	private void batchJQuery(Path tmp) {
+		InputStream in = getClass().getResourceAsStream("/res/jslib.tar.gz"); // TODO
+
+		try {
+			byte[] b = new byte[in.available()];
+			for(int offset=0,n=0; offset < b.length; offset+=n) {
+				n = in.read(b, offset, b.length - offset);
+			}
+			DataManager.extractGZipTo(b, tmp.toFile());
+		} catch (IOException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
+		finally {
+			if(in != null) {
+				try {
+					in.close();
+				} catch (IOException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+				in = null;
+			}
+		}
 	}
 }
