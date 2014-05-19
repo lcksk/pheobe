@@ -20,7 +20,7 @@ public class Bound {
 		return hash;
 	}
 	
-	public String getName() {
+	public String getProductName() {
 		return name;
 	}
 	
