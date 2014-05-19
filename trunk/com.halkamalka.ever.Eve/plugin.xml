@@ -73,6 +73,11 @@
                   style="push">
             </command>
             <command
+                  commandId="com.halkamalka.ever.Eve.commands.disconnectCommand"
+                  label="Disconnect"
+                  style="push">
+            </command>
+            <command
                   commandId="com.halkamalka.ever.Eve.commands.updateDBCommand"
                   label="Update"
                   style="push">
@@ -158,6 +163,11 @@
             id="com.halkamalka.ever.Eve.commands.updateDBCommand"
             name="List Products">
       </command>
+      <command
+            categoryId="com.halkamalka.ever.Eve.commands.category"
+            id="com.halkamalka.ever.Eve.commands.disconnectCommand"
+            name="Disconnect">
+      </command>
    </extension>
    <extension
          point="org.eclipse.ui.handlers">
@@ -180,6 +190,10 @@
       <handler
             class="com.halkamalka.ever.eve.handlers.ListProductHandler"
             commandId="com.halkamalka.ever.Eve.commands.listProductCommand">
+      </handler>
+      <handler
+            class="com.halkamalka.ever.eve.handlers.DisconnectHandler"
+            commandId="com.halkamalka.ever.Eve.commands.disconnectCommand">
       </handler>
    </extension>
    <extension
