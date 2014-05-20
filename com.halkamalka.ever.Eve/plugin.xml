@@ -77,6 +77,10 @@
                   label="Disconnect"
                   style="push">
             </command>
+            <separator
+                  name="com.halkamalka.ever.Eve.separator3"
+                  visible="true">
+            </separator>
             <command
                   commandId="com.halkamalka.ever.Eve.commands.updateDBCommand"
                   label="Update Database"
