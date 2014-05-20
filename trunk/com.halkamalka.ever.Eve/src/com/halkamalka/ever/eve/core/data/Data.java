@@ -7,6 +7,7 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.Scanner;
 import java.util.Set;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import org.jsoup.Jsoup;
@@ -32,6 +33,7 @@ public abstract class Data implements HtmlParserable {
 	protected Map<String, DataItem> map = null;
 	
 	public Data(String path) {
+		log.setLevel(Level.OFF);
 		try {
 			log.info("" + path);
 			this.path = path;
