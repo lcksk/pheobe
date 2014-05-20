@@ -25,6 +25,7 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
@@ -88,6 +89,7 @@ public class DataManager implements DataEventSource, WebsocketListener {
 //				downloadImage();
 //			}
 //		}).start();
+		log.setLevel(Level.OFF);
 	}
 
 	public static String getDBPath() {
@@ -542,7 +544,7 @@ public class DataManager implements DataEventSource, WebsocketListener {
 
 			while (r.next() ) {
 				String name = r.getString("name");
-				String price = r.getString("price0");
+				int price = r.getInt("price0");
 				int hash = r.getInt("hash");
 //				String  description = r.getString("description");
 				Charset charset = null;
@@ -642,13 +644,14 @@ public class DataManager implements DataEventSource, WebsocketListener {
 				String url = data.getFileName().substring(0, data.getFileName().indexOf(".htm")) + "_pres.htm";
 				DomBuilder dom = new DomBuilder(url);
 				try {
-//					log.info("" + data.getName());
+					log.info("$$$$$$$" + data.getName());
 					DataItem item = data.get(data.getName());
 					if(item != null) {
 //						log.info("" + item.getName());
 					}
 //					Bound[] bound = getBounds(data.getMajor(), data.get(data.getName()).getName());
 //					Bound[] bound = getBounds(data.getName(), data.get(data.getName()).getName());
+//					Bound[] bound = getBounds(data.getName());
 					Bound[] bound = getBounds(data.getName());
 					dom.build(data, bound);
 				} 
