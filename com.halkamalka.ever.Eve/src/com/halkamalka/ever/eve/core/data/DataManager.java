@@ -34,10 +34,12 @@ import org.apache.commons.compress.archivers.tar.TarArchiveInputStream;
 import org.apache.commons.compress.compressors.gzip.GzipCompressorInputStream;
 import org.eclipse.core.internal.preferences.Base64;
 import org.eclipse.jetty.websocket.api.Session;
+import org.eclipse.ui.PlatformUI;
 import org.json.simple.JSONObject;
 import org.sqlite.SQLiteConfig;
 
 import com.halkamalka.ever.eve.preferences.PreferenceConstants;
+import com.halkamalka.ever.eve.views.NotificationPopUpUI;
 import com.halkamalka.util.WebsocketListener;
 import com.halkamalka.util.WebsocketManager;
 
@@ -672,6 +674,17 @@ public class DataManager implements DataEventSource, WebsocketListener {
     	else if(method.equals("echo::broadcast")) {
     		// TODO : Something has been changed in the server side.
     		log.info(method);
+    		String msg = (String) o.get("msg");
+    		if(msg != null && msg.equals("db update")) {
+        		PlatformUI.getWorkbench().getDisplay().asyncExec(new Runnable(){
+        			@Override
+        			public void run() {
+        				// TODO Auto-generated method stub
+        				NotificationPopUpUI popup = new  NotificationPopUpUI(PlatformUI.getWorkbench().getDisplay());
+        		        popup.open();
+        			}
+        		});
+    		}
     	}
 	}
 
