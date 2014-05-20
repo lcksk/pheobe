@@ -28,7 +28,7 @@ public NotificationPopUpUI(Display display)
   {
     composite.setLayout(new GridLayout(1, true));
     Link linkGoogleNews = new Link(composite, 0);
-    String googlenewsLink = "This is a link to <a href=\"http://everever.co.kr/ \">Ever & Ever  News</a>";
+    String googlenewsLink = "This is a link to <a href=\"http://evernever.co.kr/ \">Ever & Ever  News</a>";
     linkGoogleNews.setText(googlenewsLink);
     linkGoogleNews.setSize(400, 100);
  
