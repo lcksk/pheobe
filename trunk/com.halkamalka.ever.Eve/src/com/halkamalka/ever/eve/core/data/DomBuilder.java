@@ -27,61 +27,10 @@ public class DomBuilder {
 		this.name = name;
 	}
 	
-	
-	@Deprecated
-	public void build(Data data, Product[] product) throws ParserConfigurationException {
-		Document doc = Jsoup.parse(loadTemplate());
-		Document sub = Jsoup.parse(loadSubTemplate());
-//		Element body = html.createElement("body");
 
-		if(org.apache.commons.exec.OS.isFamilyWindows()) {
-			// replace encoding to euc-kr
-			Element meta = doc.select("meta").first();
-			meta.attr("content", "text/html; charset=euc-kr");
-		}
-		
-		System.out.println(html.toString());
-
-		for(int i = 0; i < product.length; i++) {
-			
-			Product p = product[i];
-//			Element majorId = doc.select("#majorId").first();
-//			majorId.text(p.getMajor());
-			
-//			Element minorId = doc.select("#minorId").first();
-//			minorId.text(p.getMinor());
-			
-			Element scope = doc.select("#scope").first();
-			
-			Element value = doc.select("#value").first();
-//			value.text("asdd");
-			
-			Element result = doc.select("#result").first();
-			if(data.getPrescription() != null) {
-				result.text(data.getPrescription());
-			}
-			
-			Element productImage = sub.select("#productImage").first();
-			productImage.attr("src", "data:image/*;base64,"+p.getImage());
-			productImage.attr("src", p.getImage());
-//			productImage.html("<p>lorem ipsum</p>");
-
-			Element intro = sub.select("#productDescription").first();
-			intro.html(replacePath(p.getDescription()));
-
-			Element products = doc.select("#products").first();
-			products.after(sub.html());
-			
-			System.out.println(doc.html());
-		}
-		
-//		getBound(data);
-		batchJQuery(DataManager.getInstance().getTempPath());
-		save(DataManager.getInstance().getTempPath(), doc.html());
-	}
-	
 	public void build(Data data, Bound[] bound) throws ParserConfigurationException {
 
+		log.info("num of bounds" + bound.length);
 		Document doc = Jsoup.parse(loadTemplate());
 		Document sub = Jsoup.parse(loadSubTemplate());
 
@@ -135,14 +84,15 @@ public class DomBuilder {
 			}
 			
 
-			log.info("@@@@@@@@@@@@@@@@@@@@ " + b.getMajor());
+//			log.info("@@@@@@@@@@@@@@@@@@@@ " + b.getMajor());
 			
 //			Product[] products_ = DataManager.getInstance().getProducts(b.getMajor(), null);
+			log.info("=======" + b.getProductName());
 			Product[] products = DataManager.getInstance().getProducts(b.getProductName(), null);
 			
 			for(int j = 0; j < products.length; j++) {
 				Product p = products[j];
-				log.info("@@@@@@@@@@@  " + p.getName() + "num : " + products.length);
+				log.info("!!!!!!!!!!@@@@@@@@@@@  " + p.getName() + "num : " + products.length);
 				Element intro = sub.select("#productDescription").first();
 				intro.html(replacePath(p.getDescription()));
 
@@ -159,7 +109,7 @@ public class DomBuilder {
 				productImage.attr("src", p.getImage());
 				
 				Element productPrice = sub.select("#productPrice").first();
-				productPrice.html(p.getPrice0());
+				productPrice.html(Integer.toString(p.getPrice0()));
 				
 				$products.append(sub.html());
 			}
@@ -179,11 +129,11 @@ public class DomBuilder {
 //			productImage.html("<p>lorem ipsum</p>");
 
 			
-			System.out.println(doc.html());
+//			System.out.println(doc.html());
 		}
 		
 //		getBound(data);
-		batchJQuery(DataManager.getInstance().getTempPath()); // TODO
+//		batchJQuery(DataManager.getInstance().getTempPath()); // TODO
 		save(DataManager.getInstance().getTempPath(), doc.html());
 	}
 
