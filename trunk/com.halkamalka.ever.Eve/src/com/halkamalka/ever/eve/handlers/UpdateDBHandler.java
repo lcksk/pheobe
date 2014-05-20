@@ -7,11 +7,21 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
+import org.eclipse.jetty.websocket.api.Session;
+import org.json.simple.JSONObject;
 
 import com.halkamalka.ever.eve.core.data.DataManager;
+import com.halkamalka.util.WebsocketListener;
+import com.halkamalka.util.WebsocketManager;
 
-public class UpdateDBHandler extends AbstractHandler {
+public class UpdateDBHandler extends AbstractHandler  implements WebsocketListener {
 
+	private final WebsocketManager client = WebsocketManager.getInstance();
+	
+	public UpdateDBHandler() {
+		client.addWebsocketListener(this);
+	}
+	
 	@Override
 	public Object execute(ExecutionEvent event) throws ExecutionException {
 		Job job = new Job("db update") {
@@ -43,5 +53,24 @@ public class UpdateDBHandler extends AbstractHandler {
 		job.schedule();
 		
 		return null;
+	}
+	
+	
+	@Override
+	public void onMessage(JSONObject o) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void onConnect(Session session) {
+		// TODO Auto-generated method stub
+		setBaseEnabled(true);
+	}
+
+	@Override
+	public void onClose(Session session) {
+		// TODO Auto-generated method stub
+		setBaseEnabled(false);
 	}
 }

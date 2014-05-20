@@ -21,7 +21,6 @@ public class ConnectHandler extends AbstractHandler implements WebsocketListener
 	private final WebsocketManager client = WebsocketManager.getInstance();
 	
 	public ConnectHandler() {
-		System.out.println("called every time??");
 		client.addWebsocketListener(this);
 	}
 	
