@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import org.apache.commons.io.FileUtils;
@@ -60,6 +61,7 @@ public class CategoryViewPart extends ViewPart implements DataEventListener, Dro
 	final private static Logger log = Logger.getLogger(CategoryViewPart.class.getName());
 	
 	public CategoryViewPart() {
+		log.setLevel(Level.OFF);
 		DataManager.getInstance().addDataEventListener(this);
 		WebsocketManager.getInstance().addWebsocketListener(this);
 	}
