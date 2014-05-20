@@ -15,10 +15,10 @@ public class Product {
 	private String name = null;
 	private String description = null;
 	private String image = null;
-	private String price0 = null;
+	private int price0 = 0;
 	private int hash = 0;
 
-	public Product(int hash, String name, String description, String image, String price0) {
+	public Product(int hash, String name, String description, String image, int price0) {
 		this.image = image;
 		this.hash = hash;
 		this.name = name;
@@ -70,7 +70,7 @@ public class Product {
 		return hash;
 	}
 	
-	public String getPrice0() {
+	public int getPrice0() {
 		return price0;
 	}
 }
