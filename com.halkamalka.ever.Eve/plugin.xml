@@ -79,7 +79,7 @@
             </command>
             <command
                   commandId="com.halkamalka.ever.Eve.commands.updateDBCommand"
-                  label="Update"
+                  label="Update Database"
                   style="push">
             </command>
             <command

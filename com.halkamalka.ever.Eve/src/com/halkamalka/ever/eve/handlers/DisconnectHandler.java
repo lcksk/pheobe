@@ -18,7 +18,6 @@ public class DisconnectHandler extends AbstractHandler implements WebsocketListe
 	private final WebsocketManager client = WebsocketManager.getInstance();
 
 	public DisconnectHandler() {
-		System.out.println("called every time??");
 		client.addWebsocketListener(this);
 	}
 	
