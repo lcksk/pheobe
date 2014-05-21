@@ -128,10 +128,28 @@
          <toolbar
                id="com.halkamalka.ever.Eve.toolbars.sampleToolbar">
             <command
-                  commandId="com.halkamalka.ever.Eve.commands.sampleCommand"
+                  commandId="com.halkamalka.ever.Eve.commands.openFileCommand"
                   icon="icons/sample.gif"
-                  id="com.halkamalka.ever.Eve.toolbars.sampleCommand"
-                  tooltip="Say hello world">
+                  id="com.halkamalka.ever.Eve.toolbars.openCommand"
+                  style="push">
+            </command>
+            <command
+                  commandId="com.halkamalka.ever.Eve.commands.updateDBCommand"
+                  icon="icons/sample.gif"
+                  id="com.halkamalka.ever.Eve.toolbars.updateDBCommand"
+                  style="push">
+            </command>
+            <command
+                  commandId="com.halkamalka.ever.Eve.commands.connectCommand"
+                  icon="icons/sample.gif"
+                  id="com.halkamalka.ever.Eve.toolbars.connectCommand"
+                  style="push">
+            </command>
+            <command
+                  commandId="com.halkamalka.ever.Eve.commands.disconnectCommand"
+                  icon="icons/sample.gif"
+                  id="com.halkamalka.ever.Eve.toolbars.disconnectCommand"
+                  style="push">
             </command>
          </toolbar>
       </menuContribution>
