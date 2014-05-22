@@ -36,6 +36,7 @@ public NotificationPopUpUI(Display display)
     String googlenewsLink = "<a href=\"http://evernever.co.kr/ \">Ever & Ever  News</a>";
     linkEverNews.setText(googlenewsLink);
     linkEverNews.setSize(400, 100);
+    composite.setBackgroundImage(getImage()); // TODO
  
     linkEverNews.addSelectionListener(new SelectionAdapter()
     {
@@ -62,6 +63,10 @@ public NotificationPopUpUI(Display display)
   @Override
   protected Image getPopupShellImage(int maximumHeight)
   {
+	  return getImage();
+  }
+  
+  private Image getImage() {
 	  Image image = null;
 	  Product product = DataManager.getInstance().getLatestProduct();
 	  if(product != null) {
