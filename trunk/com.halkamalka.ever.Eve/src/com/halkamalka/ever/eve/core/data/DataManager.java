@@ -502,30 +502,45 @@ public class DataManager implements DataEventSource, WebsocketListener {
 		}
 		return tmp.toArray(new Bound[tmp.size()]);
 	}
-	
+
+	public Product getLatestProduct() {
+		Product[] product = getProducts(null, null, 1);
+		if(product != null && product.length > 0) {
+			return product[0];
+		}
+		return null; 
+	}
+
 	public Product[] getProducts() {
-		return getProducts(null, null);
+		return getProducts(null, null, 0);
 	}
 	
-	private String resolveProductQuery(String name, Integer hash) {
+	public Product[] getProducts(String productName, Integer nameHash) {
+		return getProducts(productName, nameHash, 0);
+	}
+	
+	private String resolveProductQuery(String name, Integer hash, int count) {
 		String query = null;
 		
 		if(hash != null) {
-			query = "SELECT * FROM product WHERE hash=" +  hash.intValue()  + ";";
+			query = "SELECT * FROM product WHERE hash=" +  hash.intValue();
 			return query;
 		}
 		
 		if(name == null) {
-			query = "SELECT * FROM product;";
+			query = "SELECT * FROM product";
 		}
 		else {
-			query = "SELECT * FROM product WHERE name=" + "\"" + name + "\"" + ";";
+			query = "SELECT * FROM product WHERE name=" + "\"" + name + "\""; 
 		}
-
+		if(count > 0) {
+			query += " LIMIT " + count;
+		}
+		query += ";";
 		return query;
 	}
 	
-	public Product[] getProducts(String productName, Integer nameHash) {
+	public Product[] getProducts(String productName, Integer nameHash, int count) {
 		ArrayList<Product> tmp = new ArrayList<Product>();
 		Connection conn = null;
 		Statement stmt = null;
@@ -538,7 +553,7 @@ public class DataManager implements DataEventSource, WebsocketListener {
 			
 			stmt = conn.createStatement();
 			
-			String query = resolveProductQuery(productName, nameHash);
+			String query = resolveProductQuery(productName, nameHash, count);
 			
 			ResultSet r = stmt.executeQuery(query);
 
