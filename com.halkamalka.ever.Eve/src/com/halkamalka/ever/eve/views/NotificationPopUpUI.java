@@ -27,12 +27,12 @@ public NotificationPopUpUI(Display display)
   protected void createContentArea(Composite composite)
   {
     composite.setLayout(new GridLayout(1, true));
-    Link linkGoogleNews = new Link(composite, 0);
+    Link linkEverNews = new Link(composite, 0);
     String googlenewsLink = "This is a link to <a href=\"http://evernever.co.kr/ \">Ever & Ever  News</a>";
-    linkGoogleNews.setText(googlenewsLink);
-    linkGoogleNews.setSize(400, 100);
+    linkEverNews.setText(googlenewsLink);
+    linkEverNews.setSize(400, 100);
  
-    linkGoogleNews.addSelectionListener(new SelectionAdapter()
+    linkEverNews.addSelectionListener(new SelectionAdapter()
     {
       public void widgetSelected(SelectionEvent e) {
         try {
