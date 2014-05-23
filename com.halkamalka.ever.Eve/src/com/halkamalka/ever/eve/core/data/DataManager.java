@@ -693,7 +693,7 @@ public class DataManager implements DataEventSource, WebsocketListener {
     		// TODO : Something has been changed in the server side.
     		log.info(method);
     		String msg = (String) o.get("msg");
-    		if(msg != null && msg.equals("db update")) {
+    		if(msg != null && msg.equals("db-update")) {
         		PlatformUI.getWorkbench().getDisplay().asyncExec(new Runnable(){
         			@Override
         			public void run() {
