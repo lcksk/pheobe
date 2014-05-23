@@ -8,13 +8,14 @@
 			function applyDomBuild() {
 				
 			//	var product = document.getElementsByClassName("productFold");
-				var product = $(".productFold");
+			//	var product = $(".productFold");
+			var product = document.querySelectorAll(".productFold");
 				
 				for(var i=0; i<product.length; i++) {
 					var currentProduct = product[i];
 					currentProduct.addEventListener('click', function(e) {
 						console.log(e);
-						var description = e.target.parentElement.children[4];
+						var description = e.target.parentElement.parentElement.parentElement.children[5];
 						if(description.style.display == "none") {
 							description.style.display = "block";
 						} else {
@@ -28,35 +29,18 @@
 	</head>
 	<body onload="applyDomBuild()">
 		<div id="wrapper" style=" text-align:center; width: 100%; position: relative">
-			<table border="1px" style="width:100%; border-collapse: collapse; border: 1px gray solid; background-color: lightgray">
+			<table border="1" style="width:100%; border-collapse: collapse; border: 1px white solid; background-color:#e0e0e0">
 				<tbody>
 					<tr>
-						<td colspan="3" style="background-color: yellow; text-align:center; width:100%; height:50px;">측정 결과</td>
+						<td colspan="3" style="background-color: yellow; text-align:center; width:100%; height:30px;"><strong>측정 결과</strong></td>
 					</tr>
 					<tr>
-						<td id="major" rowspan="3" style="text-align:center; width:20%"></td>
-						<td id="minor" style="width:20%; text-align:center; padding:20px;"></td>
-						<td colspan="3" style="text-align:center; width:60%"><img id="degree" alt="" src="" style="height:7%; width:55%;"/></td>
-					</tr>
-					<!-- if when add minor, degree -->
-					<!-- 
-					<tr>
-						<td id="minor" style="width:20%; text-align:center; padding:20px;">혈류순환계</td>
-						<td colspan="3" style="text-align:center; width:60%"><img id="degree" alt="" src="" style="height:50px; width:70%;"/></td>
-					</tr>
-					 -->
-					<tr>
-						<td style="text-align:center; width: 20%; padding:20px;">전문가 제안</td>
-						<td id="result" colspan="3" style="padding:30px; width: 60%;"></td>
+						<td rowspan="2" style="text-align:center; width:20%"><strong id="major"></strong></td>
+						<td style="text-align:center; width:20%"><strong>전문가 제안</strong></td>
+						<td id="prescription" style="width:60%; text-align:center; padding:20px;"></td>
 					</tr>
 				</tbody>
 			</table>
-			<div id="subContainer" style="position: relative; left:0;/* padding:10px; */ width: 100%; margin-top: 30px;">
-				<div style="position: relative; width: 20%; float: left; height:50px; line-height:50px; background-color: yellow;">추천 제품</div>
-				<div style="position: relative; width: 20%; float: left; height:50px; line-height:50px; background-color: yellow;">품 명</div>
-				<div style="position: relative; width: 20%; float: left; height:50px; line-height:50px; background-color: yellow;">가 격</div>
-				<div style="position: relative; width: 40%; float: left; height:50px; line-height:50px; background-color: yellow;">상세보기</div>
-			</div>
 		</div>
 	</body>
 </html>
