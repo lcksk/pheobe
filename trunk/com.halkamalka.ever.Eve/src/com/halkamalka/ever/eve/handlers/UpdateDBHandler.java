@@ -8,9 +8,11 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.jetty.websocket.api.Session;
+import org.eclipse.ui.PlatformUI;
 import org.json.simple.JSONObject;
 
 import com.halkamalka.ever.eve.core.data.DataManager;
+import com.halkamalka.ever.eve.views.NotificationPopUpUI;
 import com.halkamalka.util.WebsocketListener;
 import com.halkamalka.util.WebsocketManager;
 
@@ -32,21 +34,21 @@ public class UpdateDBHandler extends AbstractHandler  implements WebsocketListen
 				monitor.subTask("update images");
 				DataManager.getInstance().downloadImage();
 				monitor.worked(50);
-				try {
-					Thread.sleep(100);
-				} catch (InterruptedException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
+//				try {
+//					Thread.sleep(100);
+//				} catch (InterruptedException e) {
+//					// TODO Auto-generated catch block
+//					e.printStackTrace();
+//				}
 				monitor.subTask("update database");
 				DataManager.getInstance().downloadDB();
-				monitor.worked(50);
-				try {
-					Thread.sleep(100);
-				} catch (InterruptedException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
+				monitor.worked(30);
+//				try {
+//					Thread.sleep(100);
+//				} catch (InterruptedException e) {
+//					// TODO Auto-generated catch block
+//					e.printStackTrace();
+//				}
 				return Status.OK_STATUS;
 			}
 		};
