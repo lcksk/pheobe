@@ -523,15 +523,15 @@ public class DataManager implements DataEventSource, WebsocketListener {
 		String query = null;
 		
 		if(hash != null) {
-			query = "SELECT * FROM product WHERE hash=" +  hash.intValue();
+			query = "SELECT * FROM product WHERE hash=" +  hash.intValue() + " ORDER BY date(date) DESC";
 			return query;
 		}
 		
 		if(name == null) {
-			query = "SELECT * FROM product";
+			query = "SELECT * FROM product" + " ORDER BY date(date) DESC";
 		}
 		else {
-			query = "SELECT * FROM product WHERE name=" + "\"" + name + "\""; 
+			query = "SELECT * FROM product WHERE name=" + "\"" + name + "\"" + " ORDER BY date(date) DESC"; 
 		}
 		if(count > 0) {
 			query += " LIMIT " + count;
@@ -698,6 +698,10 @@ public class DataManager implements DataEventSource, WebsocketListener {
         			@Override
         			public void run() {
         				// TODO Auto-generated method stub
+        				// Change to use handler
+        				DataManager.getInstance().downloadImage();
+        				DataManager.getInstance().downloadDB();
+        				// Change to use handler
         				NotificationPopUpUI popup = new  NotificationPopUpUI(PlatformUI.getWorkbench().getDisplay());
         		        popup.open();
         			}
