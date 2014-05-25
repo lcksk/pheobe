@@ -72,53 +72,108 @@ public class DomBuilder {
 						
 						if(abnormalItem[a].getName().equals(bound[i].getMinor())) {
 							
-							//RECOMMEND LIST CONTAINER
-							Element recommendListContainer = doc.createElement("div");
-							String recommendListContainerStyle = "position:relative; width: 100%; float: left; background-color:#e0e0e0; border-top: 1px solid white; font-size:13px";
-							recommendListContainer.attr("style", recommendListContainerStyle);
-							wrapper.appendChild(recommendListContainer);
-							
-							//MINOR
-							String _minor = abnormalItem[a].getName();
-							Element _minorDom = doc.createElement("div");
-							String _minorDomStyle = "position:relative; width:20%; float:left; height:50px; line-height:50px; padding-top:5px";
-							_minorDom.attr("style", _minorDomStyle);
-							_minorDom.html(_minor);
-							recommendListContainer.appendChild(_minorDom);
-							
-							//STATUS
-							Integer _status = abnormalItem[a].getStatus();
-							Element _statusDom = createStatus(doc, _status);
-							recommendListContainer.appendChild(_statusDom);
-							
-							//PRODUCT IMAGE
-							log.info("******************product image****************** : "+products[j].getImage());
-							String _productImage = products[j].getImage();
-							Element _productImageDom = createProductImage(doc, _productImage);
-							recommendListContainer.appendChild(_productImageDom);
-//							
-//							//PRODUCT NAME
-							log.info("******************product name****************** : "+products[j].getName());
-							String _productName = products[j].getName();
-							Element _productNameDom = createProductName(doc, _productName);
-							recommendListContainer.appendChild(_productNameDom);
-//							
-//							//PRODUCT PRICE
-							log.info("******************product price****************** : "+products[j].getPrice0());
-							Integer _productPrice = products[j].getPrice0();
-							Element _productPriceDom = createProductPrice(doc, _productPrice);
-							recommendListContainer.appendChild(_productPriceDom);
-							
-							//PRODUCT DESCRIPTION TOGGLE
-//							Element _productDescriptionToggleDom = createProductDescriptionToggle(doc);
-//							recommendListContainer.appendChild(_productDescriptionToggleDom);
-							
-							
-							//PRODUCT DESCRIPTION
-							log.info("******************product description****************** : "+products[j].getDescription());
-							String _productDescription = products[j].getDescription();
-							Element _productDescriptionDom= createProductDesciption(doc, _productDescription);
-							recommendListContainer.appendChild(_productDescriptionDom);
+							//status > 0
+							if((abnormalItem[a].getStatus() > 0) && (bound[i].getStatus() > 0)) {
+								
+								//RECOMMEND LIST CONTAINER
+								Element recommendListContainer = doc.createElement("div");
+								String recommendListContainerStyle = "position:relative; width: 100%; float: left; background-color:#e0e0e0; border-top: 1px solid white; font-size:13px";
+								recommendListContainer.attr("style", recommendListContainerStyle);
+								wrapper.appendChild(recommendListContainer);
+								
+								//MINOR
+								String _minor = abnormalItem[a].getName();
+								Element _minorDom = doc.createElement("div");
+								String _minorDomStyle = "position:relative; width:20%; float:left; height:50px; line-height:50px; padding-top:5px";
+								_minorDom.attr("style", _minorDomStyle);
+								_minorDom.html(_minor);
+								recommendListContainer.appendChild(_minorDom);
+								
+								//STATUS
+								Integer _status = abnormalItem[a].getStatus();
+								Element _statusDom = createStatus(doc, _status);
+								recommendListContainer.appendChild(_statusDom);
+								
+								//PRODUCT IMAGE
+								log.info("******************product image****************** : "+products[j].getImage());
+								String _productImage = products[j].getImage();
+								Element _productImageDom = createProductImage(doc, _productImage);
+								recommendListContainer.appendChild(_productImageDom);
+//								
+//								//PRODUCT NAME
+								log.info("******************product name****************** : "+products[j].getName());
+								String _productName = products[j].getName();
+								Element _productNameDom = createProductName(doc, _productName);
+								recommendListContainer.appendChild(_productNameDom);
+//								
+//								//PRODUCT PRICE
+								log.info("******************product price****************** : "+products[j].getPrice0());
+								Integer _productPrice = products[j].getPrice0();
+								Element _productPriceDom = createProductPrice(doc, _productPrice);
+								recommendListContainer.appendChild(_productPriceDom);
+								
+								//PRODUCT DESCRIPTION TOGGLE
+//								Element _productDescriptionToggleDom = createProductDescriptionToggle(doc);
+//								recommendListContainer.appendChild(_productDescriptionToggleDom);
+								
+								
+								//PRODUCT DESCRIPTION
+								log.info("******************product description****************** : "+products[j].getDescription());
+								String _productDescription = products[j].getDescription();
+								Element _productDescriptionDom= createProductDesciption(doc, _productDescription);
+								recommendListContainer.appendChild(_productDescriptionDom);
+								
+							//status < 0
+							} else if((abnormalItem[a].getStatus() < 0) && (bound[i].getStatus() < 0)) {
+								
+								//RECOMMEND LIST CONTAINER
+								Element recommendListContainer = doc.createElement("div");
+								String recommendListContainerStyle = "position:relative; width: 100%; float: left; background-color:#e0e0e0; border-top: 1px solid white; font-size:13px";
+								recommendListContainer.attr("style", recommendListContainerStyle);
+								wrapper.appendChild(recommendListContainer);
+								
+								//MINOR
+								String _minor = abnormalItem[a].getName();
+								Element _minorDom = doc.createElement("div");
+								String _minorDomStyle = "position:relative; width:20%; float:left; height:50px; line-height:50px; padding-top:5px";
+								_minorDom.attr("style", _minorDomStyle);
+								_minorDom.html(_minor);
+								recommendListContainer.appendChild(_minorDom);
+								
+								//STATUS
+								Integer _status = abnormalItem[a].getStatus();
+								Element _statusDom = createStatus(doc, _status);
+								recommendListContainer.appendChild(_statusDom);
+								
+								//PRODUCT IMAGE
+								log.info("******************product image****************** : "+products[j].getImage());
+								String _productImage = products[j].getImage();
+								Element _productImageDom = createProductImage(doc, _productImage);
+								recommendListContainer.appendChild(_productImageDom);
+//								
+//								//PRODUCT NAME
+								log.info("******************product name****************** : "+products[j].getName());
+								String _productName = products[j].getName();
+								Element _productNameDom = createProductName(doc, _productName);
+								recommendListContainer.appendChild(_productNameDom);
+//								
+//								//PRODUCT PRICE
+								log.info("******************product price****************** : "+products[j].getPrice0());
+								Integer _productPrice = products[j].getPrice0();
+								Element _productPriceDom = createProductPrice(doc, _productPrice);
+								recommendListContainer.appendChild(_productPriceDom);
+								
+								//PRODUCT DESCRIPTION TOGGLE
+//								Element _productDescriptionToggleDom = createProductDescriptionToggle(doc);
+//								recommendListContainer.appendChild(_productDescriptionToggleDom);
+								
+								
+								//PRODUCT DESCRIPTION
+								log.info("******************product description****************** : "+products[j].getDescription());
+								String _productDescription = products[j].getDescription();
+								Element _productDescriptionDom= createProductDesciption(doc, _productDescription);
+								recommendListContainer.appendChild(_productDescriptionDom);
+							}
 						}
 					}
 //					System.out.println(doc.html());
@@ -126,7 +181,7 @@ public class DomBuilder {
 				save(DataManager.getInstance().getTempPath(), doc.html());
 			}
 		}
-	}	
+	}
 				
 	private Element createRecommendListTemplate(Document doc) {
 		
