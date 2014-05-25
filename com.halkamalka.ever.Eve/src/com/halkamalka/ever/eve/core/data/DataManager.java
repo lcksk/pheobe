@@ -687,7 +687,7 @@ public class DataManager implements DataEventSource, WebsocketListener {
     		File base = new File(PreferenceConstants.P_EVE_HOME);
     		
 //    		log.info("base dir : " + base.toString());
-    		extractGZipTo(Base64.decode(data.getBytes()), base);
+    		extractGZipTo(Base64.decode(data.getBytes(StandardCharsets.UTF_8)), base);
     	}
     	else if(method.equals("echo::broadcast")) {
     		// TODO : Something has been changed in the server side.
@@ -728,7 +728,7 @@ public class DataManager implements DataEventSource, WebsocketListener {
 		TarArchiveInputStream in = null;
 			OutputStream out = null;
 		try {
-			in = new TarArchiveInputStream(new GzipCompressorInputStream(new ByteArrayInputStream(data)));
+			in = new TarArchiveInputStream(new GzipCompressorInputStream(new ByteArrayInputStream(data)), "utf-8");
 			TarArchiveEntry entry = null;
 			while ((entry = in.getNextTarEntry()) != null) {
 				File tmp = new File(base, entry.getName());
