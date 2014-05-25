@@ -117,6 +117,7 @@ public class DataManager implements DataEventSource, WebsocketListener {
 
 	public void close() throws IOException {
 		log.info("");
+		client.close();
 		if(tmp != null) {
 			deleteTempDirectory(tmp);
 		}

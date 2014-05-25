@@ -19,6 +19,8 @@ import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
 
+import com.halkamalka.ever.eve.core.data.DataManager;
+
 @WebSocket(maxTextMessageSize = 256 * 1024* 1024)
 public class WebsocketManager {
 
@@ -121,6 +123,8 @@ public class WebsocketManager {
     public void close() {
 		log.info("close");
     	try {
+    		DataManager.getInstance().leaveEcho();
+    		
     		if(client.isStopped()) {
     			log.warning("already stopped");
     			return;
