@@ -124,7 +124,7 @@
             locationURI="menu:org.eclipse.ui.main.menu?after=additions">
       </menuContribution>
       <menuContribution
-            locationURI="toolbar:org.eclipse.ui.main.toolbar?after=additions">
+            locationURI="toolbar:org.eclipse.ui.main.toolbar">
          <toolbar
                id="com.halkamalka.ever.Eve.toolbars.sampleToolbar">
             <command
