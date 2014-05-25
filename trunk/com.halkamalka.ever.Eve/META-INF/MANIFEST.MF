@@ -7,7 +7,11 @@ Bundle-Activator: com.halkamalka.ever.eve.Activator
 Bundle-Vendor: HALKAMALKA
 Require-Bundle: org.eclipse.ui,
  org.eclipse.core.runtime,
- org.eclipse.mylyn.commons.ui;bundle-version="3.9.2"
+ org.eclipse.mylyn.commons.ui;bundle-version="3.9.2",
+ org.eclipse.equinox.p2.core;bundle-version="2.3.0",
+ org.eclipse.equinox.p2.engine;bundle-version="2.3.0",
+ org.eclipse.equinox.p2.operations;bundle-version="2.3.0",
+ org.eclipse.equinox.p2.metadata.repository;bundle-version="1.2.100"
 Bundle-RequiredExecutionEnvironment: JavaSE-1.7
 Bundle-ActivationPolicy: lazy
 Bundle-ClassPath: lib/jsoup-1.7.3.jar,
