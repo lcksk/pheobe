@@ -12,6 +12,7 @@ import java.io.OutputStream;
 import java.io.UnsupportedEncodingException;
 import java.lang.reflect.InvocationTargetException;
 import java.net.MalformedURLException;
+import java.net.URI;
 import java.net.URL;
 import java.net.URLDecoder;
 import java.nio.charset.Charset;
@@ -61,6 +62,8 @@ public class DataManager implements DataEventSource, WebsocketListener {
 	private Path tmp = null;
 	private ArrayList<DataEventListener> dataEventListener = new ArrayList<DataEventListener>();
 	final private static String db  =  PreferenceConstants.P_EVE_HOME + File.separator + PreferenceConstants.P_DB_NAME;
+	final private static String img  =  PreferenceConstants.P_EVE_HOME + File.separator + PreferenceConstants.P_GZIP_IMG_NAME;
+
 	private WebsocketManager client = null;
 //	private ThreadPoolExecutor workerthread = null;
 
@@ -373,6 +376,21 @@ public class DataManager implements DataEventSource, WebsocketListener {
 			o.put("id", "10");
 			client.send(o);
 		}
+		
+		
+//		URL url = null;
+//		try {
+//			url = new URL(PreferenceConstants.getImgFileURI());
+//			File file = new File(img);
+//			// TODO
+//			org.apache.commons.io.FileUtils.copyURLToFile(url, file);
+//			File base = new File(PreferenceConstants.P_EVE_HOME);
+//			extractGZipTo(file, base);
+//		}
+//		catch (IOException e) {
+//			// TODO Auto-generated catch block
+//			e.printStackTrace();
+//		}
 	}
 	
 	public void downloadDB(URL url) {
@@ -701,6 +719,22 @@ public class DataManager implements DataEventSource, WebsocketListener {
         				// Change to use handler
         				DataManager.getInstance().downloadImage();
         				DataManager.getInstance().downloadDB();
+//        				IHandlerService service = (IHandlerService) PlatformUI.getWorkbench().getService(IHandlerService.class);
+//        				try {
+//							service.executeCommand("com.halkamalka.ever.Eve.commands.updateDBCommand", null);
+//						} catch (ExecutionException e) {
+//							// TODO Auto-generated catch block
+//							e.printStackTrace();
+//						} catch (NotDefinedException e) {
+//							// TODO Auto-generated catch block
+//							e.printStackTrace();
+//						} catch (NotEnabledException e) {
+//							// TODO Auto-generated catch block
+//							e.printStackTrace();
+//						} catch (NotHandledException e) {
+//							// TODO Auto-generated catch block
+//							e.printStackTrace();
+//						}
         				// Change to use handler
         				NotificationPopUpUI popup = new  NotificationPopUpUI(PlatformUI.getWorkbench().getDisplay());
         		        popup.open();
@@ -722,6 +756,58 @@ public class DataManager implements DataEventSource, WebsocketListener {
 		// TODO Auto-generated method stub
 		log.info("");
 		leaveEcho();
+	}
+	
+	public static void extractGZipTo(File file, File base) {
+		TarArchiveInputStream in = null;
+		OutputStream out = null;
+		try {
+			in = new TarArchiveInputStream(new GzipCompressorInputStream(new FileInputStream(file)), "utf-8");
+			TarArchiveEntry entry = null;
+			while ((entry = in.getNextTarEntry()) != null) {
+				File tmp = new File(base, entry.getName());
+	//			log.info("file : " + tmp.toString());
+				if(entry.isDirectory()) {
+					org.apache.commons.io.FileUtils.forceMkdir(tmp);
+				}
+				else {
+					if(!tmp.getParentFile().exists()) {
+						org.apache.commons.io.FileUtils.forceMkdir(tmp.getParentFile());
+					}
+					tmp.createNewFile();
+					byte[] buf = new byte[(int) entry.getSize()];
+					in.read(buf);
+					out = new FileOutputStream(tmp);
+					out.write(buf);
+					out.close();
+					out = null;
+				}
+			}
+		} 
+		catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		finally {
+			if(in!=null) {
+				try {
+					in.close();
+				} 
+				catch (IOException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			}
+			if(out != null) {
+				try {
+					out.close();
+				} 
+				catch (IOException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			}
+		}
 	}
 	
 	public static void extractGZipTo(byte[] data, File base) {
