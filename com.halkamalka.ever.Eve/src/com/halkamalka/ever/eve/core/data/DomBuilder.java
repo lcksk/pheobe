@@ -388,6 +388,7 @@ public class DomBuilder {
 		}
 	}
 	
+	@Deprecated
 	private void batchJQuery(Path tmp) {
 		InputStream in = getClass().getResourceAsStream("/res/jslib.tar.gz"); // TODO
 
