@@ -23,6 +23,8 @@ public class PreferenceConstants {
 	
 	public static final String P_DB_NAME = "product.db";
 	
+	public static final String P_GZIP_IMG_NAME = "userfiles.tar.gz";
+	
 	public static final String P_EVE_HOME = System.getProperty("user.home") + File.separator + ".eve";
 	
 //	public static final String P_HTTP_SERVER_URL = "dbUrlPreference";
@@ -31,6 +33,12 @@ public class PreferenceConstants {
 		return "http://" + Activator.getDefault().getPreferenceStore().getString(PreferenceConstants.P_SERVER_IP) +
 				":" +
 				 Activator.getDefault().getPreferenceStore().getString(PreferenceConstants.P_SERVER_PORT) +  "/"  + P_DB_NAME;
+	}
+	
+	public static String getImgFileURI() {
+		return "http://" + Activator.getDefault().getPreferenceStore().getString(PreferenceConstants.P_SERVER_IP) +
+				":" +
+				 Activator.getDefault().getPreferenceStore().getString(PreferenceConstants.P_SERVER_PORT) +  "/"  + P_GZIP_IMG_NAME;
 	}
 	
 	public static String getWebsockURI() {
