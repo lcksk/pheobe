@@ -15,7 +15,13 @@
 					var currentProduct = product[i];
 					currentProduct.addEventListener('click', function(e) {
 						console.log(e);
-						var description = e.target.parentElement.children[5];
+						
+						if(e.target.nodeName == "IMG") {
+							var description = e.target.parentElement.parentElement.parentElement.children[5];
+						} else {
+							var description = e.target.parentElement.children[5];
+						}
+						
 						if(description.style.display == "none") {
 							description.style.display = "block";
 						} else {
