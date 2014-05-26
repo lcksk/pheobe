@@ -5,17 +5,21 @@
       version="1.0.0.qualifier"
       provider-name="HALKAMALKA">
 
-   <description url="http://www.example.com/description">
+   <description url="http://www.halkamalka.com/eve/description">
       [Enter Feature Description here.]
    </description>
 
-   <copyright url="http://www.example.com/copyright">
+   <copyright url="http://www.halkamalka.com/eve/copyright">
       [Enter Copyright Description here.]
    </copyright>
 
-   <license url="http://www.example.com/license">
+   <license url="http://www.halkamalka.com/eve/license">
       [Enter License Description here.]
    </license>
+
+   <url>
+      <discovery label="Eve software update sites" url="http://www.halkamalka.com/eve"/>
+   </url>
 
    <plugin
          id="org.eclipse.e4.ui.workbench.renderers.swt"
