@@ -1,3 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <site>
+   <feature url="features/com.halkamalka.ever.Eve.feature_1.0.0.201405270440.jar" id="com.halkamalka.ever.Eve.feature" version="1.0.0.201405270440">
+      <category name="Eve"/>
+   </feature>
+   <category-def name="Eve" label="Eve">
+      <description>
+         This category contains all of the Eve features
+      </description>
+   </category-def>
 </site>
