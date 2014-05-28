@@ -598,36 +598,38 @@ public class DataManager implements DataEventSource, WebsocketListener {
 						e.printStackTrace();
 					}
 				}
-
-				String  image = r.getString("thumbnail");
 				
-				File file = new File(getTempPath().toString() + File.separator + image.hashCode());
-				OutputStream outputStream = null;
-				try {
-					if(file.createNewFile()) {
-						@SuppressWarnings("restriction")
-						byte[] b = Base64.decode(image.getBytes());
-						outputStream = new FileOutputStream(file);
-						outputStream.write(b);
-					}
-				} 
-				catch (IOException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
-				finally {
-					if(outputStream != null) {
-						try {
-							outputStream.close();
-						} catch (IOException e) {
-							// TODO Auto-generated catch block
-							e.printStackTrace();
-						}
-					}
-					outputStream = null;
-				}
-			
-				image = file.getPath();
+				String image = r.getString("thumbnail");
+
+//				String  image = r.getString("thumbnail");
+//				
+//				File file = new File(getTempPath().toString() + File.separator + image.hashCode());
+//				OutputStream outputStream = null;
+//				try {
+//					if(file.createNewFile()) {
+//						@SuppressWarnings("restriction")
+//						byte[] b = Base64.decode(image.getBytes());
+//						outputStream = new FileOutputStream(file);
+//						outputStream.write(b);
+//					}
+//				} 
+//				catch (IOException e) {
+//					// TODO Auto-generated catch block
+//					e.printStackTrace();
+//				}
+//				finally {
+//					if(outputStream != null) {
+//						try {
+//							outputStream.close();
+//						} catch (IOException e) {
+//							// TODO Auto-generated catch block
+//							e.printStackTrace();
+//						}
+//					}
+//					outputStream = null;
+//				}
+//			
+//				image = file.getPath();
 				log.info("description : " + description);
 				Product product = new Product(hash, name, description, image, price);
 				tmp.add(product);
