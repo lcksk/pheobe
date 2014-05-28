@@ -1,35 +1,48 @@
 <html>
 	<head>
 		<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+		<meta http-equiv="X-UA-Compatible" content="IE=8">
 		<title>template</title>
-		<script type="text/javascript" src="js/jquery-2.1.0.min.js"></script>
 		<script type="text/javascript">
 		
 			function applyDomBuild() {
 				
-			//	var product = document.getElementsByClassName("productFold");
-			//	var product = $(".productFold");
-			var product = document.querySelectorAll(".productFold");
+				var product = document.querySelectorAll("div.productFold");
 				
 				for(var i=0; i<product.length; i++) {
 					var currentProduct = product[i];
-					currentProduct.addEventListener('click', function(e) {
-						console.log(e);
-						
-						if(e.target.nodeName == "IMG") {
-							var description = e.target.parentElement.parentElement.parentElement.children[5];
-						} else {
-							var description = e.target.parentElement.children[5];
-						}
-						
-						if(description.style.display == "none") {
-							description.style.display = "block";
-						} else {
-							description.style.display = "none";
-						}
-					}, false);
+					
+					if (!currentProduct.addEventListener) {
+					    currentProduct.attachEvent("onclick", function(){toggle(currentProduct)});
+					} else {
+					    currentProduct.addEventListener("click", function(e) {
+					    	if(e.target.nodeName == "IMG") {
+								var description = e.target.parentElement.parentElement.parentElement.children[5];
+							} else {
+								var description = e.target.parentElement.children[5];
+							}
+							
+							if(description.style.display == "none") {
+								description.style.display = "block";
+							} else {
+								description.style.display = "none";
+							}	
+					    
+					    }, false);
+					}
 				}
 			}
+			
+			function toggle(currentProduct) {
+				var description = currentProduct.children[5];
+				
+				if(description.style.display == "none") {
+					description.style.display = "block";
+				} else {
+					description.style.display = "none";
+				}		
+			}
+			
 		
 		</script>
 	</head>
@@ -43,7 +56,7 @@
 					<tr>
 						<td rowspan="2" style="text-align:center; width:20%"><strong id="major"></strong></td>
 						<td style="text-align:center; width:20%"><strong>전문가 제안</strong></td>
-						<td id="prescription" style="width:60%; text-align:center; padding:20px;"></td>
+						<td id="prescription" style="width:60%; text-align:center; padding:20px;">의료기관에서 정확한 검사를 받아보시기 바랍니다.</td>
 					</tr>
 				</tbody>
 			</table>
