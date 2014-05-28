@@ -110,12 +110,16 @@
          </menu>
          <menu
                label="Help">
+            <command
+                  commandId="org.eclipse.ui.help.aboutAction"
+                  style="push">
+            </command>
             <separator
                   name="com.halkamalka.ever.Eve.separator1"
                   visible="true">
             </separator>
             <command
-                  commandId="org.eclipse.ui.help.aboutAction"
+                  commandId="com.halkamalka.ever.Eve.commands.update"
                   style="push">
             </command>
          </menu>
@@ -190,6 +194,10 @@
             id="com.halkamalka.ever.Eve.commands.disconnectCommand"
             name="Disconnect">
       </command>
+      <command
+            id="com.halkamalka.ever.Eve.commands.update"
+            name="Update">
+      </command>
    </extension>
    <extension
          point="org.eclipse.ui.handlers">
@@ -216,6 +224,10 @@
       <handler
             class="com.halkamalka.ever.eve.handlers.DisconnectHandler"
             commandId="com.halkamalka.ever.Eve.commands.disconnectCommand">
+      </handler>
+      <handler
+            class="com.halkamalka.ever.eve.handlers.UpdateHandler"
+            commandId="com.halkamalka.ever.Eve.commands.update">
       </handler>
    </extension>
    <extension
