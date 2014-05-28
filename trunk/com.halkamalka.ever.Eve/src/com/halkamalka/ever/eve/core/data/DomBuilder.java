@@ -42,9 +42,6 @@ public class DomBuilder {
 		Element prescription = doc.select("#prescription").first();
 		if (data.getPrescription() != null) {
 			prescription.text(data.getPrescription());
-		} else {
-			String text = "의료기관에서 정확한 검사를 받아보시기 바랍니다.";
-			prescription.text(text);
 		}
 
 		Element major = doc.select("#major").first();
