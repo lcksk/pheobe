@@ -42,6 +42,9 @@ public class DomBuilder {
 		Element prescription = doc.select("#prescription").first();
 		if (data.getPrescription() != null) {
 			prescription.text(data.getPrescription());
+		} else {
+			String text = "의료기관에서 정확한 검사를 받아보시기 바랍니다.";
+			prescription.text(text);
 		}
 
 		Element major = doc.select("#major").first();
@@ -74,8 +77,7 @@ public class DomBuilder {
 							if ((abnormalItem[a].getStatus() > 0) && (bound[i].getStatus() > 0)) {
 
 								// RECOMMEND LIST CONTAINER
-								Element recommendListContainer = doc
-										.createElement("div");
+								Element recommendListContainer = doc.createElement("div");
 								recommendListContainer.attr("class", "productFold");
 								String recommendListContainerStyle = "position:relative; width: 100%; float: left; background-color:#e0e0e0; border-top: 1px solid white; font-size:13px; cursor:pointer;";
 								recommendListContainer.attr("style", recommendListContainerStyle);
@@ -97,6 +99,7 @@ public class DomBuilder {
 								// PRODUCT IMAGE
 								log.info("******************product image****************** : "+ products[j].getImage());
 								String _productImage = products[j].getImage();
+//								String _productImage = products[j].getImageName();
 								Element _productImageDom = createProductImage(doc, _productImage);
 								recommendListContainer.appendChild(_productImageDom);
 								//
@@ -147,31 +150,23 @@ public class DomBuilder {
 								recommendListContainer.appendChild(_statusDom);
 
 								// PRODUCT IMAGE
-								log.info("******************product image****************** : "
-										+ products[j].getImage());
+								log.info("******************product image****************** : "+ products[j].getImage());
 								String _productImage = products[j].getImage();
-								Element _productImageDom = createProductImage(
-										doc, _productImage);
-								recommendListContainer
-										.appendChild(_productImageDom);
+//								String _productImage = products[j].getImageName();
+								Element _productImageDom = createProductImage(doc, _productImage);
+								recommendListContainer.appendChild(_productImageDom);
 								//
 								// //PRODUCT NAME
-								log.info("******************product name****************** : "
-										+ products[j].getName());
+								log.info("******************product name****************** : "+ products[j].getName());
 								String _productName = products[j].getName();
-								Element _productNameDom = createProductName(
-										doc, _productName);
-								recommendListContainer
-										.appendChild(_productNameDom);
+								Element _productNameDom = createProductName(doc, _productName);
+								recommendListContainer.appendChild(_productNameDom);
 								//
 								// //PRODUCT PRICE
-								log.info("******************product price****************** : "
-										+ products[j].getPrice0());
+								log.info("******************product price****************** : "+ products[j].getPrice0());
 								Integer _productPrice = products[j].getPrice0();
-								Element _productPriceDom = createProductPrice(
-										doc, _productPrice);
-								recommendListContainer
-										.appendChild(_productPriceDom);
+								Element _productPriceDom = createProductPrice(doc, _productPrice);
+								recommendListContainer.appendChild(_productPriceDom);
 
 								// PRODUCT DESCRIPTION TOGGLE
 								// Element _productDescriptionToggleDom =
@@ -289,7 +284,7 @@ public class DomBuilder {
 		Element _productImageTag = doc.createElement("img");
 		_productImageTag.attr("width", "50px");
 		_productImageTag.attr("height", "50px");
-		_productImageTag.attr("src", imageSrc);
+		_productImageTag.attr("src", productThumnailreplacePath(imageSrc));
 		// _productImageTag.attr("class", "productFold");
 		// _productImageTag.attr("style", "cursor:pointer;");
 		_productImageAlign.appendChild(_productImageTag);
@@ -322,8 +317,7 @@ public class DomBuilder {
 		String _productDescriptionToggle = "DETAIL";
 		Element _productDescriptionToggleDom = doc.createElement("div");
 		String _productDescriptionToggleDomStyle = "position:relative; width:10%; float:left; height:50px; line-height:50px; padding-top:5px";
-		_productDescriptionToggleDom.attr("style",
-				_productDescriptionToggleDomStyle);
+		_productDescriptionToggleDom.attr("style",_productDescriptionToggleDomStyle);
 		_productDescriptionToggleDom.attr("class", "productFold");
 		_productDescriptionToggleDom.html(_productDescriptionToggle);
 
@@ -346,6 +340,12 @@ public class DomBuilder {
 					+ File.separator + "userfiles");
 		}
 		return str.replace("/userfiles", PreferenceConstants.P_EVE_HOME
+				+ File.separator + "userfiles");
+	}
+	
+	private String productThumnailreplacePath(String str) {
+		
+		return str.replace("userfiles", PreferenceConstants.P_EVE_HOME
 				+ File.separator + "userfiles");
 	}
 
