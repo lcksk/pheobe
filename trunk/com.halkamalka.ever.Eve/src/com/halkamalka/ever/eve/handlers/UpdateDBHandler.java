@@ -8,11 +8,9 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.jetty.websocket.api.Session;
-import org.eclipse.ui.PlatformUI;
 import org.json.simple.JSONObject;
 
 import com.halkamalka.ever.eve.core.data.DataManager;
-import com.halkamalka.ever.eve.views.NotificationPopUpUI;
 import com.halkamalka.util.WebsocketListener;
 import com.halkamalka.util.WebsocketManager;
 
