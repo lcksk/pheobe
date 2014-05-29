@@ -35,7 +35,7 @@ public class ApplicationWorkbenchWindowAdvisor extends WorkbenchWindowAdvisor {
         configurer.setShowCoolBar(true);
         configurer.setShowStatusLine(true);
         configurer.setShowProgressIndicator(true);
-        configurer.setTitle("EVER&EVER ! - http://www.evernever.co.kr"); //$NON-NLS-1$
+        configurer.setTitle("EVER&EVER  - http://www.evernever.co.kr"); //$NON-NLS-1$
     }
 
     /*
