@@ -5,6 +5,21 @@
 		<title>template</title>
 		<script type="text/javascript">
 		
+			function eventListener(e) {
+				var target = (e.target) ? e.target : e.srcElement;
+				if(target.nodeName == "IMG") {
+					description = target.parentElement.parentElement.parentElement.children[5];
+				} else {
+					description = target.parentElement.children[5];
+				}
+				
+				if(description.style.display == "none") {
+					description.style.display = "block";
+				} else {
+					description.style.display = "none";
+				}
+			}	
+		
 			function applyDomBuild() {
 				
 				var product = document.querySelectorAll("div.productFold");
@@ -13,21 +28,34 @@
 					var currentProduct = product[i];
 					
 					if (!currentProduct.addEventListener) {
-					    currentProduct.attachEvent("onclick", function(){toggle(currentProduct)});
-					} else {
-					    currentProduct.addEventListener("click", function(e) {
-					    	if(e.target.nodeName == "IMG") {
-								var description = e.target.parentElement.parentElement.parentElement.children[5];
+					    currentProduct.attachEvent("onclick", function(e){
+							var target = (e.target) ? e.target : e.srcElement;
+							if(target.nodeName == "IMG") {
+								description = target.parentElement.parentElement.parentElement.children[5];
 							} else {
-								var description = e.target.parentElement.children[5];
+								description = target.parentElement.children[5];
 							}
 							
 							if(description.style.display == "none") {
 								description.style.display = "block";
 							} else {
 								description.style.display = "none";
-							}	
-					    
+							}
+					    });
+					} else {
+					    currentProduct.addEventListener("click", function(e) {
+							var target = (e.target) ? e.target : e.srcElement;
+							if(target.nodeName == "IMG") {
+								description = target.parentElement.parentElement.parentElement.children[5];
+							} else {
+								description = target.parentElement.children[5];
+							}
+							
+							if(description.style.display == "none") {
+								description.style.display = "block";
+							} else {
+								description.style.display = "none";
+							}
 					    }, false);
 					}
 				}
