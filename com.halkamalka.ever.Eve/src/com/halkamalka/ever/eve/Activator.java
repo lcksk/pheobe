@@ -2,7 +2,10 @@ package com.halkamalka.ever.eve;
 
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
+import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleContext;
+import org.osgi.framework.ServiceReference;
+import org.osgi.service.packageadmin.PackageAdmin;
 
 /**
  * The activator class controls the plug-in life cycle
@@ -12,8 +15,14 @@ public class Activator extends AbstractUIPlugin {
 	// The plug-in ID
 	public static final String PLUGIN_ID = "com.halkamalka.ever.Eve"; //$NON-NLS-1$
 
+	public static BundleContext bundleContext = null;
+
 	// The shared instance
 	private static Activator plugin;
+
+	// XXX services for starting bundles
+	private static PackageAdmin packageAdmin = null;
+	private static ServiceReference packageAdminRef = null;
 	
 	/**
 	 * The constructor
@@ -28,8 +37,28 @@ public class Activator extends AbstractUIPlugin {
 	public void start(BundleContext context) throws Exception {
 		super.start(context);
 		plugin = this;
+		
+		bundleContext = context;
+		
+		packageAdminRef = bundleContext.getServiceReference(PackageAdmin.class.getName());
+		packageAdmin = (PackageAdmin) bundleContext.getService(packageAdminRef);
 	}
 
+	private static Bundle getBundle(String symbolicName) {
+		if (packageAdmin == null)
+			return null;
+		Bundle[] bundles = packageAdmin.getBundles(symbolicName, null);
+		if (bundles == null)
+			return null;
+		// Return the first bundle that is not installed or uninstalled
+		for (int i = 0; i < bundles.length; i++) {
+			if ((bundles[i].getState() & (Bundle.INSTALLED | Bundle.UNINSTALLED)) == 0) {
+				return bundles[i];
+			}
+		}
+		return null;
+	}
+	
 	/*
 	 * (non-Javadoc)
 	 * @see org.eclipse.ui.plugin.AbstractUIPlugin#stop(org.osgi.framework.BundleContext)
