@@ -35,7 +35,7 @@ public class ApplicationWorkbenchWindowAdvisor extends WorkbenchWindowAdvisor {
         configurer.setShowCoolBar(true);
         configurer.setShowStatusLine(true);
         configurer.setShowProgressIndicator(true);
-        configurer.setTitle("EVER&EVER - http://www.evernever.co.kr"); //$NON-NLS-1$
+        configurer.setTitle("EVER&EVER ! - http://www.evernever.co.kr"); //$NON-NLS-1$
     }
 
     /*
@@ -65,7 +65,7 @@ public class ApplicationWorkbenchWindowAdvisor extends WorkbenchWindowAdvisor {
 //					.log(new Status(IStatus.ERROR, Activator.PLUGIN_ID,
 //							"No provisioning agent found.  This application is not set up for updates."));
 //		}
-    	P2Util.autoupdate(0);
+    	P2Util.autoupdate(100);
         
 	}
     
