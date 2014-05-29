@@ -2,33 +2,42 @@
 <feature
       id="com.halkamalka.ever.Eve.feature"
       label="Eve Feature"
-      version="1.0.0.qualifier"
-      provider-name="HALKAMALKA">
+      version="1.0.2.qualifier"
+      provider-name="HALKAMALKA"
+      os="win32"
+      ws="win32"
+      nl="ko"
+      arch="x86">
 
-   <description url="http://www.halkamalka.com/eve/description">
+   <description url="http://www.halkamalka.com/p2/eve/description">
       [Enter Feature Description here.]
    </description>
 
-   <copyright url="http://www.halkamalka.com/eve/copyright">
+   <copyright url="http://www.halkamalka.com/p2/eve/copyright">
       [Enter Copyright Description here.]
    </copyright>
 
-   <license url="http://www.halkamalka.com/eve/license">
+   <license url="http://www.halkamalka.com/p2/eve/license">
       [Enter License Description here.]
    </license>
 
    <url>
-      <discovery label="Eve software update sites" url="http://www.halkamalka.com/eve"/>
+      <discovery label="Eve software update sites" url="http://www.halkamalka.com/p2/eve"/>
    </url>
 
    <includes
          id="org.eclipse.equinox.p2.core.feature"
-         version="0.0.0"/>
+         version="0.0.0"
+         os="win32"
+         ws="win32"
+         arch="x86"
+         nl="ko"/>
 
    <requires>
       <import plugin="org.eclipse.ui"/>
       <import plugin="org.eclipse.core.runtime" version="3.3.0" match="compatible"/>
       <import plugin="org.eclipse.mylyn.commons.ui" version="3.9.2" match="greaterOrEqual"/>
+      <import plugin="org.eclipse.equinox.util" version="1.0.500" match="greaterOrEqual"/>
       <import plugin="org.eclipse.equinox.p2.core" version="2.3.0" match="greaterOrEqual"/>
       <import plugin="org.eclipse.equinox.p2.metadata" version="2.2.0" match="greaterOrEqual"/>
       <import plugin="org.eclipse.equinox.p2.operations" version="2.3.0" match="greaterOrEqual"/>
@@ -59,7 +68,6 @@
       <import plugin="org.eclipse.jface" version="3.6.0" match="compatible"/>
       <import plugin="com.ibm.icu"/>
       <import plugin="org.eclipse.swt" version="3.0.0" match="compatible"/>
-      <import plugin="org.eclipse.equinox.util" version="1.0.500" match="greaterOrEqual"/>
    </requires>
 
    <plugin
