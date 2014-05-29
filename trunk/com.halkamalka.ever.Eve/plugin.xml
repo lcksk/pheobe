@@ -226,7 +226,6 @@
             commandId="com.halkamalka.ever.Eve.commands.disconnectCommand">
       </handler>
       <handler
-            class="com.halkamalka.ever.eve.handlers.UpdateHandler"
             commandId="com.halkamalka.ever.Eve.commands.update">
       </handler>
    </extension>
