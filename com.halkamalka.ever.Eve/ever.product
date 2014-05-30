@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <?pde version="3.5"?>
 
-<product name="eve" id="com.halkamalka.ever.Eve.product" application="com.halkamalka.ever.Eve.application" version="1.0.3.qualifier" useFeatures="true" includeLaunchers="true">
+<product name="eve" id="com.halkamalka.ever.Eve.product" application="com.halkamalka.ever.Eve.application" version="1.0.4.qualifier" useFeatures="true" includeLaunchers="true">
 
 
    <configIni use="default">
@@ -162,13 +162,8 @@
    <features>
       <feature id="org.eclipse.rcp" version="4.3.2.v20140221-1700"/>
       <feature id="org.eclipse.equinox.p2.rcp.feature" version="1.2.0.v20140221-1852"/>
-      <feature id="org.eclipse.equinox.p2.core.feature"/>
-      <feature id="org.eclipse.emf.ecore"/>
-      <feature id="org.eclipse.emf.common"/>
-      <feature id="org.eclipse.e4.rcp"/>
-      <feature id="org.eclipse.core.runtime.feature" version="1.1.0.v20140110-1610"/>
-      <feature id="org.eclipse.equinox.core.feature"/>
-      <feature id="com.halkamalka.ever.Eve.feature" version="1.0.0.qualifier"/>
+      <feature id="com.halkamalka.ever.Eve.feature" version="1.0.4.qualifier"/>
+      <feature id="org.eclipse.equinox.p2.core.feature" version="1.2.1.v20140221-1852"/>
    </features>
 
    <configurations>
