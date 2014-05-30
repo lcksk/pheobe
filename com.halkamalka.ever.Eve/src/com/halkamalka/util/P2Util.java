@@ -108,9 +108,7 @@ public class P2Util {
          * Query to find all installable units in the profile. These will be
          * searched in the update site for updates.
          */
-        Collection<IInstallableUnit> toUpdate = profile.query(
-QueryUtil.createIUAnyQuery(),
-            monitor).toSet();
+        Collection<IInstallableUnit> toUpdate = profile.query(QueryUtil.createIUAnyQuery(),monitor).toSet();
         ProvisioningSession provisioningSession = new ProvisioningSession(agent);
         operation = new UpdateOperation(provisioningSession, toUpdate);
         operation.setProfileId(profile.getProfileId());
