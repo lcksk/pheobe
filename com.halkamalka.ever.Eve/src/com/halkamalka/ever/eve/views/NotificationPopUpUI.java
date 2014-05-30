@@ -1,6 +1,5 @@
 package com.halkamalka.ever.eve.views;
-import java.net.MalformedURLException;
-import java.net.URL;
+import java.io.File;
 
 import org.eclipse.mylyn.commons.ui.dialogs.AbstractNotificationPopup;
 import org.eclipse.swt.SWT;
@@ -21,6 +20,7 @@ import org.eclipse.ui.PlatformUI;
 
 import com.halkamalka.ever.eve.core.data.DataManager;
 import com.halkamalka.ever.eve.core.data.Product;
+import com.halkamalka.ever.eve.preferences.PreferenceConstants;
  
 @SuppressWarnings("restriction")
 public class NotificationPopUpUI extends AbstractNotificationPopup
@@ -38,10 +38,10 @@ public NotificationPopUpUI(Display display)
     composite.setLayout(new GridLayout(1, true));
     Label label = new Label(composite, SWT.NONE);
     label.setBounds(0, 0, 400, 400);
-    label.setImage(getImage());
+    label.setImage(getImage(400));
 
     Link linkEverNews = new Link(composite, 0);
-    String evernewsLink = "<a href=\"http://evernever.co.kr/ \">Ever &amp; Ever  News</a>";
+    String evernewsLink = "<a href=\"http://evernever.co.kr/ \">Ever and Ever  News</a>";
     linkEverNews.setText(evernewsLink);
     linkEverNews.setSize(400, 100);
     linkEverNews.addSelectionListener(new SelectionAdapter()
@@ -63,9 +63,6 @@ public NotificationPopUpUI(Display display)
         catch (PartInitException e1) {
           e1.printStackTrace();
         }
-//        catch (MalformedURLException e1) {
-//          e1.printStackTrace();
-//        }
       }
     });
   }
@@ -80,16 +77,17 @@ public NotificationPopUpUI(Display display)
   @Override
   protected Image getPopupShellImage(int maximumHeight)
   {
-	  return getImage();
+	  return getImage(maximumHeight);
   }
   
-  private Image getImage() {
+  private Image getImage(int maximumHeight) {
 	  Image image = null;
 	  Product product = DataManager.getInstance().getLatestProduct();
 	  if(product != null) {
 			
 		  ImageLoader imageLoader = new ImageLoader();
-		  ImageData[] imageData = imageLoader.load(product.getImage());
+		  System.out.println("image - " + product.getImage());
+		  ImageData[] imageData = imageLoader.load(PreferenceConstants.P_EVE_HOME + File.separator + product.getImage());
 			
 		  if(imageData.length > 0){
 //			  imageData[0].scaledTo(imageData[0].width * maximumHeight / imageData[0].height, maximumHeight);
