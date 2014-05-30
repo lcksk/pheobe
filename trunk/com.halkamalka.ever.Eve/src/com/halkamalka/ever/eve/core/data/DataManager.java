@@ -370,28 +370,28 @@ public class DataManager implements DataEventSource, WebsocketListener {
 	
 	@SuppressWarnings("unchecked")
 	public void downloadImage() {
-		if(client != null && client.isConnected()) {
-			JSONObject o = new JSONObject();
-			o.put("jsonrpc", "2.0");
-			o.put("method", "product::download_images");
-			o.put("id", "10");
-			client.send(o);
+//		if(client != null && client.isConnected()) {
+//			JSONObject o = new JSONObject();
+//			o.put("jsonrpc", "2.0");
+//			o.put("method", "product::download_images");
+//			o.put("id", "10");
+//			client.send(o);
+//		}
+		
+		
+		URL url = null;
+		try {
+			url = new URL(PreferenceConstants.getImgFileURI());
+			File file = new File(img);
+			// TODO
+			org.apache.commons.io.FileUtils.copyURLToFile(url, file);
+			File base = new File(PreferenceConstants.P_EVE_HOME);
+			extractGZipTo(file, base);
 		}
-		
-		
-//		URL url = null;
-//		try {
-//			url = new URL(PreferenceConstants.getImgFileURI());
-//			File file = new File(img);
-//			// TODO
-//			org.apache.commons.io.FileUtils.copyURLToFile(url, file);
-//			File base = new File(PreferenceConstants.P_EVE_HOME);
-//			extractGZipTo(file, base);
-//		}
-//		catch (IOException e) {
-//			// TODO Auto-generated catch block
-//			e.printStackTrace();
-//		}
+		catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 	
 	public void downloadDB(URL url) {
