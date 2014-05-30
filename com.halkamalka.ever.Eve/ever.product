@@ -1,8 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <?pde version="3.5"?>
 
-<product name="eve" id="com.halkamalka.ever.Eve.product" application="com.halkamalka.ever.Eve.application" version="1.0.4.qualifier" useFeatures="true" includeLaunchers="true">
-
+<product name="eve" uid="com.halkmalka.ever.Eve.product" id="com.halkamalka.ever.Eve.product" application="com.halkamalka.ever.Eve.application" version="1.0.0.qualifier" useFeatures="true" includeLaunchers="true">
 
    <configIni use="default">
    </configIni>
@@ -15,7 +14,6 @@
 
    <windowImages/>
 
-
    <launcher name="eve">
       <solaris/>
       <win useIco="false">
@@ -23,12 +21,10 @@
       </win>
    </launcher>
 
-
    <vm>
       <linux include="false">org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JRE-1.1</linux>
       <windows include="true">org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JRE-1.1</windows>
    </vm>
-
 
    <plugins>
       <plugin id="com.halkamalka.ever.Eve"/>
@@ -162,15 +158,15 @@
    <features>
       <feature id="org.eclipse.rcp" version="4.3.2.v20140221-1700"/>
       <feature id="org.eclipse.equinox.p2.rcp.feature" version="1.2.0.v20140221-1852"/>
-      <feature id="com.halkamalka.ever.Eve.feature" version="1.0.4.qualifier"/>
       <feature id="org.eclipse.equinox.p2.core.feature" version="1.2.1.v20140221-1852"/>
+      <feature id="com.halkamalka.ever.Eve.feature" version="1.0.6.qualifier"/>
    </features>
 
    <configurations>
       <plugin id="com.halkamalka.ever.Eve" autoStart="false" startLevel="5" />
-      <plugin id="org.eclipse.core.runtime" autoStart="true" startLevel="4" />
+      <plugin id="org.eclipse.core.runtime" autoStart="true" startLevel="2" />
       <plugin id="org.eclipse.equinox.common" autoStart="true" startLevel="2" />
-      <plugin id="org.eclipse.equinox.ds" autoStart="true" startLevel="2" />
+      <plugin id="org.eclipse.equinox.ds" autoStart="true" startLevel="3" />
       <plugin id="org.eclipse.equinox.simpleconfigurator" autoStart="true" startLevel="1" />
    </configurations>
 
