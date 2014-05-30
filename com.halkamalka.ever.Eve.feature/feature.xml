@@ -2,7 +2,7 @@
 <feature
       id="com.halkamalka.ever.Eve.feature"
       label="Eve Feature"
-      version="1.0.4.qualifier"
+      version="1.0.6.qualifier"
       provider-name="HALKAMALKA">
 
    <description url="http://www.halkamalka.com/p2/eve/description">
