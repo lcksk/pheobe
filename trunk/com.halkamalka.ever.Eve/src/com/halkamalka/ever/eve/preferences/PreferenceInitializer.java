@@ -21,7 +21,7 @@ public class PreferenceInitializer extends AbstractPreferenceInitializer {
 		store.setDefault(PreferenceConstants.P_CHOICE, "choice2");
 		store.setDefault(PreferenceConstants.P_STRING,"Default value");
 //		store.setDefault(PreferenceConstants.P_HTTP_SERVER_URL,"http://14.33.234.132:8080");
-		store.setDefault(PreferenceConstants.P_SERVER_IP,"14.33.234.132");
-		store.setDefault(PreferenceConstants.P_SERVER_PORT,"8080");
+		store.setDefault(PreferenceConstants.P_SERVER_IP,"service.halkamalka.com");
+		store.setDefault(PreferenceConstants.P_SERVER_PORT,"8081");
 	}
 }
