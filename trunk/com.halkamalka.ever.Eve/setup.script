@@ -2,7 +2,7 @@
 ; SEE THE DOCUMENTATION FOR DETAILS ON CREATING INNO SETUP SCRIPT FILES!
 
 #define MyAppName "eve"
-#define MyAppVersion "1.5"
+#define MyAppVersion "1.0.0"
 #define MyAppPublisher "Ever & Ever, Inc."
 #define MyAppURL "http://www.evernever.co.kr/"
 #define MyAppExeName "eve.exe"
@@ -11,7 +11,7 @@
 ; NOTE: The value of AppId uniquely identifies this application.
 ; Do not use the same AppId value in installers for other applications.
 ; (To generate a new GUID, click Tools | Generate GUID inside the IDE.)
-AppId={{6CDFE999-263C-481F-97B7-243A8535189D}
+AppId={{EA9C6BF5-76F0-48EE-BE1A-919B5D71C210}
 AppName={#MyAppName}
 AppVersion={#MyAppVersion}
 ;AppVerName={#MyAppName} {#MyAppVersion}
@@ -19,7 +19,7 @@ AppPublisher={#MyAppPublisher}
 AppPublisherURL={#MyAppURL}
 AppSupportURL={#MyAppURL}
 AppUpdatesURL={#MyAppURL}
-DefaultDirName={pf}\{#MyAppName}
+DefaultDirName=C:\{#MyAppName}
 DefaultGroupName={#MyAppName}
 OutputDir=C:\Documents and Settings\buttonfly\My Documents\setup_output
 OutputBaseFilename=setup
@@ -27,17 +27,12 @@ Compression=lzma
 SolidCompression=yes
 ChangesEnvironment=yes
 
-
-
-[Registry]
-Root: HKLM; Subkey: "SYSTEM\CurrentControlSet\Control\Session Manager\Environment"; ValueType: expandsz; ValueName: "Path"; ValueData: "{olddata};{app}"; Check: NeedsAddPath('{app}')
-
-
 [Languages]
 Name: "english"; MessagesFile: "compiler:Default.isl"
 
 [Tasks]
-Name: "desktopicon"; Description: "{cm:CreateDesktopIcon}"; GroupDescription: "{cm:AdditionalIcons}"; Flags: unchecked
+Name: "desktopicon"; Description: "{cm:CreateDesktopIcon}"; GroupDescription: "{cm:AdditionalIcons}"; 
+Name: "quicklaunchicon"; Description: "{cm:CreateQuickLaunchIcon}"; GroupDescription: "{cm:AdditionalIcons}"; OnlyBelowVersion: 0,6.1
 
 [Files]
 Source: "C:\Documents and Settings\buttonfly\My Documents\eve\eve\eve.exe"; DestDir: "{app}"; Flags: ignoreversion
@@ -47,26 +42,57 @@ Source: "C:\Documents and Settings\buttonfly\My Documents\eve\repository\*"; Des
 
 [Icons]
 Name: "{group}\{#MyAppName}"; Filename: "{app}\{#MyAppExeName}"
-Name: "{group}\{cm:UninstallProgram,{#MyAppName}}"; Filename: "{uninstallexe}"
 Name: "{commondesktop}\{#MyAppName}"; Filename: "{app}\{#MyAppExeName}"; Tasks: desktopicon
+Name: "{userappdata}\Microsoft\Internet Explorer\Quick Launch\{#MyAppName}"; Filename: "{app}\{#MyAppExeName}"; Tasks: quicklaunchicon
 
 [Run]
 Filename: "{app}\{#MyAppExeName}"; Description: "{cm:LaunchProgram,{#StringChange(MyAppName, '&', '&&')}}"; Flags: nowait postinstall skipifsilent
 
+[Registry]
+Root: HKLM; Subkey: "SYSTEM\CurrentControlSet\Control\Session Manager\Environment"; ValueType: expandsz; ValueName: "Path"; ValueData: "{app};{olddata}"; Check: NotOnPathAlready();
+
 [Code]
-function NeedsAddPath(Param: string): boolean;
+function NotOnPathAlready(): Boolean;
 var
-  OrigPath: string;
+  BinDir, Path: String;
 begin
-  if not RegQueryStringValue(HKEY_LOCAL_MACHINE,
-    'SYSTEM\CurrentControlSet\Control\Session Manager\Environment',
-    'Path', OrigPath)
-  then begin
+  if RegQueryStringValue(HKEY_LOCAL_MACHINE,
+   'SYSTEM\CurrentControlSet\Control\Session Manager\Environment',
+   'Path', Path) then
+  begin // Successfully read the value
+    BinDir := ExpandConstant('{app}');
+    if Pos(LowerCase(BinDir), Lowercase(Path)) = 0 then
+    begin
+      Log('Did not find eve dir in %PATH% so will add it');
+      Result := True;
+    end
+    else
+    begin
+      Result := False;
+    end
+  end
+  else // The key probably doesn't exist
+  begin
     Result := True;
-    exit;
   end;
-  // look for the path with leading and trailing semicolon
-  // Pos() returns 0 if not found
-  Result := Pos(';' + Param + ';', ';' + OrigPath + ';') = 0;
 end;
 
+procedure CurUninstallStepChanged(CurUninstallStep: TUninstallStep);
+var
+  BinDir, Path: String;
+begin
+  if (CurUninstallStep = usPostUninstall)
+     and (RegQueryStringValue(HKEY_LOCAL_MACHINE,
+     'SYSTEM\CurrentControlSet\Control\Session Manager\Environment',
+     'Path', Path)) then
+  begin
+    BinDir := ExpandConstant('{app}');
+    if Pos(LowerCase(BinDir) + ';', Lowercase(Path)) <> 0 then
+    begin
+      StringChange(Path, BinDir + ';', '');
+      RegWriteStringValue(HKEY_LOCAL_MACHINE,
+      'SYSTEM\CurrentControlSet\Control\Session Manager\Environment',
+      'Path', Path);
+    end;
+  end;
+end;
