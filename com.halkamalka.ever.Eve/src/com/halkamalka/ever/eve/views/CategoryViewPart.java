@@ -386,12 +386,22 @@ public class CategoryViewPart extends ViewPart implements DataEventListener, Dro
 		}
 
 		public Image getImage(Object obj) {
-			String imageKey = ISharedImages.IMG_OBJ_FILE;
+//			String imageKey = ISharedImages.IMG_OBJ_FILE;
 			if (obj instanceof TreeParent) {
 //				imageKey = ISharedImages.IMG_OBJ_FOLDER;				
 				return CustomSharedImage.getInstance().getImage(CustomSharedImage.IMG_WARN);
 			}
-			return PlatformUI.getWorkbench().getSharedImages().getImage(imageKey);
+			TreeObject o = (TreeObject) obj;
+			TreeParent p = o.getParent();
+			Data data = p.getData();
+			if((data != null) && data.hasAbnormal()) {
+				return CustomSharedImage.getInstance().getImage(CustomSharedImage.IMG_MSG_WARN);
+			}
+//			if(o.getData().hasAbnormal()) {
+//			if(o.getData().hasAbnormal()) {
+//				
+//			}
+			return CustomSharedImage.getInstance().getImage(CustomSharedImage.IMG_PASSED);
 		}
 	}
 
