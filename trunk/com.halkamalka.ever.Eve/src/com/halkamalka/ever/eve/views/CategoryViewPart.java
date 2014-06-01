@@ -397,10 +397,6 @@ public class CategoryViewPart extends ViewPart implements DataEventListener, Dro
 			if((data != null) && data.hasAbnormal()) {
 				return CustomSharedImage.getInstance().getImage(CustomSharedImage.IMG_MSG_WARN);
 			}
-//			if(o.getData().hasAbnormal()) {
-//			if(o.getData().hasAbnormal()) {
-//				
-//			}
 			return CustomSharedImage.getInstance().getImage(CustomSharedImage.IMG_PASSED);
 		}
 	}
