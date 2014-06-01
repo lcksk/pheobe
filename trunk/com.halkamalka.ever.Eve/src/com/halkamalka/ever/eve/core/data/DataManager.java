@@ -12,7 +12,6 @@ import java.io.OutputStream;
 import java.io.UnsupportedEncodingException;
 import java.lang.reflect.InvocationTargetException;
 import java.net.MalformedURLException;
-import java.net.URI;
 import java.net.URL;
 import java.net.URLDecoder;
 import java.nio.charset.Charset;
@@ -34,9 +33,14 @@ import java.util.zip.ZipInputStream;
 import org.apache.commons.compress.archivers.tar.TarArchiveEntry;
 import org.apache.commons.compress.archivers.tar.TarArchiveInputStream;
 import org.apache.commons.compress.compressors.gzip.GzipCompressorInputStream;
+import org.eclipse.core.commands.ExecutionException;
+import org.eclipse.core.commands.NotEnabledException;
+import org.eclipse.core.commands.NotHandledException;
+import org.eclipse.core.commands.common.NotDefinedException;
 import org.eclipse.core.internal.preferences.Base64;
 import org.eclipse.jetty.websocket.api.Session;
 import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.handlers.IHandlerService;
 import org.json.simple.JSONObject;
 import org.sqlite.SQLiteConfig;
 
@@ -63,7 +67,8 @@ public class DataManager implements DataEventSource, WebsocketListener {
 	private ArrayList<DataEventListener> dataEventListener = new ArrayList<DataEventListener>();
 	final private static String db  =  PreferenceConstants.P_EVE_HOME + File.separator + PreferenceConstants.P_DB_NAME;
 	final private static String img  =  PreferenceConstants.P_EVE_HOME + File.separator + PreferenceConstants.P_GZIP_IMG_NAME;
-
+	private String path = null;
+	
 	private WebsocketManager client = null;
 //	private ThreadPoolExecutor workerthread = null;
 
@@ -236,10 +241,20 @@ public class DataManager implements DataEventSource, WebsocketListener {
 		extractZipTo(path, tmp, Charset.forName("MS949"));
 	}
 	
+	public void reload() throws NullPointerException {
+		if(path == null) {
+			throw new NullPointerException();
+		}
+		reload(path);
+	}
+	
 	public void reload(String path) {
+		this.path = null;
 		clear();
 		fireDataEvent(DataStatus.DATA_RESET, null);
 
+		this.path = path;
+		
 		try {
 			if(tmp != null) {
 				deleteTempDirectory(tmp);
@@ -720,24 +735,27 @@ public class DataManager implements DataEventSource, WebsocketListener {
         			public void run() {
         				// TODO Auto-generated method stub
         				// Change to use handler
-        				DataManager.getInstance().downloadImage();
-        				DataManager.getInstance().downloadDB();
-//        				IHandlerService service = (IHandlerService) PlatformUI.getWorkbench().getService(IHandlerService.class);
-//        				try {
-//							service.executeCommand("com.halkamalka.ever.Eve.commands.updateDBCommand", null);
-//						} catch (ExecutionException e) {
-//							// TODO Auto-generated catch block
-//							e.printStackTrace();
-//						} catch (NotDefinedException e) {
-//							// TODO Auto-generated catch block
-//							e.printStackTrace();
-//						} catch (NotEnabledException e) {
-//							// TODO Auto-generated catch block
-//							e.printStackTrace();
-//						} catch (NotHandledException e) {
-//							// TODO Auto-generated catch block
-//							e.printStackTrace();
-//						}
+//        				DataManager.getInstance().downloadImage();
+//        				DataManager.getInstance().downloadDB();
+        				IHandlerService service = (IHandlerService) PlatformUI.getWorkbench().getService(IHandlerService.class);
+
+						try {
+							service.executeCommand("com.halkamalka.ever.Eve.commands.updateDBCommand", null);
+						} catch (ExecutionException e) {
+							// TODO Auto-generated catch block
+							e.printStackTrace();
+						} catch (NotDefinedException e) {
+							// TODO Auto-generated catch block
+							e.printStackTrace();
+						} catch (NotEnabledException e) {
+							// TODO Auto-generated catch block
+							e.printStackTrace();
+						} catch (NotHandledException e) {
+							// TODO Auto-generated catch block
+							e.printStackTrace();
+						}
+						
+
         				// Change to use handler
         				NotificationPopUpUI popup = new  NotificationPopUpUI(PlatformUI.getWorkbench().getDisplay());
         		        popup.open();

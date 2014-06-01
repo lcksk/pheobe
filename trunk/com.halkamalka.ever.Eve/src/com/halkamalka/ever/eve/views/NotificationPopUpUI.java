@@ -38,7 +38,7 @@ public NotificationPopUpUI(Display display)
     composite.setLayout(new GridLayout(1, true));
     Label label = new Label(composite, SWT.NONE);
     label.setBounds(0, 0, 400, 400);
-    label.setImage(getImage(400));
+//    label.setImage(getImage(400));
 
     Link linkEverNews = new Link(composite, 0);
     String evernewsLink = "<a href=\"http://evernever.co.kr/ \">Ever and Ever  News</a>";
