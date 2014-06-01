@@ -42,13 +42,6 @@ public class ConnectHandler extends AbstractHandler implements WebsocketListener
 				}
 				monitor.worked(50);
 				monitor.subTask("connected");
-				try {
-					Thread.sleep(100);
-				}
-				catch (InterruptedException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
 				return Status.OK_STATUS;
 
 			}
