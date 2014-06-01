@@ -32,21 +32,9 @@ public class UpdateDBHandler extends AbstractHandler  implements WebsocketListen
 				monitor.subTask("update images");
 				DataManager.getInstance().downloadImage();
 				monitor.worked(50);
-//				try {
-//					Thread.sleep(100);
-//				} catch (InterruptedException e) {
-//					// TODO Auto-generated catch block
-//					e.printStackTrace();
-//				}
 				monitor.subTask("update database");
 				DataManager.getInstance().downloadDB();
-				monitor.worked(30);
-//				try {
-//					Thread.sleep(100);
-//				} catch (InterruptedException e) {
-//					// TODO Auto-generated catch block
-//					e.printStackTrace();
-//				}
+				monitor.worked(50);
 				return Status.OK_STATUS;
 			}
 		};
