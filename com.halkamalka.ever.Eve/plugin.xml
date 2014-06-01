@@ -61,7 +61,14 @@
                mnemonic="F">
             <command
                   commandId="com.halkamalka.ever.Eve.commands.openFileCommand"
+                  icon="icons/open-task.gif"
                   label="Open...">
+            </command>
+            <command
+                  commandId="com.halkamalka.ever.Eve.commands.refreshCommand"
+                  icon="icons/refresh.gif"
+                  label="Refresh"
+                  style="push">
             </command>
             <separator
                   name="com.halkamalka.ever.Eve.separator1"
@@ -69,11 +76,13 @@
             </separator>
             <command
                   commandId="com.halkamalka.ever.Eve.commands.connectCommand"
+                  icon="icons/synced.gif"
                   label="Connect"
                   style="push">
             </command>
             <command
                   commandId="com.halkamalka.ever.Eve.commands.disconnectCommand"
+                  icon="icons/disconnect.gif"
                   label="Disconnect"
                   style="push">
             </command>
@@ -83,6 +92,7 @@
             </separator>
             <command
                   commandId="com.halkamalka.ever.Eve.commands.updateDBCommand"
+                  icon="icons/synch_db.gif"
                   label="Update Database"
                   style="push">
             </command>
@@ -133,25 +143,31 @@
                id="com.halkamalka.ever.Eve.toolbars.sampleToolbar">
             <command
                   commandId="com.halkamalka.ever.Eve.commands.openFileCommand"
-                  icon="icons/sample.gif"
+                  icon="icons/open-task.gif"
                   id="com.halkamalka.ever.Eve.toolbars.openCommand"
                   style="push">
             </command>
             <command
+                  commandId="com.halkamalka.ever.Eve.commands.refreshCommand"
+                  icon="icons/refresh.gif"
+                  id="com.halkamalka.ever.Eve.toolbars.refreshCommand"
+                  style="push">
+            </command>
+            <command
                   commandId="com.halkamalka.ever.Eve.commands.updateDBCommand"
-                  icon="icons/sample.gif"
+                  icon="icons/synch_db.gif"
                   id="com.halkamalka.ever.Eve.toolbars.updateDBCommand"
                   style="push">
             </command>
             <command
                   commandId="com.halkamalka.ever.Eve.commands.connectCommand"
-                  icon="icons/sample.gif"
+                  icon="icons/synced.gif"
                   id="com.halkamalka.ever.Eve.toolbars.connectCommand"
                   style="push">
             </command>
             <command
                   commandId="com.halkamalka.ever.Eve.commands.disconnectCommand"
-                  icon="icons/sample.gif"
+                  icon="icons/disconnect.gif"
                   id="com.halkamalka.ever.Eve.toolbars.disconnectCommand"
                   style="push">
             </command>
@@ -198,6 +214,11 @@
             id="com.halkamalka.ever.Eve.commands.update"
             name="Update">
       </command>
+      <command
+            categoryId="com.halkamalka.ever.Eve.commands.category"
+            id="com.halkamalka.ever.Eve.commands.refreshCommand"
+            name="Refresh">
+      </command>
    </extension>
    <extension
          point="org.eclipse.ui.handlers">
@@ -227,6 +248,10 @@
       </handler>
       <handler
             commandId="com.halkamalka.ever.Eve.commands.update">
+      </handler>
+      <handler
+            class="com.halkamalka.ever.eve.handlers.RefreshHandler"
+            commandId="com.halkamalka.ever.Eve.commands.refreshCommand">
       </handler>
    </extension>
    <extension
@@ -281,6 +306,10 @@
          <property
                name="aboutText"
                value="Eve for Ever &amp; Ever seller&#x0A;&#x0A;Version: Eve Service Release 1&#x0A;Build id: 20140224-0627&#x0A;&#x0A;(c) Copyright Eve contributors and others 2000, 2014.  All rights reserved.&#x0A;Visit http://evernever.co.kr/&#x0A;&#x0A;This product includes software developed by the&#x0A;Apache Software Foundation http://apache.org/">
+         </property>
+         <property
+               name="windowImages"
+               value="icons/16x16.png,icons/32x32.png,icons/48x48.png,icons/64x64.png,icons/128x128.png">
          </property>
       </product>
    </extension>

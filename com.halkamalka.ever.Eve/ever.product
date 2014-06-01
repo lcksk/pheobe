@@ -27,12 +27,12 @@ Apache Software Foundation http://apache.org/
       <vmArgsMac>-XstartOnFirstThread -Dorg.eclipse.swt.internal.carbon.smallFonts</vmArgsMac>
    </launcherArgs>
 
-   <windowImages/>
-
+   <windowImages i16="/com.halkamalka.ever.Eve/icons/16x16.png" i32="/com.halkamalka.ever.Eve/icons/32x32.png" i48="/com.halkamalka.ever.Eve/icons/48x48.png" i64="/com.halkamalka.ever.Eve/icons/64x64.png" i128="/com.halkamalka.ever.Eve/icons/128x128.png"/>
 
    <launcher name="eve">
       <solaris/>
-      <win useIco="false">
+      <win useIco="true">
+         <ico path="/com.halkamalka.ever.Eve/icons/alt_launcher.ico"/>
          <bmp/>
       </win>
    </launcher>
