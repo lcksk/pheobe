@@ -27,7 +27,10 @@ public class CustomSharedImage {
 //	public static final String IMG_AUDIO_CONTENT = "audio_content.gif";
 //	public static final String IMG_PHOTO_CONTENT = "photo_content.gif";
 //	public static final String IMG_STOP = "methpri_obj.gif";
-	public static final String IMG_WARN = "ihigh_obj.gif";
+//	public static final String IMG_WARN = "ihigh_obj.gif";
+	public static final String IMG_WARN = "red_bug.gif";
+	public static final String IMG_PASSED = "passed.png";
+	public static final String IMG_MSG_WARN = "message_warning.gif";
 	
 	private Map<String, Image> map;
 	
@@ -54,6 +57,8 @@ public class CustomSharedImage {
 //		load(IMG_AUDIO_CONTENT);
 //		load(IMG_STOP);
 		load(IMG_WARN);
+		load(IMG_PASSED);
+		load(IMG_MSG_WARN);
 	}
 
 	private void load(String id) {
