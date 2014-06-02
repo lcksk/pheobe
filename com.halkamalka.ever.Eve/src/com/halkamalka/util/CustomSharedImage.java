@@ -21,16 +21,12 @@ public class CustomSharedImage {
 //	public static final String[] paths = new String[1];
 	
 //	paths[0] = "";
-//	public static final String IMG_PACKAGE = "package_obj.gif";
-//	public static final String IMG_PACKAGEFOLDER = "packagefolder_obj.gif";
-//	public static final String IMG_VIDEO_CONTENT = "video_content.gif";
-//	public static final String IMG_AUDIO_CONTENT = "audio_content.gif";
-//	public static final String IMG_PHOTO_CONTENT = "photo_content.gif";
-//	public static final String IMG_STOP = "methpri_obj.gif";
-//	public static final String IMG_WARN = "ihigh_obj.gif";
-	public static final String IMG_WARN = "red_bug.gif";
+
+//	public static final String IMG_WARN = "red_bug.gif";
+	public static final String IMG_WARN = "bell.png";
 	public static final String IMG_PASSED = "passed.png";
-	public static final String IMG_MSG_WARN = "message_warning.gif";
+//	public static final String IMG_MSG_WARN = "message_warning.gif";
+	public static final String IMG_MSG_WARN = "detail_contents.png";
 	
 	private Map<String, Image> map;
 	
