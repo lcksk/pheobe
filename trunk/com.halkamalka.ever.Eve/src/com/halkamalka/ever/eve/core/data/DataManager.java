@@ -411,9 +411,13 @@ public class DataManager implements DataEventSource, WebsocketListener {
 	
 	public void downloadDB(URL url) {
 		try {
-			File file = new File(db);
+			File temp = new File(db + ".download");
 			// TODO
-			org.apache.commons.io.FileUtils.copyURLToFile(url, file);
+			org.apache.commons.io.FileUtils.copyURLToFile(url, temp);
+			
+			File file = new File(db);
+			org.apache.commons.io.FileUtils.copyFile(temp, file);
+			temp.delete();
 		}
 		catch (IOException e) {
 			// TODO Auto-generated catch block

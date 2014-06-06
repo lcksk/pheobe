@@ -61,12 +61,12 @@
                mnemonic="F">
             <command
                   commandId="com.halkamalka.ever.Eve.commands.openFileCommand"
-                  icon="icons/open-task.gif"
+                  icon="icons/open.ico"
                   label="Open...">
             </command>
             <command
                   commandId="com.halkamalka.ever.Eve.commands.refreshCommand"
-                  icon="icons/refresh.gif"
+                  icon="icons/refresh.ico"
                   label="Refresh"
                   style="push">
             </command>
@@ -76,13 +76,13 @@
             </separator>
             <command
                   commandId="com.halkamalka.ever.Eve.commands.connectCommand"
-                  icon="icons/synced.gif"
+                  icon="icons/connect.ico"
                   label="Connect"
                   style="push">
             </command>
             <command
                   commandId="com.halkamalka.ever.Eve.commands.disconnectCommand"
-                  icon="icons/disconnect.gif"
+                  icon="icons/disconnect.ico"
                   label="Disconnect"
                   style="push">
             </command>
@@ -92,13 +92,8 @@
             </separator>
             <command
                   commandId="com.halkamalka.ever.Eve.commands.updateDBCommand"
-                  icon="icons/synch_db.gif"
+                  icon="icons/update.ico"
                   label="Update Database"
-                  style="push">
-            </command>
-            <command
-                  commandId="com.halkamalka.ever.Eve.commands.listProductCommand"
-                  label="List Products"
                   style="push">
             </command>
             <separator
@@ -107,6 +102,7 @@
             </separator>
             <command
                   commandId="org.eclipse.ui.file.exit"
+                  icon="icons/exit.ico"
                   label="Exit">
             </command>
          </menu>
@@ -122,14 +118,8 @@
                label="Help">
             <command
                   commandId="org.eclipse.ui.help.aboutAction"
-                  style="push">
-            </command>
-            <separator
-                  name="com.halkamalka.ever.Eve.separator1"
-                  visible="true">
-            </separator>
-            <command
-                  commandId="com.halkamalka.ever.Eve.commands.update"
+                  icon="icons/16x16.png"
+                  label="about eve"
                   style="push">
             </command>
          </menu>
@@ -143,31 +133,31 @@
                id="com.halkamalka.ever.Eve.toolbars.sampleToolbar">
             <command
                   commandId="com.halkamalka.ever.Eve.commands.openFileCommand"
-                  icon="icons/open-task.gif"
+                  icon="icons/open.ico"
                   id="com.halkamalka.ever.Eve.toolbars.openCommand"
                   style="push">
             </command>
             <command
                   commandId="com.halkamalka.ever.Eve.commands.refreshCommand"
-                  icon="icons/refresh.gif"
+                  icon="icons/refresh.ico"
                   id="com.halkamalka.ever.Eve.toolbars.refreshCommand"
                   style="push">
             </command>
             <command
                   commandId="com.halkamalka.ever.Eve.commands.updateDBCommand"
-                  icon="icons/synch_db.gif"
+                  icon="icons/update.ico"
                   id="com.halkamalka.ever.Eve.toolbars.updateDBCommand"
                   style="push">
             </command>
             <command
                   commandId="com.halkamalka.ever.Eve.commands.connectCommand"
-                  icon="icons/synced.gif"
+                  icon="icons/connect.ico"
                   id="com.halkamalka.ever.Eve.toolbars.connectCommand"
                   style="push">
             </command>
             <command
                   commandId="com.halkamalka.ever.Eve.commands.disconnectCommand"
-                  icon="icons/disconnect.gif"
+                  icon="icons/disconnect.ico"
                   id="com.halkamalka.ever.Eve.toolbars.disconnectCommand"
                   style="push">
             </command>
