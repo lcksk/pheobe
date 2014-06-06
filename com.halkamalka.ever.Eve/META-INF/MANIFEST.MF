@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: Eve
 Bundle-SymbolicName: com.halkamalka.ever.Eve;singleton:=true
-Bundle-Version: 1.0.6.qualifier
+Bundle-Version: 1.0.7.qualifier
 Bundle-Activator: com.halkamalka.ever.eve.Activator
 Bundle-Vendor: HALKAMALKA
 Require-Bundle: org.eclipse.ui,
