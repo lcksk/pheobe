@@ -83,7 +83,7 @@ public class DomBuilder {
 								// MINOR
 								String _minor = abnormalItem[a].getName();
 								Element _minorDom = doc.createElement("div");
-								String _minorDomStyle = "position:relative; width:20%; float:left; height:50px; line-height:50px; padding-top:5px; word-wrap: break-word; display: inline-block; word-break: break-all; ";
+								String _minorDomStyle = "position:relative; width:20%; float:left; height:50px; line-height:50px; padding-top:5px; word-wrap: break-word; overflow:hidden;";
 								_minorDom.attr("style", _minorDomStyle);
 								_minorDom.html(_minor);
 								recommendListContainer.appendChild(_minorDom);
@@ -136,7 +136,7 @@ public class DomBuilder {
 								// MINOR
 								String _minor = abnormalItem[a].getName();
 								Element _minorDom = doc.createElement("div");
-								String _minorDomStyle = "position:relative; width:20%; float:left; height:50px; line-height:50px; padding-top:5px; word-wrap: break-word; display: inline-block; word-break: break-all;";
+								String _minorDomStyle = "position:relative; width:20%; float:left; height:50px; line-height:50px; padding-top:5px; word-wrap: break-word; overflow:hidden;";
 								_minorDom.attr("style", _minorDomStyle);
 								_minorDom.html(_minor);
 								recommendListContainer.appendChild(_minorDom);
@@ -292,7 +292,7 @@ public class DomBuilder {
 	private Element createProductName(Document doc, String name) {
 
 		Element _productNameDom = doc.createElement("div");
-		String _productNameDomStyle = "position:relative; width:15%; float:left; height:50px; line-height:50px; padding-top:5px; word-wrap: break-word;";
+		String _productNameDomStyle = "position:relative; width:15%; float:left; height:50px; line-height:50px; padding-top:5px; word-wrap: break-word; overflow:hidden;";
 		_productNameDom.attr("style", _productNameDomStyle);
 		_productNameDom.html(name);
 
