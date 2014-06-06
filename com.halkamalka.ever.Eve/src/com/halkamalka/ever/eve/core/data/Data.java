@@ -193,8 +193,8 @@ public abstract class Data implements HtmlParserable {
 			String key = it.next();
 			DataItem item = map.get(key);
 			
-//			if(!(item.getStatus().equals(Data.NORMAL) || item.getStatus().equals(Data.LOW) || item.getStatus().equals(Data.HIGH))) {
-			if(!(item.getStatus().equals(Data.NORMAL))) {
+			if(!(item.getStatus().equals(Data.NORMAL) || item.getStatus().equals(Data.LOW) || item.getStatus().equals(Data.HIGH))) {
+//			if(!(item.getStatus().equals(Data.NORMAL))) {
 				tmp.add(item);
 			}
 		}

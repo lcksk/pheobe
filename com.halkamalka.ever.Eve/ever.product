@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <?pde version="3.5"?>
 
-<product name="eve" uid="com.halkmalka.ever.Eve.product" id="com.halkamalka.ever.Eve.product" application="com.halkamalka.ever.Eve.application" version="1.0.0.qualifier" useFeatures="true" includeLaunchers="true">
+<product name="eve" uid="com.halkmalka.ever.Eve.product" id="com.halkamalka.ever.Eve.product" application="com.halkamalka.ever.Eve.application" version="1.0.6.qualifier" useFeatures="true" includeLaunchers="true">
 
    <aboutInfo>
       <image path="/com.halkamalka.ever.Eve/icons/alt_about.gif"/>
@@ -36,7 +36,6 @@ Apache Software Foundation http://apache.org/
          <bmp/>
       </win>
    </launcher>
-
 
    <vm>
       <linux include="false">org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JRE-1.1</linux>
