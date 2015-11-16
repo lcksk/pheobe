@@ -1,0 +1,1 @@
+small application using gupnp and gstreamer on linux system.
